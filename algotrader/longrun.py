@@ -62,8 +62,9 @@ def membership_matrix(members: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_frames(history=HISTORY, start=START, coverage=None) -> dict:
-    """Daily frames per member ticker (and the benchmark): Tiingo if its series is 'ok'
-    in coverage.csv (or no coverage file exists), else WIKI. Columns open..volume."""
+    """Daily frames per member ticker (and the benchmark): Tiingo unless coverage.csv
+    marks it a mismatch or covering under half of the membership period (a reused
+    ticker), else WIKI. Columns open..volume (+ raw_close)."""
     history = Path(history)
     spans = member_spans(parse_members((history / "sp500_members.csv").read_text()), start)
     cov = None
@@ -74,7 +75,10 @@ def load_frames(history=HISTORY, start=START, coverage=None) -> dict:
     for t in list(spans.index) + [BENCHMARK]:
         tiingo = history / "tiingo" / f"{tiingo_symbol(t)}.parquet"
         wiki = history / "wiki" / f"{wiki_symbol(t)}.parquet"
-        bad = cov is not None and t in cov.index and cov.loc[t, "status"] == "mismatch"
+        # wrong company (returns disagree with WIKI/HF) or mostly outside the membership
+        bad = cov is not None and t in cov.index and (
+            cov.loc[t, "status"] == "mismatch"
+            or (cov.loc[t, "status"] == "partial" and not cov.loc[t].get("cover", 1) >= 0.5))
         src = tiingo if tiingo.exists() and not bad else wiki if wiki.exists() else None
         if src is None:
             continue

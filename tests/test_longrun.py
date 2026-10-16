@@ -97,3 +97,14 @@ def test_choice_ignores_data_after_fold(tmp_path):
             1, 5, (f.index >= "2012-01-01").sum())[:, None]
     other = longrun.run_long(exp, wrecked, members)
     assert other["folds"]["params"][0] == base["folds"]["params"][0]
+
+
+def test_load_frames_skips_reused_tickers(tmp_path):
+    hist = _history(tmp_path / "h")
+    (hist / "tiingo").mkdir()
+    idx = pd.bdate_range("2025-01-02", periods=50)       # a later company reusing the ticker
+    pd.DataFrame({"open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0, "volume": 1.0},
+                 index=idx).to_parquet(hist / "tiingo" / "AAA.parquet")
+    pd.DataFrame({"status": ["partial"], "cover": [0.0]}, index=["AAA"]).to_csv(hist / "coverage.csv")
+    frames = longrun.load_frames(hist)
+    assert frames["AAA"].index.min() < pd.Timestamp("2009-01-01")   # WIKI used instead
