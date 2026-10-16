@@ -46,5 +46,4 @@ commission, buy-and-hold return (first open to last close).
 ## Not implemented (ideas)
 
 Shorting, ADX regime filter, volume-based partial fills, random latency,
-multi-instrument portfolio, walk-forward parameter selection. The legacy scripts
-in `backtest/` sketch some of these, unverified.
+multi-instrument portfolio, walk-forward parameter selection. 

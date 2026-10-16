@@ -2,12 +2,11 @@
 
 A small, tested backtester for long-only SMA-crossover strategies on US equity
 minute bars. Written to replace an earlier, unverified set of scripts (see
-[Legacy code](#legacy-code-and-the-published-results)).
+[Removed legacy code](#removed-legacy-code)).
 
 - `algotrader/` is the package, in a handful of small classes (see [Design](#design)).
 - `tests/` has the unit tests (`pytest`, 44 tests, about 1 second).
 - `STRATEGY.md` is the exact strategy and execution rules.
-- `backtest/`, `test_voladj*.py`, `results/` is the **legacy, unverified** code and output.
 
 ## Quick start
 
@@ -140,16 +139,17 @@ dominates. On 30 min and daily bars the result is indistinguishable from noise.
 test better ideas against, not a profitable strategy. Three tickers is far too
 small a sample for any conclusion.
 
-## Legacy code and the published results
+## Removed legacy code
 
-`backtest/`, `test_voladj*.py` and `results/` came from an earlier agent-written
-pipeline. They are kept for reference only and should not be trusted:
+The repo originally held an agent-written pipeline (`backtest/`, `test_voladj*.py`,
+`results/`). It was deleted because it could not be trusted (it remains in git history,
+commit `7fc720e` and earlier):
 
-- The legacy script `backtest/sma_backtest_voladj.py` run unchanged on the real data
-  loses 99% to 100% on every ticker (about 10,000 trades each).
-- `results/summary_with_commission_all.csv` lists 3 tickers (not the 50 claimed), two
-  of them with just 2 trades, and cannot be reproduced from any code in this repo.
-- Its generating pipeline (`/home/hermes/run_pipeline.sh`) and ticker list are absent.
+- The script `backtest/sma_backtest_voladj.py` run unchanged on the real data lost 99% to
+  100% on every ticker (about 10,000 trades each).
+- Its published `results/summary_with_commission_all.csv` listed 3 tickers (not the 50
+  claimed), two of them with just 2 trades, and could not be reproduced from any code.
+- Its generating pipeline (`/home/hermes/run_pipeline.sh`) and ticker list were never in the repo.
 
 ## Limitations
 

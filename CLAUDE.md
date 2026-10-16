@@ -28,6 +28,5 @@ Backtesting different algorithmic trading strategies on US equity 1-minute IEX b
 
 ## Legacy code
 
-`backtest/`, `test_voladj*.py`, `results/` are an unverified agent-written pipeline whose
-published results do not reproduce (see README). Do not extend or rely on them; they may be
-deleted once the new package covers what is useful.
+The old agent-written scripts and results were deleted (still in git history up to `7fc720e`).
+Their published numbers never reproduced; do not cite them.
