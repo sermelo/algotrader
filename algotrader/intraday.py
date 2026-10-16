@@ -192,18 +192,23 @@ class OpeningRangeBreakoutStrategy:
     If the opening range (first `or_minutes`) closes above its open, buy at the next
     open with the stop at the range low, and exit at the session close. Optional
     "stocks in play" filter: opening-range volume at least `min_rel_volume` times its
-    mean over the previous `rv_lookback` sessions. (The paper's 10R profit target is
-    not modelled; it is rarely reached.)
+    mean over the previous `rv_lookback` sessions. Optional trend filter: only when
+    the previous session's close is above the mean of the `trend_days` session
+    closes before it. (The paper's 10R profit target is not modelled; it is rarely
+    reached.)
     """
     or_minutes: int = 5
     min_rel_volume: float = 0.0
     rv_lookback: int = 14
+    trend_days: int | None = None
     atr_period: int = 14
     atr_mult: float = 50.0
 
     def __post_init__(self):
         if self.or_minutes < 1 or self.rv_lookback < 1 or self.min_rel_volume < 0:
             raise ValueError("require or_minutes >= 1, rv_lookback >= 1, min_rel_volume >= 0")
+        if self.trend_days is not None and self.trend_days < 1:
+            raise ValueError("trend_days must be >= 1 or None")
 
     def indicators(self, bars: pd.DataFrame) -> pd.DataFrame:
         df = bars.copy()
@@ -221,6 +226,11 @@ class OpeningRangeBreakoutStrategy:
         ok = rng["complete"] & (rng["close"] > rng["open"])
         if self.min_rel_volume > 0:
             ok &= rel_vol >= self.min_rel_volume
+        if self.trend_days:
+            daily = df["close"][last.to_numpy()]
+            daily.index = daily.index.normalize()
+            prev = daily.shift()
+            ok &= (prev > prev.rolling(self.trend_days).mean().shift()).reindex(rng.index).fillna(False)
         df["or_low"] = _per_day(rng["low"], df.index)
         df["rel_volume"] = _per_day(rel_vol, df.index)
         ok_bar = _per_day(ok.astype(float), df.index).fillna(0.0) > 0

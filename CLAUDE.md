@@ -2,7 +2,8 @@
 
 Backtesting different algorithmic trading strategies on US equity 1-minute IEX bars
 (HF Data Library). Read `README.md` (usage, design, results) and `STRATEGY.md`
-(exact rules) before changing code.
+(exact rules) before changing code. **Read `HANDOFF.md` first**: it records the work in
+progress (runs on the VPS, what is committed and what is not, next steps).
 
 @README.md
 @STRATEGY.md
@@ -11,7 +12,9 @@ Backtesting different algorithmic trading strategies on US equity 1-minute IEX b
 
 - Code lives in `algotrader/` (object-oriented: `BarLoader`, `CostModel`,
   `PositionSizer`, strategy classes in `strategy.py`, `tree.py`, `ml.py`, `intraday.py`,
-  `meanrev.py`, `Backtester`, `Metrics`, and the `experiments.py` runner). Add new strategies as
+  `meanrev.py`, `momentum.py`, overlays in `overlays.py`, the portfolio engine and
+  cross-sectional strategies in `portfolio.py`, `Backtester`, `Metrics`, `stats.py`, and
+  the `experiments.py` runner). Add new strategies as
   new classes satisfying the `Strategy` protocol (`indicators(bars)` returning
   `want_long` and `atr`, plus an `atr_mult` attribute; `average_true_range` is
   available); do not copy-paste engine code.
@@ -23,10 +26,13 @@ Backtesting different algorithmic trading strategies on US equity 1-minute IEX b
   strategy, the engine, costs or the runner, register it in `EXPERIMENTS`
   (`algotrader/experiments.py`), rerun the affected experiments
   (`uv run python -m algotrader.experiments <names>`; all of them if shared code
-  changed) and commit `results/` in the same commit. `results/summary.md` marks an
-  experiment "(stale)" when its code fingerprint no longer matches the current code;
-  do not commit stale rows. Do not edit `algotrader/*.py` while experiments run (the
-  fingerprint is taken when each finishes).
+  changed) and commit `results/` in the same commit. Each experiment's fingerprint
+  covers only the code it uses (runner without the registry, engine/cost/metric
+  modules, its strategy module and that module's package imports, its own definition),
+  so adding a strategy does not invalidate the others; `results/summary.md` marks an
+  experiment "(stale)" when its fingerprint no longer matches. Do not commit stale
+  rows. Do not edit `algotrader/*.py` in a checkout that experiments are running from
+  (develop in a scratch copy and copy the files back after committing the results).
 - Tune only on the training period (the runner enforces this); report test results of
   every experiment, not only the best ones.
 - Never introduce look-ahead: signals use bar close, fills use next open. Models that
@@ -41,7 +47,10 @@ Backtesting different algorithmic trading strategies on US equity 1-minute IEX b
   ask the `Hermes` session for connection details, never copy its key or `~/.hermes`).
   Work only in `~/algotrader-work` there: rsync the working tree (without `.venv`, `data`,
   `results`), `uv sync`, run detached with `nohup`, rsync `results/` back, commit here.
-  This machine has little free memory: use `--workers 1` locally.
+  This machine has little free memory: use `--workers 1` locally (Claude Code also
+  stops idle background jobs here when memory is low). To stop a run on the VPS, kill
+  it by PID and also kill its spawned worker processes (they survive the parent);
+  `pkill -f algotrader.experiments` inside an ssh command also matches the ssh shell.
 - Data download needs an HF Data Library API key stored OUTSIDE the repo at
   `~/.config/hfdatalibrary/token`. Never print, commit or write the key into any file.
 - Run scripts with data under `data/scratch/tickers/<TICKER>_clean.parquet`.

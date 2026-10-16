@@ -61,6 +61,8 @@ class Backtester:
       * `exit_at_close`: on bars where it is True, an open position is closed at
         that bar's close ('close') and no new order is placed from that bar. Used
         by intraday strategies to be flat overnight.
+      * `size_frac`: fraction of equity to put into the position, decided on the
+        signal bar; the sizer's result is capped at that (volatility targeting).
 
     Args:
         strategy: any `Strategy` (indicators with `want_long` and `atr`, plus
@@ -97,13 +99,14 @@ class Backtester:
         n = len(df)
         stop_px = df["stop_price"].to_numpy(float) if "stop_price" in df else np.full(n, np.nan)
         eod = df["exit_at_close"].to_numpy(bool) if "exit_at_close" in df else np.zeros(n, bool)
+        frac = df["size_frac"].to_numpy(float) if "size_frac" in df else np.full(n, np.nan)
 
         cash = self.initial_capital
         shares = 0
         stop = entry_fill = entry_comm = 0.0
         entry_time = None
         pending = None                      # 'buy' / 'sell' decided at prior close
-        pending_atr = pending_stop = np.nan
+        pending_atr = pending_stop = pending_frac = np.nan
         equity = np.empty(n)
         held = np.zeros(n, dtype=int)
         trades = []
@@ -124,6 +127,8 @@ class Backtester:
                 new_stop = (pending_stop if not np.isnan(pending_stop)
                             else fill - self.strategy.atr_mult * pending_atr)
                 qty = self.sizer.shares(cash, fill, fill - new_stop)
+                if not np.isnan(pending_frac):
+                    qty = min(qty, int(cash * max(pending_frac, 0.0) // fill))
                 while qty > 0 and qty * fill + self.costs.commission(qty) > cash:
                     qty -= 1
                 if qty > 0:
@@ -152,6 +157,7 @@ class Backtester:
                 elif shares == 0 and want[i] and (i == 0 or not want[i - 1]) \
                         and not (np.isnan(atr[i]) and np.isnan(stop_px[i])):
                     pending, pending_atr, pending_stop = "buy", atr[i], stop_px[i]
+                    pending_frac = frac[i]
 
         if shares > 0:
             close_position(n - 1, c[-1], "end")

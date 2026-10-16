@@ -125,3 +125,18 @@ def test_orb_relative_volume_filter():
     assert len(trades) == 1 and trades[0].entry_time.day == 4      # only the high-volume day
     with pytest.raises(ValueError):
         OpeningRangeBreakoutStrategy(or_minutes=0)
+
+
+def test_orb_trend_filter_needs_previous_close_above_its_mean():
+    # three flat days at 100, then a down day closing at 95, then an up opening range
+    flat = [100.0] * 6
+    down = [99, 98, 97, 96, 95, 95]
+    up = [96, 97, 98, 99, 100, 101]
+    bars = make_days([flat, flat, flat, down, up], freq_minutes=5,
+                     first_opens=[100, 100, 100, 100, 95])
+    plain = run(OpeningRangeBreakoutStrategy(), bars).trades
+    filt = run(OpeningRangeBreakoutStrategy(trend_days=3), bars).trades
+    assert any(t.entry_time.day == 6 for t in plain)          # day 5 (Jan 6) trades unfiltered
+    assert not any(t.entry_time.day == 6 for t in filt)       # 95 < mean(100, 100, 100)
+    with pytest.raises(ValueError):
+        OpeningRangeBreakoutStrategy(trend_days=0)

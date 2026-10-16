@@ -58,7 +58,8 @@ def test_writes_results_manifest_and_summary(setup):
     at_test = grid[grid["fold"] == "2023-08-01"]
     assert m["params"] == json.loads(at_test.loc[at_test["portfolio_sharpe"].idxmax(), "params"])
     assert set(m["fold_params"]) == {"2023-06-01", "2023-08-01", "2023-10-01"}
-    assert m["code_sha256"] == ex.code_fingerprint()
+    assert m["code_sha256"] == ex.experiment_fingerprint(TOY)
+    assert m["package_sha256"] == ex.code_fingerprint()
     assert set(m["data"]) == {"AAA", "BBB"}
     w = m["walk_forward"]
     assert set(w["fold_sharpe"]) == {"2023-06-01", "2023-08-01", "2023-10-01"}
@@ -71,6 +72,11 @@ def test_writes_results_manifest_and_summary(setup):
     assert equity.index[1] >= pd.Timestamp("2023-08-01")          # [0] is the 1.0 start value
     text = (out / "summary.md").read_text()
     assert "`toy`" in text and "Walk-forward" in text
+    trades = pd.read_csv(out / "toy_trades.csv.gz")
+    assert {"ticker", "fold", "entry_time", "exit_time", "pnl", "exit_reason"} <= set(trades.columns)
+    assert set(trades["fold"]) <= {"2023-06-01", "2023-08-01", "2023-10-01"}
+    assert pd.to_datetime(trades["entry_time"]).min() >= pd.Timestamp("2023-06-01")
+    assert m["trade_log"]["written"] and m["trade_log"]["rows"] == len(trades)
 
 
 def test_parameter_choice_ignores_data_after_each_fold_start(setup, tmp_path):
@@ -137,3 +143,100 @@ def test_low_activity_grid_points_cannot_be_chosen(setup, monkeypatch, tmp_path)
     assert m["params"] == busy and m["selection_note"] == ""
     monkeypatch.setattr(ex, "MIN_TRADES", 10 ** 6)     # nobody qualifies: flagged
     assert "no grid point" in run(data, tmp_path / "none")["selection_note"]
+
+
+def test_overlay_parameters_build_wrappers_and_load_market(setup, monkeypatch):
+    data, out = setup
+    from algotrader.overlays import MarketRegime, VolTargeted
+    write_ticker(data, "SPY", list(np.linspace(100, 150, 300)))
+    exp = ex.Experiment("ovl", "overlays", SmaCrossStrategy, "1D",
+                        {"fast": 2, "slow": 8, "atr_period": 2, "vol_target": 0.1},
+                        {"regime_days": [None, 20]}, costs=ex.CostModel(0, 0))
+    assert isinstance(exp.make({"fast": 2, "slow": 8, "vol_target": 0.1}), VolTargeted)
+    assert isinstance(exp.make({"fast": 2, "slow": 8, "regime_days": 20}), MarketRegime)
+    assert exp.needs_market
+    use(monkeypatch, exp)
+    m = run(data, out, "ovl")
+    assert m["params"]["regime_days"] in (None, 20)
+
+
+def test_ticker_that_stops_trading_is_handled(setup):
+    data, out = setup
+    write_ticker(data, "CCC", wave(170, 30))                   # ends 2023-06-20
+    ex.main(["toy", "--data-dir", str(data), "--tickers", "AAA", "BBB", "CCC",
+             "--workers", "1", "--out", str(out)])
+    folds = pd.read_csv(out / "toy_folds.csv")
+    late = folds[folds["period"] == "fold:2023-10-01/base"]
+    assert set(late["ticker"]) == {"AAA", "BBB"}               # CCC had no bars left
+    early = folds[folds["period"] == "fold:2023-06-01/base"]
+    assert "CCC" in set(early["ticker"])
+
+
+def test_portfolio_experiment_walk_forward(setup, monkeypatch):
+    data, out = setup
+    write_ticker(data, "CCC", wave(300, 25, phase=0.6))
+    from algotrader.portfolio import CrossSectionalMomentum
+    exp = ex.PortfolioExperiment("xs", "toy momentum", CrossSectionalMomentum, "1D",
+                                 {"skip": 0, "top_n": 1, "every": "W"},
+                                 {"lookback": [5, 10]}, costs=ex.CostModel(0, 0))
+    use(monkeypatch, exp)
+    ex.main(["xs", "--data-dir", str(data), "--tickers", "AAA", "BBB", "CCC",
+             "--workers", "1", "--out", str(out)])
+    m = json.loads((out / "manifest.json").read_text())["xs"]
+    assert m["kind"] == "portfolio" and m["params"]["lookback"] in (5, 10)
+    assert set(m["walk_forward"]["fold_sharpe"]) == {"2023-06-01", "2023-08-01", "2023-10-01"}
+    rows = pd.read_csv(out / "xs.csv")
+    assert set(rows["period"]) == {"train", "test", "gross", "stress"}
+    orders = pd.read_csv(out / "xs_trades.csv.gz")
+    assert {"date", "ticker", "shares", "price", "fold"} <= set(orders.columns)
+    assert (rows["ticker"] == "PORTFOLIO").all()
+    assert "$100,000 total" in (out / "summary.md").read_text()
+
+
+def test_worker_pool_uses_spawned_processes():
+    # spawned (not forked) workers: safe after OpenMP threads exist in the parent
+    assert ex._map(abs, [-1, -2, -3], workers=2) == [1, 2, 3]
+
+
+def test_long_short_portfolio_experiment(setup, monkeypatch):
+    data, out = setup
+    from algotrader.portfolio import PairsStrategy
+    exp = ex.PortfolioExperiment("pr", "toy pairs", PairsStrategy, "1D",
+                                 {"pairs": (("AAA", "BBB"),)}, {"entry_z": [1.0, 1.5]},
+                                 costs=ex.CostModel(0, 0), allow_short=True)
+    use(monkeypatch, exp)
+    m = run(data, out, "pr")
+    assert m["kind"] == "portfolio" and m["params"]["entry_z"] in (1.0, 1.5)
+    folds = pd.read_csv(out / "pr_folds.csv")
+    assert len(folds) > 0
+
+
+def test_fitted_portfolio_experiment_refits_per_fold(setup, monkeypatch):
+    data, out = setup
+    write_ticker(data, "CCC", wave(300, 25, phase=0.6))
+    from algotrader.portfolio import CrossSectionalML
+    exp = ex.PortfolioExperiment("xml", "toy ranking", CrossSectionalML, "1D",
+                                 {"top_n": 1, "every": "W", "max_iter": 20},
+                                 {"horizon": [3, 5]}, costs=ex.CostModel(0, 0), fit="pooled")
+    use(monkeypatch, exp)
+    ex.main(["xml", "--data-dir", str(data), "--tickers", "AAA", "BBB", "CCC",
+             "--workers", "1", "--out", str(out)])
+    m = json.loads((out / "manifest.json").read_text())["xml"]
+    assert m["fit"] == "pooled" and set(m["fold_params"]) == {"2023-06-01", "2023-08-01",
+                                                              "2023-10-01"}
+
+
+def test_experiment_fingerprint_depends_only_on_used_code(monkeypatch, tmp_path):
+    from algotrader.momentum import TurnOfMonthStrategy
+    a = ex.Experiment("a", "", SmaCrossStrategy, "1D", {"fast": 2, "slow": 5})
+    b = ex.Experiment("b", "", TurnOfMonthStrategy, "1D")
+    fa, fb = ex.experiment_fingerprint(a), ex.experiment_fingerprint(b)
+    assert fa == ex.experiment_fingerprint(a) and fa != fb
+    assert ex.experiment_fingerprint(ex.Experiment("a", "", SmaCrossStrategy, "1D",
+                                                   {"fast": 3, "slow": 5})) != fa
+    # strategy modules: SMA does not depend on momentum.py, turn-of-month does
+    deps = ex._module_deps("momentum", set())
+    assert "momentum" in deps and "strategy" in deps and "tree" not in deps
+    # the registry is not part of the runner source
+    src = ex.runner_source()
+    assert "Experiment(\"sma_daily\"" not in src and "def run_experiment" in src

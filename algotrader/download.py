@@ -5,7 +5,7 @@ never printed or written anywhere else.
 
 Example:
     python -m algotrader.download --out data/scratch/tickers SPY QQQ AAPL
-    python -m algotrader.download --out data/scratch/tickers --universe
+    python -m algotrader.download --out data/scratch/tickers --universe broad
 """
 import argparse
 import time
@@ -47,17 +47,18 @@ def download(tickers, out_dir, token_file=DEFAULT_TOKEN, force=False, pause=0.7,
 
 
 def main(argv=None):
-    from .universe import UNIVERSE
+    from .universe import UNIVERSES
 
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("tickers", nargs="*")
-    p.add_argument("--universe", action="store_true", help="all tickers in algotrader.universe")
+    p.add_argument("--universe", choices=sorted(UNIVERSES),
+                   help="also fetch every ticker of this universe (core, broad)")
     p.add_argument("--out", default="data/scratch/tickers")
     p.add_argument("--token-file", default=str(DEFAULT_TOKEN))
     p.add_argument("--force", action="store_true", help="re-download existing files")
     args = p.parse_args(argv)
-    tickers = list(dict.fromkeys(args.tickers + (UNIVERSE if args.universe else [])))
+    tickers = list(dict.fromkeys(args.tickers + (UNIVERSES[args.universe] if args.universe else [])))
     if not tickers:
         p.error("give tickers or --universe")
     fetched = download(tickers, args.out, args.token_file, args.force)

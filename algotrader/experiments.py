@@ -42,6 +42,8 @@ import argparse
 import hashlib
 import itertools
 import json
+import multiprocessing
+import re
 import subprocess
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
@@ -58,14 +60,18 @@ from .engine import Backtester, BacktestResult
 from .intraday import (IntradayMomentumStrategy, NoiseAreaStrategy,
                        OpeningRangeBreakoutStrategy, OvernightStrategy)
 from .meanrev import RsiReversionStrategy
+from .momentum import TimeSeriesMomentumStrategy, TurnOfMonthStrategy
 from .metrics import Metrics
 from .ml import GradientBoostingStrategy
+from .overlays import MarketRegime, VolTargeted
+from .portfolio import (CrossSectionalML, CrossSectionalMomentum, PairsStrategy,
+                        PortfolioBacktester, ShortTermReversal)
 from .sizing import PositionSizer
 from .stats import (TRADING_DAYS, alpha_beta, expected_max_sharpe, portfolio_returns,
                     returns_stats, sharpe_interval)
 from .strategy import SmaCrossStrategy
 from .tree import DecisionTreeStrategy
-from .universe import UNIVERSE
+from .universe import UNIVERSES
 
 TEST_START = "2024-01-01"
 FOLD_STARTS = ["2023-07-01", "2024-01-01", "2024-07-01", "2025-01-01", "2025-07-01",
@@ -78,6 +84,8 @@ STRESS_SPREAD_BPS = 5.0
 BASE_COSTS = CostModel(spread_bps=SPREAD_BPS)                # IBKR + 2 bp half-spread
 FULL = PositionSizer(risk_per_trade=1.0, max_position_frac=1.0)   # fully invested
 VARIANTS = ("base", "gross", "stress")
+MARKET = "SPY"                     # market series for the regime overlay
+OVERLAY_KEYS = ("vol_target", "vol_lookback", "regime_days")
 PACKAGE_DIR = Path(__file__).parent
 
 
@@ -95,6 +103,24 @@ class Experiment:
     fit: str = ""                 # "", "ticker" (fit per ticker) or "pooled" (one model)
     capital: float = CAPITAL      # starting equity per ticker
 
+    def make(self, params: dict, market=None):
+        """Build the strategy for `params`, wrapped in any overlays they ask for:
+        `vol_target` (+ `vol_lookback`) -> VolTargeted, `regime_days` -> MarketRegime
+        on `market` bars. None disables an overlay."""
+        core = {k: v for k, v in params.items() if k not in OVERLAY_KEYS}
+        strat = self.strategy(**core)
+        if params.get("vol_target"):
+            strat = VolTargeted(strat, params["vol_target"], params.get("vol_lookback") or 20)
+        if params.get("regime_days"):
+            strat = MarketRegime(strat, params["regime_days"])
+            if market is not None:
+                strat.set_market(market)
+        return strat
+
+    @property
+    def needs_market(self) -> bool:
+        return any(p.get("regime_days") for p in self.combos())
+
     def combos(self) -> list:
         """Parameter dicts to try: `params` updated with each point of `grid`."""
         keys = list(self.grid)
@@ -102,7 +128,7 @@ class Experiment:
         for values in itertools.product(*(self.grid[k] for k in keys)):
             p = {**self.params, **dict(zip(keys, values))}
             try:
-                self.strategy(**p)                   # skip invalid points (e.g. fast >= slow)
+                self.make(p)                         # skip invalid points (e.g. fast >= slow)
             except ValueError:
                 continue
             out.append(p)
@@ -114,6 +140,21 @@ class Experiment:
         if variant == "stress":
             return replace(self.costs, spread_bps=STRESS_SPREAD_BPS)
         return self.costs
+
+
+@dataclass(frozen=True)
+class PortfolioExperiment(Experiment):
+    """A cross-sectional strategy run as ONE portfolio over all tickers (daily bars).
+    `capital` is the whole portfolio's starting equity. With `allow_short`, weights
+    may be negative (gross exposure capped at `max_gross`, shorts pay `borrow_bps` a
+    year)."""
+    capital: float = 100_000.0
+    allow_short: bool = False
+    max_gross: float = 1.0
+    borrow_bps: float = 50.0
+
+    def make(self, params: dict, market=None):
+        return self.strategy(**params)
 
 
 EXPERIMENTS = [
@@ -155,6 +196,52 @@ EXPERIMENTS = [
                OpeningRangeBreakoutStrategy, "5min", {},
                {"or_minutes": [5, 15, 30], "min_rel_volume": [0.0, 1.5, 2.5]},
                capital=100_000.0),
+    # round 3: new strategies
+    Experiment("tsmom_daily", "Moskowitz et al. (2012) time-series momentum, long only",
+               TimeSeriesMomentumStrategy, "1D", {},
+               {"lookback": [63, 126, 252], "skip": [0, 21], "vol_target": [None, 0.15]}),
+    Experiment("turn_of_month_daily", "Lakonishok & Smidt (1988) turn of the month",
+               TurnOfMonthStrategy, "1D", {},
+               {"days_before": [0, 1, 2, 3], "days_after": [1, 3, 5]}),
+    # round 3: overlays and filters on the earlier strategies
+    Experiment("sma_daily_overlays", "SMA crossover with volatility targeting / SPY regime",
+               SmaCrossStrategy, "1D", {"atr_period": 14, "atr_mult": 50.0},
+               {"fast": [10, 20, 50], "slow": [50, 100, 200], "vol_target": [None, 0.10, 0.20],
+                "regime_days": [None, 200]}),
+    Experiment("rsi2_daily_overlays", "RSI(2) with volatility targeting / SPY regime",
+               RsiReversionStrategy, "1D", {"rsi_period": 2},
+               {"entry": [5.0, 10.0, 20.0], "exit_sma": [5, 10], "trend_sma": [None, 200],
+                "vol_target": [None, 0.15], "regime_days": [None, 200]}),
+    Experiment("overnight_1min_100k_filters", "Overnight hold, $100k, SPY regime and own trend",
+               OvernightStrategy, "1min", {},
+               {"trend_days": [None, 200], "regime_days": [None, 200]}, capital=100_000.0),
+    Experiment("orb_5min_100k_filters", "Opening-range breakout, $100k, trend and regime filters",
+               OpeningRangeBreakoutStrategy, "5min", {},
+               {"or_minutes": [5, 15, 30], "min_rel_volume": [0.0, 1.5], "trend_days": [None, 20],
+                "regime_days": [None, 200]}, capital=100_000.0),
+    # round 3: cross-sectional portfolios (one portfolio over all tickers, $100k)
+    PortfolioExperiment("xs_momentum_daily", "Jegadeesh & Titman (1993) momentum, top N",
+                        CrossSectionalMomentum, "1D", {"every": "M"},
+                        {"lookback": [126, 252], "skip": [0, 21], "top_n": [5, 10]}),
+    PortfolioExperiment("xs_reversal_daily", "Jegadeesh (1990) short-term reversal, bottom N",
+                        ShortTermReversal, "1D", {},
+                        {"lookback": [5, 21], "top_n": [5, 10], "every": ["W", "M"]}),
+    # round 4: long-short (shorting, 1x gross, 50 bp/yr borrow)
+    PortfolioExperiment("xs_momentum_ls_daily", "Momentum long top N, short bottom N",
+                        CrossSectionalMomentum, "1D", {"every": "M"},
+                        {"lookback": [126, 252], "skip": [0, 21], "top_n": [5, 10],
+                         "short_n": [5, 10]}, allow_short=True),
+    PortfolioExperiment("pairs_daily", "Pairs mean reversion on fixed economic pairs",
+                        PairsStrategy, "1D", {},
+                        {"lookback": [20, 60], "entry_z": [1.5, 2.0], "exit_z": [0.0, 0.5]},
+                        allow_short=True),
+    PortfolioExperiment("xs_gbm_daily", "Gradient boosting ranks tickers by forward return",
+                        CrossSectionalML, "1D", {"every": "W"},
+                        {"horizon": [5, 21], "top_n": [5, 10]}, fit="pooled"),
+    PortfolioExperiment("xs_gbm_ls_daily", "Gradient-boosting ranking, long top N, short bottom N",
+                        CrossSectionalML, "1D", {"every": "W"},
+                        {"horizon": [5, 21], "top_n": [5, 10], "short_n": [5, 10]},
+                        fit="pooled", allow_short=True),
 ]
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
@@ -207,19 +294,29 @@ def _daily_curve(values: pd.Series, start_value: float) -> pd.Series:
     return pd.concat([first, daily])
 
 
-def _window_record(result, bars, start, end):
-    """(summary, daily strategy curve, daily buy-and-hold curve) for one window."""
+MAX_TRADE_ROWS = 300_000       # larger trade logs are not written (noted in the manifest)
+
+
+def _window_record(result, bars, start, end, with_trades=False):
+    """(summary, daily strategy curve, daily buy-and-hold curve, trades) for one
+    window; trades is a DataFrame of the window's trades when `with_trades`."""
     part = slice_result(result, start, end)
     if part is None:
         return None
     period = bars[(bars.index >= start) if start is not None else slice(None)]
     period = _before(period, end)
     summary = Metrics(part, period).summary()
+    trades = part.trades_frame() if with_trades else None
     return (summary, _daily_curve(part.equity, part.initial_capital),
-            _daily_curve(period["close"], period["open"].iloc[0]))
+            _daily_curve(period["close"], period["open"].iloc[0]), trades)
 
 
 # ------------------------------------------------------------------- workers
+
+def _market(exp, data_dir):
+    """Market bars at the experiment's bar size, if any grid point needs them."""
+    return BarLoader(data_dir).load(MARKET, exp.timeframe) if exp.needs_market else None
+
 
 def _engine(exp, strat, variant):
     return Backtester(strat, exp.costs_for(variant), exp.sizer, exp.capital)
@@ -230,10 +327,11 @@ def _select_ticker(args):
     exp_name, ticker, data_dir, starts, combos, models = args
     exp = BY_NAME[exp_name]
     bars = BarLoader(data_dir).load(ticker, exp.timeframe)
+    market = _market(exp, data_dir)
     out = []
     if not exp.fit:
         for k, p in enumerate(combos):
-            full = _engine(exp, exp.strategy(**p), "base").run(bars)
+            full = _engine(exp, exp.make(p, market), "base").run(bars)
             for F in starts:
                 rec = _window_record(full, bars, None, F)
                 if rec:
@@ -248,7 +346,7 @@ def _select_ticker(args):
             if exp.fit == "pooled":
                 strat = models[(F, k)]
             else:
-                strat = exp.strategy(**p)
+                strat = exp.make(p, market)
                 try:
                     strat.fit(bars[bars.index < v])
                 except ValueError:
@@ -268,6 +366,7 @@ def _final_ticker(args):
     exp_name, ticker, data_dir, windows, models = args
     exp = BY_NAME[exp_name]
     bars = BarLoader(data_dir).load(ticker, exp.timeframe)
+    market = _market(exp, data_dir)
     cache, out = {}, []
     for name, start, end, params, fit_end in windows:
         variants = ("base",) if name == "train" else VARIANTS
@@ -275,15 +374,16 @@ def _final_ticker(args):
             for var in variants:
                 key = (json.dumps(params, sort_keys=True), var)
                 if key not in cache:
-                    cache[key] = _engine(exp, exp.strategy(**params), var).run(bars)
-                rec = _window_record(cache[key], bars, start, end)
+                    cache[key] = _engine(exp, exp.make(params, market), var).run(bars)
+                rec = _window_record(cache[key], bars, start, end,
+                                     with_trades=var == "base" and name.startswith("fold:"))
                 if rec:
                     out.append((name, var, ticker) + rec)
             continue
         if exp.fit == "pooled":
             strat = models[fit_end]
         else:
-            strat = exp.strategy(**params)
+            strat = exp.make(params, market)
             try:
                 strat.fit(bars[bars.index < fit_end])
             except ValueError:
@@ -293,16 +393,20 @@ def _final_ticker(args):
             continue
         for var in variants:
             run = _engine(exp, strat, var).run(upto, start=start)
-            rec = _window_record(run, bars, start, end)
+            rec = _window_record(run, bars, start, end,
+                                 with_trades=var == "base" and name.startswith("fold:"))
             if rec:
                 out.append((name, var, ticker) + rec)
     return out
 
 
 def _map(fn, jobs, workers):
+    """Run jobs in `workers` processes. Workers are spawned, not forked: forking after
+    scikit-learn's OpenMP threads have started in this process can deadlock them
+    (it hung a pooled gradient-boosting run)."""
     if workers <= 1:
         return [fn(j) for j in jobs]
-    with ProcessPoolExecutor(workers) as pool:
+    with ProcessPoolExecutor(workers, mp_context=multiprocessing.get_context("spawn")) as pool:
         return list(pool.map(fn, jobs))
 
 
@@ -314,9 +418,9 @@ def _train_frames(exp, data_dir, tickers, end) -> list:
     return [_before(loader.load(t, exp.timeframe), end) for t in tickers]
 
 
-def _fit_pooled(exp, params, frames, end):
+def _fit_pooled(exp, params, frames, end, market=None):
     """Fit one strategy on all frames, using only bars before `end`."""
-    return exp.strategy(**params).fit_many([f[f.index < end] for f in frames])
+    return exp.make(params, market).fit_many([f[f.index < end] for f in frames])
 
 
 def _choose(grid_rows):
@@ -337,11 +441,12 @@ def run_experiment(exp: Experiment, data_dir, tickers, workers=2) -> dict:
     starts = selection_starts()
     pooled = exp.fit == "pooled"
     frames = _train_frames(exp, data_dir, tickers, max(starts)) if pooled else None
+    market = _market(exp, data_dir) if pooled else None
 
     # pass 1: selection
     chosen, notes, grid_rows = {F: 0 for F in starts}, {F: "" for F in starts}, []
     if len(combos) > 1:
-        models = ({(F, k): _fit_pooled(exp, p, frames, valid_start(F))
+        models = ({(F, k): _fit_pooled(exp, p, frames, valid_start(F), market)
                    for F in starts for k, p in enumerate(combos)} if pooled else None)
         jobs = [(exp.name, t, str(data_dir), starts, combos, models) for t in tickers]
         curves = {(F, k): {} for F in starts for k in range(len(combos))}
@@ -367,7 +472,7 @@ def run_experiment(exp: Experiment, data_dir, tickers, workers=2) -> dict:
     windows = [(f"fold:{s.date()}", s, e, combos[chosen[s]], s) for s, e in fold_windows()]
     windows += [("test", single, None, combos[chosen[single]], single),
                 ("train", None, single, combos[chosen[single]], single)]
-    models = ({F: _fit_pooled(exp, combos[chosen[F]], frames, F) for F in starts}
+    models = ({F: _fit_pooled(exp, combos[chosen[F]], frames, F, market) for F in starts}
               if pooled else None)
     del frames
     jobs = [(exp.name, t, str(data_dir), windows, models) for t in tickers]
@@ -377,9 +482,11 @@ def run_experiment(exp: Experiment, data_dir, tickers, workers=2) -> dict:
 
 def _assemble(exp, combos, chosen, notes, grid_rows, recs) -> dict:
     """Portfolio statistics for the single split and the walk-forward."""
-    by = {}
-    for name, var, ticker, summary, daily, hold in recs:
+    by, trade_frames = {}, []
+    for name, var, ticker, summary, daily, hold, trades in recs:
         by.setdefault((name, var), {})[ticker] = (summary, daily, hold)
+        if trades is not None and len(trades):
+            trade_frames.append(trades.assign(ticker=ticker, fold=name.split(":")[1]))
 
     def port(name, var):
         got = by.get((name, var), {})
@@ -426,17 +533,200 @@ def _assemble(exp, combos, chosen, notes, grid_rows, recs) -> dict:
         },
         "wf_returns": pd.DataFrame({**{var: wf[var] for var in VARIANTS}, "hold": wf_hold}),
         "test_equity": pd.DataFrame({t: v[1] for t, v in test_curves.items()}).sort_index(),
+        "trades": pd.concat(trade_frames, ignore_index=True) if trade_frames else pd.DataFrame(),
+    }
+
+
+# ------------------------------------------------------------- portfolios
+
+def _portfolio_summary(res, start=None, end=None):
+    """(summary, daily curve) of a portfolio run inside [start, end)."""
+    eq = res.equity
+    mask = np.ones(len(eq), dtype=bool)
+    if start is not None:
+        mask &= eq.index >= start
+    if end is not None:
+        mask &= eq.index < end
+    if not mask.any():
+        return None
+    before = eq[eq.index < start] if start is not None else eq.iloc[:0]
+    initial = float(before.iloc[-1]) if len(before) else res.initial_capital
+    part = eq[mask]
+    orders = [o for o in res.orders
+              if (start is None or o[0] >= start) and (end is None or o[0] < end)]
+    curve = _daily_curve(part, initial)
+    st = returns_stats(curve.pct_change().dropna())
+    invested = (res.holdings[mask] > 0).any(axis=1).mean()
+    summary = {"total_return": st["return"], "cagr": st["cagr"], "sharpe": st["sharpe"],
+               "max_drawdown": st["max_drawdown"], "exposure": float(invested),
+               "trades": len({o[0] for o in orders}),          # rebalance days
+               "orders": len(orders), "total_commission": float(sum(o[4] for o in orders)),
+               "final_equity": float(part.iloc[-1])}
+    return summary, curve
+
+
+def run_portfolio_experiment(exp: PortfolioExperiment, data_dir, tickers) -> dict:
+    """Walk-forward for a cross-sectional strategy: one full-history run per grid
+    point (and cost variant), sliced into selection and test windows."""
+    loader = BarLoader(data_dir)
+    frames = {t: loader.load(t, exp.timeframe) for t in tickers}
+    combos, starts = exp.combos(), selection_starts()
+    runs, models = {}, {}
+
+    def strategy(k, fit_end):
+        """Rule strategies are built once; fitted ones are fitted on bars before fit_end."""
+        if not exp.fit:
+            return exp.make(combos[k])
+        if (k, fit_end) not in models:
+            models[(k, fit_end)] = exp.make(combos[k]).fit_many(
+                {t: f[f.index < fit_end] for t, f in frames.items()})
+        return models[(k, fit_end)]
+
+    def run(k, var, fit_end=None):
+        key = (k, var, fit_end if exp.fit else None)
+        if key not in runs:
+            engine = PortfolioBacktester(strategy(k, fit_end), exp.costs_for(var), exp.capital,
+                                         exp.allow_short, exp.max_gross,
+                                         exp.borrow_bps if var != "gross" else 0.0)
+            runs[key] = engine.run(frames)
+        return runs[key]
+
+    chosen, notes, grid_rows = {F: 0 for F in starts}, {F: "" for F in starts}, []
+    if len(combos) > 1:
+        for F in starts:
+            rows = []
+            for k, p in enumerate(combos):
+                # fitted: fit before F - VALID_MONTHS, score on the validation months
+                rec = (_portfolio_summary(run(k, "base", valid_start(F)), valid_start(F), F)
+                       if exp.fit else _portfolio_summary(run(k, "base"), None, F))
+                st, trades = (({"return": rec[0]["total_return"], "cagr": rec[0]["cagr"],
+                                "sharpe": rec[0]["sharpe"], "max_drawdown": rec[0]["max_drawdown"]},
+                               rec[0]["trades"]) if rec else ({}, 0))
+                rows.append({"fold": F.date().isoformat(), "params": json.dumps(p, sort_keys=True),
+                             **{f"portfolio_{s}": st.get(s, np.nan)
+                                for s in ("return", "cagr", "sharpe", "max_drawdown")},
+                             "median_trades": float(trades), "eligible": trades >= MIN_TRADES})
+            chosen[F], notes[F] = _choose(rows)
+            grid_rows += rows
+
+    hold = {t: f for t, f in frames.items()}
+
+    def hold_returns(start, end):
+        curves = {}
+        for t, f in hold.items():
+            per = _before(f[f.index >= start] if start is not None else f, end)
+            if len(per):
+                curves[t] = _daily_curve(per["close"], per["open"].iloc[0])
+        return portfolio_returns(curves) if curves else pd.Series(dtype=float)
+
+    single = pd.Timestamp(TEST_START)
+    recs = {}
+    windows = [(f"fold:{s.date()}", s, e, chosen[s], s) for s, e in fold_windows()]
+    windows += [("test", single, None, chosen[single], single),
+                ("train", None, single, chosen[single], single)]
+    order_frames = []
+    for name, start, end, k, fit_end in windows:
+        for var in (("base",) if name == "train" else VARIANTS):
+            res_run = run(k, var, fit_end)
+            rec = _portfolio_summary(res_run, start, end)
+            if rec:
+                recs[(name, var)] = rec
+            if var == "base" and name.startswith("fold:"):
+                rows = [o for o in res_run.orders
+                        if o[0] >= start and (end is None or o[0] < end)]
+                if rows:
+                    order_frames.append(pd.DataFrame(rows, columns=[
+                        "date", "ticker", "shares", "price", "commission"]).assign(
+                        fold=name.split(":")[1]))
+
+    def rets(name, var):
+        return recs[(name, var)][1].pct_change().dropna() if (name, var) in recs \
+            else pd.Series(dtype=float)
+
+    folds = [f"fold:{s.date()}" for s, _ in fold_windows()]
+    wf = {var: pd.concat([rets(f, var) for f in folds]).sort_index() for var in VARIANTS}
+    wf_hold = pd.concat([hold_returns(s, e) for s, e in fold_windows()]).sort_index()
+    period = {("test", "base"): "test", ("test", "gross"): "gross", ("test", "stress"): "stress",
+              ("train", "base"): "train"}
+    rows = [{"ticker": "PORTFOLIO", "period": period.get(key, f"{key[0]}/{key[1]}"), **rec[0]}
+            for key, rec in recs.items()]
+    rows = pd.DataFrame(rows)
+    single_rows = rows[rows["period"].isin(["train", "test", "gross", "stress"])]
+    test_eq = recs.get(("test", "base"))
+    return {
+        "params": combos[chosen[single]], "note": notes[single],
+        "fold_params": {s.date().isoformat(): combos[chosen[s]] for s, _ in fold_windows()},
+        "fold_notes": {s.date().isoformat(): notes[s] for s, _ in fold_windows() if notes[s]},
+        "rows": single_rows, "fold_rows": rows[~rows.index.isin(single_rows.index)],
+        "grid": pd.DataFrame(grid_rows),
+        "portfolio": {ph: returns_stats(rets(*key)) for ph, key in
+                      (("train", ("train", "base")), ("test", ("test", "base")),
+                       ("gross", ("test", "gross")), ("stress", ("test", "stress")))},
+        "hold": {"train": returns_stats(hold_returns(None, single)),
+                 "test": returns_stats(hold_returns(single, None))},
+        "walk_forward": {
+            **{var: returns_stats(wf[var]) for var in VARIANTS},
+            "hold": returns_stats(wf_hold), "sharpe_90": sharpe_interval(wf["base"]),
+            "vs_hold": alpha_beta(wf["base"], wf_hold),
+            "fold_sharpe": {f.split(":")[1]: returns_stats(rets(f, "base"))["sharpe"]
+                            for f in folds},
+            "days": int(len(wf["base"]))},
+        "wf_returns": pd.DataFrame({**{var: wf[var] for var in VARIANTS}, "hold": wf_hold}),
+        "test_equity": (pd.DataFrame({"PORTFOLIO": test_eq[1]}) if test_eq
+                        else pd.DataFrame()),
+        "trades": pd.concat(order_frames, ignore_index=True) if order_frames else pd.DataFrame(),
     }
 
 
 # --------------------------------------------------------------- fingerprints
 
 def code_fingerprint() -> str:
-    """sha256 over the package source files (name + content), first 16 hex digits."""
+    """sha256 over all package source files (name + content), first 16 hex digits."""
     h = hashlib.sha256()
     for path in sorted(PACKAGE_DIR.glob("*.py")):
         h.update(path.name.encode())
         h.update(path.read_bytes())
+    return h.hexdigest()[:16]
+
+
+# modules every experiment's numbers depend on (besides its strategy's own modules)
+CORE_MODULES = ("engine", "costs", "sizing", "data", "metrics", "stats", "indicators",
+                "strategy", "overlays")
+
+
+def _module_deps(name: str, seen: set) -> set:
+    """`name` plus the package modules it imports (`from .x import`), recursively."""
+    if name in seen:
+        return seen
+    seen.add(name)
+    src = (PACKAGE_DIR / f"{name}.py").read_text()
+    for dep in re.findall(r"^from \.(\w+) import", src, flags=re.M):
+        _module_deps(dep, seen)
+    return seen
+
+
+def runner_source() -> str:
+    """experiments.py without the EXPERIMENTS registry, so adding or editing one
+    experiment does not change the others' fingerprints."""
+    src = (PACKAGE_DIR / "experiments.py").read_text()
+    start, end = src.index("\nEXPERIMENTS = ["), src.index("\nBY_NAME = ")
+    return src[:start] + src[end:]
+
+
+def experiment_fingerprint(exp: Experiment) -> str:
+    """sha256 over the code one experiment's results depend on: the runner (without
+    the registry), the engine/cost/metric modules, the strategy's module and the
+    package modules it imports, the portfolio engine for portfolio experiments, and the
+    experiment's own definition. First 16 hex digits."""
+    modules = set()
+    for m in CORE_MODULES + ((("portfolio",) if isinstance(exp, PortfolioExperiment) else ())):
+        _module_deps(m, modules)
+    _module_deps(exp.strategy.__module__.rsplit(".", 1)[-1], modules)
+    h = hashlib.sha256(runner_source().encode())
+    for m in sorted(modules):
+        h.update(m.encode())
+        h.update((PACKAGE_DIR / f"{m}.py").read_bytes())
+    h.update(repr(exp).encode())
     return h.hexdigest()[:16]
 
 
@@ -470,6 +760,14 @@ def write_results(exp, res, out_dir, manifest_entry):
         res["grid"].to_csv(out / f"{exp.name}_grid.csv", index=False, float_format="%.6g")
     res["test_equity"].to_csv(out / f"{exp.name}_equity.csv", float_format="%.6g")
     res["wf_returns"].to_csv(out / f"{exp.name}_wf_returns.csv", float_format="%.6g")
+    trades = res.get("trades", pd.DataFrame())
+    manifest_entry["trade_log"] = {"rows": int(len(trades)),
+                                   "written": bool(0 < len(trades) <= MAX_TRADE_ROWS)}
+    path = out / f"{exp.name}_trades.csv.gz"
+    if manifest_entry["trade_log"]["written"]:
+        trades.to_csv(path, index=False, float_format="%.6g", compression="gzip")
+    elif path.exists():
+        path.unlink()
     path = out / "manifest.json"
     manifest = json.loads(path.read_text()) if path.exists() else {}
     manifest[exp.name] = manifest_entry
@@ -503,7 +801,6 @@ def write_summary(out_dir):
     """Regenerate summary.md from the manifest."""
     out = Path(out_dir)
     manifest = json.loads((out / "manifest.json").read_text())
-    current = code_fingerprint()
     names = [e.name for e in EXPERIMENTS if e.name in manifest]
     trials = sum(len(BY_NAME[n].combos()) for n in names)
     any_wf = next((manifest[n]["walk_forward"] for n in names if "walk_forward" in manifest[n]), None)
@@ -532,12 +829,13 @@ def write_summary(out_dir):
         w = m.get("walk_forward")
         if not w:
             continue
-        stale = "" if m["code_sha256"] == current else " (stale)"
+        stale = "" if m["code_sha256"] == experiment_fingerprint(BY_NAME[name]) else " (stale)"
         lo, hi = w["sharpe_90"]
         fs = [v for v in w["fold_sharpe"].values() if v is not None and not pd.isna(v)]
         ab = w["vs_hold"]
         lines.append(
-            f"| `{name}` | {m['timeframe']} | ${m['capital']:,.0f} | {_fold_choices(m)} "
+            f"| `{name}` | {m['timeframe']} | ${m['capital']:,.0f}"
+            f"{' total' if m.get('kind') == 'portfolio' else ''} | {_fold_choices(m)} "
             f"| {_num(w['base']['sharpe'])} [{_num(lo)}, {_num(hi)}] | {_pct(w['base']['return'])} "
             f"| {_pct(w['base']['max_drawdown'])} | {_pct(ab['alpha'])} ({_num(ab['alpha_t'])}) "
             f"| {_num(ab['beta'])} | {_num(w['gross']['sharpe'])} | {_num(w['stress']['sharpe'])} "
@@ -575,9 +873,11 @@ def main(argv=None):
     p.add_argument("names", nargs="*", help="experiments to run (default: all)")
     p.add_argument("--list", action="store_true")
     p.add_argument("--data-dir", default="data/scratch/tickers")
-    p.add_argument("--tickers", nargs="*", help="default: algotrader.universe.UNIVERSE")
+    p.add_argument("--universe", choices=sorted(UNIVERSES), default="core",
+                   help="ticker set from algotrader.universe (default core)")
+    p.add_argument("--tickers", nargs="*", help="explicit tickers (overrides --universe)")
     p.add_argument("--workers", type=int, default=2)
-    p.add_argument("--out", default="results")
+    p.add_argument("--out", help="default: results/ for core, results/<universe>/ otherwise")
     args = p.parse_args(argv)
     if args.list:
         for e in EXPERIMENTS:
@@ -586,10 +886,13 @@ def main(argv=None):
     unknown = [n for n in args.names if n not in BY_NAME]
     if unknown:
         p.error(f"unknown experiments: {unknown}")
-    tickers = args.tickers or UNIVERSE
+    tickers = args.tickers or UNIVERSES[args.universe]
+    out = args.out or ("results" if args.universe == "core" else f"results/{args.universe}")
     data = data_fingerprint(args.data_dir, tickers)
     for exp in [BY_NAME[n] for n in args.names] if args.names else EXPERIMENTS:
-        res = run_experiment(exp, args.data_dir, tickers, args.workers)
+        res = (run_portfolio_experiment(exp, args.data_dir, tickers)
+               if isinstance(exp, PortfolioExperiment)
+               else run_experiment(exp, args.data_dir, tickers, args.workers))
         test = res["rows"][res["rows"]["period"] == "test"]
         eq = res["test_equity"]
         years = ((eq.index[-1] - pd.Timestamp(TEST_START)).days / 365.25) if len(eq) else 0
@@ -599,17 +902,21 @@ def main(argv=None):
                  "grid": {k: [str(v) for v in vs] for k, vs in exp.grid.items()},
                  "costs": vars(exp.costs), "sizer": vars(exp.sizer), "fit": exp.fit,
                  "capital": exp.capital, "selection_note": res["note"],
+                 "universe": "custom" if args.tickers else args.universe,
+                 "kind": "portfolio" if isinstance(exp, PortfolioExperiment) else "per ticker",
+                 "tickers": len(tickers),
                  "split": {"test_start": TEST_START, "fold_starts": FOLD_STARTS,
                            "valid_months": VALID_MONTHS},
                  "portfolio": res["portfolio"], "hold": res["hold"],
                  "walk_forward": res["walk_forward"],
                  "test_trades_per_year": float(test["trades"].mean() / years) if years > 0 else 0.0,
                  "test_exposure": float(test["exposure"].mean()) if len(test) else 0.0,
-                 "code_sha256": code_fingerprint(), "git": git_state(),
+                 "code_sha256": experiment_fingerprint(exp),
+                 "package_sha256": code_fingerprint(), "git": git_state(),
                  "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                  "data": data}
-        write_results(exp, res, args.out, entry)
-        write_summary(args.out)
+        write_results(exp, res, out, entry)
+        write_summary(out)
         w = res["walk_forward"]
         print(f"{exp.name}: walk-forward Sharpe {w['base']['sharpe']:.2f} "
               f"(gross {w['gross']['sharpe']:.2f}, B&H {w['hold']['sharpe']:.2f}) | "

@@ -66,10 +66,74 @@ on each session's last bar, so they are flat overnight.
   above its first open (and its volume is at least `min_rel_volume` times the mean of
   the previous `rv_lookback` sessions, when that filter is on), buy at the next open
   with `stop_price` = range low; exit at the close. Days without a complete range
-  are skipped. No profit target.
+  are skipped. Optional `trend_days`: only when the previous session's close is above
+  the mean of the `trend_days` closes before it. No profit target.
 
 Session VWAP is on the typical price (H+L+C)/3 from the session's first bar.
 Defaults use `atr_mult` 50, i.e. effectively no ATR stop.
+
+## Time-series momentum and calendar (`algotrader/momentum.py`, daily bars)
+
+- **Time-series momentum** (`TimeSeriesMomentumStrategy`, Moskowitz et al. 2012):
+  long while close[t - `skip`] / close[t - `lookback`] - 1 > `min_ret`.
+- **Turn of the month** (`TurnOfMonthStrategy`, Lakonishok & Smidt 1988): trading days
+  are numbered 1, 2, ... from each month's first and -1, -2, ... from its last.
+  `want_long` on the closes of days -(`days_before` + 1) .. `days_after` - 1, so the
+  engine buys at the open of day -`days_before` and sells at the open of day
+  `days_after` + 1. Uses which days have bars (the exchange calendar, known in advance),
+  not prices; the last month of the data has no month-end positions (it may be
+  incomplete).
+
+## Overlays (`algotrader/overlays.py`)
+
+Wrappers around any strategy, selected by parameters in an experiment's grid:
+
+- `vol_target` (+ `vol_lookback`, default 20): `VolTargeted` adds `size_frac` =
+  min(1, target / realised vol), the realised vol being the annualised standard
+  deviation of the last `vol_lookback` daily close-to-close returns. The engine caps
+  the position at `size_frac` of equity.
+- `regime_days`: `MarketRegime` keeps `want_long` only while SPY's session close is
+  above its `regime_days` mean (entries blocked, open positions exited otherwise).
+- Both use only sessions finished by the bar's close: on daily bars the same day's
+  close, on intraday bars the previous session's.
+
+## Portfolio strategies (`algotrader/portfolio.py`)
+
+- `PortfolioBacktester` runs ONE long-only portfolio over all tickers on daily bars.
+  A cross-sectional strategy's `weights(closes)` gives target weights per day from
+  closes up to that day. Orders are placed only when the weights change, at the next
+  day's open (sells first, buys scaled down if cash is short), whole shares, same
+  `CostModel`. A ticker whose data ends is sold at its last close. Equity is marked
+  to each day's close (last known close for tickers without a bar).
+- **Cross-sectional momentum** (`CrossSectionalMomentum`, Jegadeesh & Titman 1993):
+  equal weight in the `top_n` tickers by return from `lookback` to `skip` days ago,
+  rebalanced at each month (or week/day) end among tickers trading that day.
+- **Short-term reversal** (`ShortTermReversal`, Jegadeesh 1990): equal weight in the
+  `top_n` tickers with the lowest `lookback`-day return.
+- **Shorting** (`allow_short=True`): weights may be negative (whole shares, rounded
+  towards zero). Short sale proceeds go to cash; equity = cash + signed market value.
+  Gross exposure (sum of |weights|) is scaled down to `max_gross` (1.0 in the
+  experiments, so a long-short book is 50% long and 50% short). Shorts pay
+  `borrow_bps` a year (50 bp in the experiments, 0 in the gross variant) on their
+  market value, charged at each close as 1/252 of the annual rate. A short in a ticker
+  whose data ends is bought back at its last close. No margin calls or recalls.
+- **Long-short momentum**: `CrossSectionalMomentum(short_n=N)` also shorts the N
+  tickers with the lowest score (weights +1/top_n and -1/short_n before the gross cap).
+- **Pairs** (`PairsStrategy`, after Gatev et al. 2006): for fixed pairs chosen in
+  advance on economic grounds (XOM/CVX, JPM/BAC, KO/PEP, SPY/DIA, QQQ/XLK, AAPL/MSFT;
+  pairs missing a ticker are skipped), z = (log(a/b) - mean) / std over `lookback`
+  days. Enter when |z| > `entry_z` (long the cheap leg, short the rich one, 0.5 /
+  n_pairs per leg), exit when |z| < `exit_z`.
+- **Cross-sectional ML** (`CrossSectionalML`, in the spirit of Gu, Kelly & Xiu 2020):
+  daily features (returns over 1, 5, 21, 63, 126 days, 21-day volatility, distance
+  from the 50 and 200-day means, RSI(14)), each ranked across tickers per day. A
+  `HistGradientBoostingRegressor` (depth 3, 200 iterations, learning rate 0.05, L2
+  1.0) predicts the `horizon`-day forward return minus that day's cross-sectional mean;
+  rows whose future lies after the training data are dropped. At each period end hold
+  the `top_n` highest predictions (and short the `short_n` lowest). In the runner it is
+  fitted before F - 6 months for tuning and refitted before each fold start F.
+- In the experiments a portfolio starts with $100,000 in total; the activity rule
+  counts rebalance days.
 
 ## Daily mean reversion (`RsiReversionStrategy`)
 
@@ -96,7 +160,12 @@ close, filled at the next open. No stop by default.
 
 ## Experiments (`algotrader/experiments.py`)
 
-- Universe: `algotrader/universe.py` (4 index ETFs, 20 large caps, 3 original tickers).
+- Universes (`algotrader/universe.py`, `--universe`): **core** (4 index ETFs, 20 large
+  caps, 3 original tickers; results in `results/`) and **broad** (core plus 11 sector,
+  bond and gold ETFs and 69 tickers from a seeded random sample of the provider's
+  symbols, filtered on March 2022 data only: first bar before April 2022, price >= $5,
+  >= 100 traded minutes a day; results in `results/broad/`). Broad includes names that
+  stop trading (acquisitions, renames), which leave the portfolio at their last bar.
 - **Walk-forward (main result):** folds start 2023-07, 2024-01, 2024-07, 2025-01,
   2025-07 and 2026-01. At each fold start F the parameters are chosen with data before
   F only and tested from F to the next fold start (the last to the end of the data).
@@ -144,6 +213,7 @@ the overnight gap, and positions can be held overnight.
 | Stop trigger | The bar's low is at or below the stop. Fill at the stop, or at the open if it gaps below. |
 | After a stop | No new entry until the next fresh crossover. |
 | Explicit stop | If the strategy has a `stop_price` column (not NaN on the signal bar), it replaces the ATR stop and sizing uses fill - stop. No entry if the fill is already at or below it. |
+| Size fraction | If the strategy has a `size_frac` column, the position is capped at that fraction of equity (decided on the signal bar). |
 | Exit at close | On bars where the strategy's `exit_at_close` is True, an open position is closed at that bar's close (minus slippage), and no new order is placed from that bar. |
 | Backtest start | `Backtester.run(bars, start=...)` computes indicators on all bars but trades and records equity only from `start`. |
 | End of data | Open position closed at the last close. |
@@ -173,6 +243,7 @@ commission, buy-and-hold return (first open to last close) and buy-and-hold Shar
 
 ## Not implemented (ideas)
 
-Shorting, ADX regime filter, volume-based partial fills, random latency,
-multi-instrument portfolio, walk-forward parameter selection (and walk-forward
-retraining of the decision tree).
+Shorting in the single-ticker engine (only the portfolio engine can short), ADX
+regime filter, volume-based partial fills, random latency, an ORB profit target and
+"stocks in play" ranking across tickers, overnight day-of-week and earnings-gap
+filters, the pre-holiday effect.

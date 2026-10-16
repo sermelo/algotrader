@@ -1,0 +1,5 @@
+ticker,period,params,total_return,cagr,sharpe,max_drawdown,exposure,trades,orders,total_commission,final_equity
+PORTFOLIO,test,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.758197,0.225249,1.20613,-0.248192,0.998571,34,408,647.29,260887
+PORTFOLIO,gross,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.77389,0.229175,1.22331,-0.247738,0.998571,34,406,0,263883
+PORTFOLIO,stress,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.748808,0.222889,1.19493,-0.248728,0.998571,34,409,646.615,258991
+PORTFOLIO,train,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.48383,0.242507,1.51372,-0.118149,0.683406,12,134,143.105,148383
