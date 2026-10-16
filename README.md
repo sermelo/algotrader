@@ -51,13 +51,23 @@ This repository contains the code, backtest results, and documentation for the S
    - Required packages: `pandas`, `numpy` (others may be imported by specific scripts)
    - The scripts expect minute‑OHLCV data in Parquet format under `$HERMES_CACHE/scratch/tickers/` (or adjust the path in the scripts).
 
-3. **Run a quick test**
+3. **Data Acquisition** (if data not already present)
+   - The backtest uses 1‑minute OHLCV data from the IEX feed via the Hugging Face Data Library (Mar 2022‑present).
+   - To download, you can use the `datasets` library:
+     ```bash
+     pip install datasets
+     python -c "from datasets import load_dataset; ds = load_dataset('IEEx/minute-bar', split='train'); ds.to_parquet('$HERMES_CACHE/scratch/tickers/')"
+     ```
+   - Alternatively, you can obtain the data from Kaggle (e.g., `StockMinuteData`) or from a paid provider (IQFeed, FirstRate, TickData) and convert to Parquet files named `<TICKER>_clean.parquet`.
+   - Ensure each file contains columns: `open, high, low, close, volume` with a datetime index.
+
+4. **Run a quick test**
    ```bash
    python test_voladj.py
    ```
    This processes the first five tickers and prints Sharpe, total return, and trade counts.
 
-4. **Run the full backtest** (as used to generate the CSVs in `results/`)
+5. **Run the full backtest** (as used to generate the CSVs in `results/`)
    - The original pipeline executed the suite of scripts and produced the CSVs.
    - To regenerate, run the appropriate backtest script (e.g., `backtest/sma_backtest_voladj.py`) over the full ticker list and aggregate the outputs.
    - Example (pseudo):
@@ -66,7 +76,7 @@ This repository contains the code, backtest results, and documentation for the S
      ```
    - After generating per‑ticker CSVs, you can combine them into `summary_with_commission_all.csv` and compute the daily‑return histogram.
 
-5. **Refer to the strategy doc**
+6. **Refer to the strategy doc**
    See `STRATEGY.md` for detailed rules, risk controls, transaction cost model, performance expectations, usage instructions, limitations, and future work.
 
 ## Reproducing the Published Results
