@@ -46,7 +46,7 @@ Background evidence used throughout:
 | # | Task | Why (evidence / need) | Source options | Status |
 |---|---|---|---|---|
 | D1 | **Long daily price history** (20+ years) for the broad universe, ideally including delisted names | Power (above); seasonality, 12-month momentum, low-vol and trend need many years; the papers tested decades | Tiingo EOD (free plan: internal use, 1,000 requests/day; vendor claims history to 1962, a reviewer says 20-30 years); Stooq (free, fragile downloads); Alpaca (free plan; history from 2016 per a third-party page, unverified). Survivorship-free needs paid data: see "Data sources and costs" below. **Decision for sergio** | todo |
-| D2 | **Fama-French + momentum daily factors** (Kenneth French data library, free, from 1926) | Regress our returns on market, size, value, profitability, investment, momentum to see whether "alpha" is just factor exposure; long-history check of factor strategies; inputs for factor momentum (S5) | mba.tuck.dartmouth.edu Data Library (CSV) | todo |
+| D2 | ~~Fama-French + momentum daily factors~~ **done** (Kenneth French data library, free, from 1926) | Regress our returns on market, size, value, profitability, investment, momentum to see whether "alpha" is just factor exposure; long-history check of factor strategies; inputs for factor momentum (S5) | mba.tuck.dartmouth.edu Data Library (CSV) | **done**: `french.py`, see M1 |
 | D3 | **Point-in-time fundamentals and filing dates** from SEC EDGAR XBRL | Unlocks value, profitability, investment (S3), the best-replicating categories after momentum; filing dates give earnings dates for PEAD (S7) and the overnight earnings filter | `data.sec.gov` companyfacts API / nightly bulk zip, free, User-Agent required, about 10 requests/s. Must key each fact to its filing date (not the period end) and keep amendments in order | todo |
 | D4 | **Bigger, point-in-time universe** (e.g. historical S&P 500 / Russell 1000 members) | Cross-sectional strategies need breadth (papers use hundreds to thousands of stocks; deep stat arb used about 550 large caps) | Index membership lists (free ones are incomplete; paid ones exist); combine with D1 | todo |
 | D5 | Consolidated (SIP) minute data | Only if an intraday item gets promoted again: IEX volume is a small share of the tape | Alpaca paid plan or others; low priority | later |
@@ -72,8 +72,11 @@ Background evidence used throughout:
 
 ### P3. Method improvements (cheap, do alongside)
 
-- M1. Report alpha against Fama-French 5 factors + momentum (D2), not only against
-  equal-weight buy and hold.
+- M1. **Done** (`french.py`, `results/factor_alpha.md`): alpha against Fama-French 5
+  factors + momentum. Finding: long-short momentum loads 0.40 (core) / 0.77 (broad) on
+  the momentum factor and its alpha falls from t 1.5 to t 0.5 / 0.4, so it is the known
+  momentum premium. Dual momentum on broad keeps +14.8% (t 1.47): gold and bonds, which
+  the equity factors do not span. Nothing has a factor alpha t above 1.5.
 - M2. Count every configuration ever tried (across commits) for the luck bar, not only
   the current registry.
 - M3. Turnover and cost per strategy in the summary (NMV's 50% monthly turnover line).
@@ -119,7 +122,7 @@ results show the survivorship gap matters; then prefer an ongoing subscription
 
 ## Recommended order
 
-1. D2 (an afternoon, free) and M1: tells us whether current "alphas" are factor exposure.
+1. ~~D2 and M1~~ done: current "alphas" are factor exposure (see M1).
 2. D1 (decide free vs paid with sergio), then rerun all daily experiments on the long
    history: the biggest gain in statistical power.
 3. S1 buy/hold spread and S2 multi-horizon trend (cheap, on the strongest evidence).

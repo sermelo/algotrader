@@ -203,6 +203,16 @@ close, filled at the next open. No stop by default.
   Prado 2014: SE * ((1 - gamma) z(1 - 1/N) + gamma z(1 - 1/(N e))), SE = 1/sqrt(years)),
   with N the total number of configurations tried.
 
+## Factor regressions (`algotrader/french.py`)
+
+Separate from the runner: `python -m algotrader.french report` regresses each
+experiment's walk-forward daily returns (base costs) and the buy and hold of the same
+tickers on the daily Fama-French five factors and momentum (Kenneth French data
+library), by OLS on the days both series have. The market factor is the total market
+return (Mkt-RF + RF), because the backtests earn no interest on cash. Alpha is the
+intercept times 252 with its t-statistic. Output: `results/factor_alpha.md` and `.csv`
+(and in `results/broad/`), with the factor files' and the module's sha256.
+
 ## Bars
 
 Intraday bar sizes are built from 1-minute bars anchored to the 09:30 session open
