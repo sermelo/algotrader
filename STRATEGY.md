@@ -214,6 +214,35 @@ close, filled at the next open. No stop by default.
   Prado 2014: SE * ((1 - gamma) z(1 - 1/N) + gamma z(1 - 1/(N e))), SE = 1/sqrt(years)),
   with N the total number of configurations tried.
 
+## Long history (`algotrader/longrun.py`)
+
+- Universe: S&P 500 members on each day (daily membership lists, forward-filled between
+  list dates); `PointInTime` hides the closes of non-members from the strategy, so it
+  can only buy members; held stocks that leave are sold at the next rebalance; a stock
+  whose data ends is sold at its last close. Prices: Tiingo if its series did not fail
+  `history check`, else Quandl WIKI (adjusted OHLCV).
+- Walk-forward: folds start every January from 2012 to the last year of data; at each
+  fold start the grid point with the best portfolio Sharpe on all earlier data (and at
+  least 3 rebalance days) is chosen and run until the next fold. One full-history run
+  per grid point, sliced (rule-based strategies on causal signals).
+- $1,000,000 portfolio, same costs as the main experiments (IBKR + 2 / 0 / 5 bp), shorts
+  pay 50 bp a year, gross exposure capped at 1. Turnover = traded value / 2 / mean
+  equity per year. Alpha/beta against SPY.
+- **Fundamental sorts** (`fundamentals.py`): book-to-market = latest stockholders'
+  equity (10-K/10-Q) / (latest shares outstanding x unadjusted close), negative equity
+  excluded; gross profitability = latest annual gross profit (reported, else revenue -
+  cost of revenue; 330-400-day periods) / latest annual total assets; asset growth =
+  latest annual assets / previous annual assets - 1. A value counts from the day after
+  its filing date; for each date the value with the latest period end known so far is
+  used (an amendment of that period replaces it from its own filing date; older periods
+  reported later as comparatives do not).
+- **Earnings drift** (`pead.py`): reaction day = the 8-K (item 2.02) acceptance day, or
+  the next trading day if accepted at or after 16:00 New York time; EAR = (1+r_d)(1+r_d+1)
+  - 1 minus the same for the market (SPY, or the equal-weight mean of the stocks),
+  known at the close of d+1 and kept `hold_days` trading days; top/bottom N by EAR.
+- **Seasonality** (`seasonal.py`): at each month end, score = mean return of the coming
+  calendar month in the previous `years` years (at least `min_years`); top/bottom N.
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each

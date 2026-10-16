@@ -57,11 +57,11 @@ Background evidence used throughout:
 |---|---|---|---|---|
 | S1 | **Cross-sectional momentum (12-1 month), long-short and long-only**, with a Novy-Marx-Velikov buy/hold spread to cut turnover | Strongest replication (HXZ 63%, JKP); low turnover, survives costs (NMV); decays after publication (McLean & Pontiff). Lou, Polk & Skouras (*JFE* 2019): momentum profits are earned overnight. **Ours:** the only strategy consistent on both universes (alpha t 1.49 / 1.52) | Buffer done (`xs_momentum_buffer*`, `buffered.py`): core 1.18 / 1.05, broad 0.91 / 0.76, no factor alpha; little cost to save at monthly turnover. Retest on D1 + D4 | buffer done; retest on long history |
 | S2 | **Trend following / time-series momentum across asset classes** (1, 3, 12-month signals combined, 10% vol target) | Hurst, Ooi & Pedersen, "A century of evidence on trend-following investing", *JPM* 2017 (67 markets, 1880-2016); Moskowitz, Ooi & Pedersen, *JFE* 2012. Evidence is on diversified futures; on single stocks weaker. **Ours:** `tsmom_daily` 1.32 core / 1.04 broad, alpha about 0 | Multi-horizon done (`trend_multi*`, `trend.py`): long-short 0.66 / 0.37, long or cash 0.83 / 0.86, no alpha. Retest on long history (Tiingo ETFs from the 1990s/2000s) | done; retest on long history |
-| S3 | **Value, profitability/quality, investment** (book-to-market, gross profitability, asset growth) | HXZ: investment 73.7%, value 42%, profitability 44% value-weighted; JKP: most themes replicate, also in large caps; low turnover, survive costs (NMV) | D3 (fundamentals), D1 | todo |
-| S4 | **Return seasonality** (same calendar month in past years; Heston & Sadka, *JFE* 2008; Keloharju, Linnainmaa & Nyberg, *JF* 2016: about 13% a year) | Strong original papers, holds in developed markets (Li, Zhang & Zheng); but seasonality is one of the three themes that replicate poorly in JKP | D1 (needs 10-20 years of history), prices only | todo |
+| S3 | **Value, profitability/quality, investment** (book-to-market, gross profitability, asset growth) | HXZ: investment 73.7%, value 42%, profitability 44% value-weighted; JKP: most themes replicate, also in large caps; low turnover, survive costs (NMV) | D3, D1 | **code done** (`fundamentals.py`, `longrun.py` value/profitability/asset_growth); results wait for D1 |
+| S4 | **Return seasonality** (same calendar month in past years; Heston & Sadka, *JFE* 2008; Keloharju, Linnainmaa & Nyberg, *JF* 2016: about 13% a year) | Strong original papers, holds in developed markets (Li, Zhang & Zheng); but seasonality is one of the three themes that replicate poorly in JKP | D1 | **code done** (`seasonal.py`, `seasonality*_long`); results wait for D1 |
 | S5 | **Factor momentum** (Ehsani & Linnainmaa, *JF* 2022: factors after a positive year earn 51 bp/month vs 6 bp after a negative year) | Peer-reviewed; later replications dispute that it subsumes stock momentum globally | D2 for evidence; tradeable only through our own factor portfolios (S1, S3, low vol) | todo |
 | S6 | **Low volatility / defensive** | Ang et al. 2006; Frazzini & Pedersen, *JFE* 2014; but Novy-Marx & Velikov, "Betting against betting against beta", *JFE* 2022: BAB returns come from microcaps, costs cut about 60%, no net alpha vs FF5. Defensive tilts are large-cap (Novy-Marx 2016). **Ours:** `low_vol_daily` 1.24 core | Implemented; retest on D1, against D2 factors (likely just profitability/investment exposure) | done (retest later) |
-| S7 | **Post-earnings announcement drift** | Classic and peer-reviewed, but Martineau (2022): gone in non-microcaps since about 2006; some recent papers revive it with multi-quarter surprises (strongest in large caps), a point-in-time S&P 500 study loses after costs | D3 (earnings dates and EPS surprises from filings; analyst forecasts not available) | todo |
+| S7 | **Post-earnings announcement drift** | Classic and peer-reviewed, but Martineau (2022): gone in non-microcaps since about 2006; some recent papers revive it with multi-quarter surprises (strongest in large caps), a point-in-time S&P 500 study loses after costs | D3 | **code done** (`pead.py`, `pead*_long`): surprise = announcement return (Brandt et al. 2008), since XBRL EPS is filed after the release; results wait for D1 |
 | S8 | **Deep learning statistical arbitrage** (Guijarro-Ordonez, Pelger & Zanotti, *Management Science* 2025) | Best deep-learning evidence: daily US large caps, profitable after costs; independent replication (arXiv 2412.11432) finds even higher Sharpe, suspects overfitting/missing costs | D1 + D4 (about 500 large caps, many years), PyTorch on the VPS | todo |
 | S9 | **Price-chart CNN** (Jiang, Kelly & Xiu, *JF* 2023) | Top journal, 2001-2019 out of sample, authors report transfer across markets; only an unreviewed replication; headline Sharpe ratios are equal-weighted | D1 + D4 (trained on all US stocks for decades) | todo |
 | S10 | **Deep momentum networks / Momentum Transformer** (Lim, Zohren & Roberts 2019; Wood et al. 2021) | Futures only; edge survives costs only to 2-3 bp (10 bp with turnover penalty); Pollok & Robik 2026: learned policies beat simple rules in some, not all, cases | Fits current data (ETFs); extends S2 | todo |
@@ -79,7 +79,7 @@ Background evidence used throughout:
   the equity factors do not span. Nothing has a factor alpha t above 1.5.
 - M2. Count every configuration ever tried (across commits) for the luck bar, not only
   the current registry.
-- M3. Turnover and cost per strategy in the summary (NMV's 50% monthly turnover line).
+- M3. Turnover per strategy: **done in `longrun.py`** (one-sided, per year); not yet in the main runner (would change every fingerprint).
 
 ## Data sources and costs (researched 2026-10-16)
 
@@ -143,6 +143,17 @@ results show the survivorship gap matters; then prefer an ongoing subscription
   its dates must cover the membership period, and its returns must match WIKI (before
   2018) or the HF data (from 2022) where they overlap. Unmatched tickers are logged,
   not guessed.
+
+### Long-history runner (2026-10-16)
+
+`longrun.py` runs 16 experiments (momentum, buffered momentum, reversal, low vol, 52-week
+high, value, profitability, asset growth, seasonality, earnings drift; long-only and
+long-short) on the point-in-time S&P 500 from 2008, yearly folds from 2012. Smoke test on
+WIKI only (2012 to Mar 2018, no SPY): low vol 1.20, momentum 1.02, not committed.
+**Full results need all Tiingo prices:** about 716 symbols, 500 a month on the free
+plan, so the complete set is expected after the quota resets (November 2026). Then:
+`python -m algotrader.history check`, `python -m algotrader.longrun` on the VPS,
+`python -m algotrader.french report --results results/long`, commit `results/long/`.
 
 ## Recommended order
 
