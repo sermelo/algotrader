@@ -3,7 +3,13 @@ name = "algotrader"
 version = "0.1.0"
 description = "Small, tested backtester for long-only strategies on minute bars"
 requires-python = ">=3.10"
-dependencies = ["pandas", "numpy", "pyarrow", "scikit-learn"]
+dependencies = [
+    "pandas",
+    "numpy",
+    "pyarrow",
+    "scikit-learn",
+    "lxml>=6.1.3",
+]
 
 [dependency-groups]
 dev = ["pytest"]

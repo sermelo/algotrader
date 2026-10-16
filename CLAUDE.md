@@ -14,7 +14,7 @@ progress (runs on the VPS, what is committed and what is not, next steps).
 - Code lives in `algotrader/` (object-oriented: `BarLoader`, `CostModel`,
   `PositionSizer`, strategy classes in `strategy.py`, `tree.py`, `ml.py`, `intraday.py`,
   `meanrev.py`, `momentum.py`, overlays in `overlays.py`, the portfolio engine and
-  cross-sectional strategies in `portfolio.py`, `factors.py`, `buffered.py` and `trend.py`, `Backtester`, `Metrics`, `stats.py`, `french.py` (Fama-French factor regressions), `history.py` (long daily history), and
+  cross-sectional strategies in `portfolio.py`, `factors.py`, `buffered.py` and `trend.py`, `Backtester`, `Metrics`, `stats.py`, `french.py` (Fama-French factor regressions), `history.py` (long daily history), `edgar.py` (SEC fundamentals), and
   the `experiments.py` runner). Add new strategies as
   new classes satisfying the `Strategy` protocol (`indicators(bars)` returning
   `want_long` and `atr`, plus an `atr_mult` attribute; `average_true_range` is
@@ -58,6 +58,9 @@ progress (runs on the VPS, what is committed and what is not, next steps).
   Kaggle token in `~/.kaggle/access_token` (both outside the repo, chmod 600, never print
   them). Tiingo's free quota is per account (500 symbols a month): download only once
   (on the VPS) and rsync `data/history/` to wherever it is needed.
+- SEC EDGAR (`edgar.py`) requires a User-Agent with a contact email, stored in
+  `~/.config/sec/user_agent` (sergio agreed to use his email for this; never commit it).
+  The bulk files are 3 GB: download and process them on the VPS.
 - Run scripts with data under `data/scratch/tickers/<TICKER>_clean.parquet`.
 
 ## Legacy code

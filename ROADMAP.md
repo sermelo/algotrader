@@ -47,7 +47,7 @@ Background evidence used throughout:
 |---|---|---|---|---|
 | D1 | **Long daily price history** (20+ years) for the broad universe, ideally including delisted names | Power (above); seasonality, 12-month momentum, low-vol and trend need many years; the papers tested decades | Tiingo EOD (free plan: internal use, 1,000 requests/day; vendor claims history to 1962, a reviewer says 20-30 years); Stooq (free, fragile downloads); Alpaca (free plan; history from 2016 per a third-party page, unverified). Survivorship-free needs paid data: see "Data sources and costs" below. **Decision for sergio** | todo |
 | D2 | ~~Fama-French + momentum daily factors~~ **done** (Kenneth French data library, free, from 1926) | Regress our returns on market, size, value, profitability, investment, momentum to see whether "alpha" is just factor exposure; long-history check of factor strategies; inputs for factor momentum (S5) | mba.tuck.dartmouth.edu Data Library (CSV) | **done**: `french.py`, see M1 |
-| D3 | **Point-in-time fundamentals and filing dates** from SEC EDGAR XBRL | Unlocks value, profitability, investment (S3), the best-replicating categories after momentum; filing dates give earnings dates for PEAD (S7) and the overnight earnings filter | `data.sec.gov` companyfacts API / nightly bulk zip, free, User-Agent required, about 10 requests/s. Must key each fact to its filing date (not the period end) and keep amendments in order | todo |
+| D3 | ~~Point-in-time fundamentals and filing dates~~ **done** (`edgar.py`) | Unlocks value, profitability, investment (S3), the best-replicating categories after momentum; filing dates give earnings dates for PEAD (S7) and the overnight earnings filter | `data.sec.gov` companyfacts API / nightly bulk zip, free, User-Agent required, about 10 requests/s. Must key each fact to its filing date (not the period end) and keep amendments in order | **done**: 748 of 818 members since 2008 mapped to a CIK (590 by ticker, 158 by name); members with XBRL facts 82% in 2008, 90% in 2010, 96-98% from 2020; 1.54M facts for 722 companies; 430k earnings releases (8-K item 2.02) |
 | D4 | **Bigger, point-in-time universe** (e.g. historical S&P 500 / Russell 1000 members) | Cross-sectional strategies need breadth (papers use hundreds to thousands of stocks; deep stat arb used about 550 large caps) | Index membership lists (free ones are incomplete; paid ones exist); combine with D1 | todo |
 | D5 | Consolidated (SIP) minute data | Only if an intraday item gets promoted again: IEX volume is a small share of the tape | Alpaca paid plan or others; low priority | later |
 
@@ -150,7 +150,11 @@ results show the survivorship gap matters; then prefer an ongoing subscription
 2. D1 (decide free vs paid with sergio), then rerun all daily experiments on the long
    history: the biggest gain in statistical power.
 3. ~~S1 buy/hold spread and S2 multi-horizon trend~~ done (no edge on 3.3 years; retest on D1).
-4. D3, then S3 (value/profitability/investment) and S7 (PEAD).
+4. ~~D3~~ done; next S3 (value/profitability/investment) and S7 (PEAD), once D1 prices are
+   in (Tiingo download running on the VPS; second batch after the monthly quota resets).
+   Known mapping limits: 70 members unmapped (mostly acquired/renamed before 2012:
+   ANTM->Elevance, ABC->Cencora, BLL->Ball, LEHMQ, WAMUQ...); CVC maps to its
+   subsidiary CSC Holdings; XBRL starts 2009-2011, so fundamentals strategies start 2010.
 5. S4 seasonality and S5 factor momentum (need D1/D2).
 6. D4, then S8 (deep stat arb) and S9 (chart CNN) on the VPS.
 7. S10 to S13 only if earlier results justify them.
