@@ -7,7 +7,8 @@ Sources (all free; see ROADMAP.md "D1 findings"):
 - Tiingo end-of-day API (free account): adjusted daily OHLCV including delisted stocks.
 
 Each series is saved as `<out>/<source>/<TICKER>.parquet` with a date index and
-adjusted `open, high, low, close, volume`. Tickers are renamed and reused over time,
+adjusted `open, high, low, close, volume`, plus the unadjusted `raw_close`, the cash
+`dividend` and the `split` factor of each day (needed for market capitalisation). Tickers are renamed and reused over time,
 so `check` compares every series with the membership period and with the other
 sources where they overlap before it is used.
 
@@ -92,7 +93,8 @@ def wiki_extract(zip_path, out_dir, tickers=None, chunksize=500_000) -> list:
     out.mkdir(parents=True, exist_ok=True)
     keep = set(tickers) if tickers is not None else None
     cols = {"adj_open": "open", "adj_high": "high", "adj_low": "low", "adj_close": "close",
-            "adj_volume": "volume"}
+            "adj_volume": "volume", "close": "raw_close", "ex-dividend": "dividend",
+            "split_ratio": "split"}
     written, parts, current = [], [], None
 
     def flush():
@@ -111,7 +113,7 @@ def wiki_extract(zip_path, out_dir, tickers=None, chunksize=500_000) -> list:
                     flush()
                     parts, current = [], ticker
                 if keep is None or ticker in keep:
-                    parts.append(part[["date", *COLUMNS]])
+                    parts.append(part[["date", *COLUMNS, "raw_close", "dividend", "split"]])
         flush()
     return written
 
@@ -165,9 +167,10 @@ def parse_tiingo_csv(data: bytes) -> pd.DataFrame:
     df = pd.read_csv(io.BytesIO(data))
     df.index = pd.to_datetime(df.pop("date")).dt.tz_localize(None)
     df.index.name = None
-    df = df[["adjOpen", "adjHigh", "adjLow", "adjClose", "adjVolume"]]
-    df.columns = COLUMNS
-    return df.sort_index()
+    out = df[["adjOpen", "adjHigh", "adjLow", "adjClose", "adjVolume"]]
+    out.columns = COLUMNS
+    out = out.assign(raw_close=df["close"], dividend=df["divCash"], split=df["splitFactor"])
+    return out.sort_index()
 
 
 def tiingo_download(symbols, out_dir, limiter, token_file=TIINGO_TOKEN, start="1990-01-01",

@@ -39,8 +39,9 @@ def test_wiki_extract_streams_by_ticker(tmp_path):
                                    chunksize=2)      # chunks split tickers
     assert written == ["AAA", "CCC"]
     df = pd.read_parquet(tmp_path / "out" / "CCC.parquet")
-    assert list(df.columns) == history.COLUMNS
+    assert list(df.columns) == history.COLUMNS + ["raw_close", "dividend", "split"]
     assert len(df) == 3
+    assert df["raw_close"].iloc[-1] == 12.0           # unadjusted kept too
     assert df["close"].iloc[-1] == 6.0                # adjusted column
     assert df["volume"].iloc[0] == 200
     assert not (tmp_path / "out" / "BBB.parquet").exists()
@@ -106,7 +107,9 @@ def test_tiingo_download_saves_logs_and_stops(tmp_path):
     assert st == {"AAA": "ok", "GONE": "error 404"}
     assert seen[0].get_header("Authorization") == "Token secret"
     df = pd.read_parquet(tmp_path / "t" / "AAA.parquet")
-    assert df["close"].tolist() == [22.45, 20.8] and list(df.columns) == history.COLUMNS
+    assert df["close"].tolist() == [22.45, 20.8]
+    assert list(df.columns) == history.COLUMNS + ["raw_close", "dividend", "split"]
+    assert df["raw_close"].tolist() == [44.9, 41.65]
     assert (tmp_path / "t" / "GONE.missing").exists()
     st = history.tiingo_download(["AAA", "GONE", "BBB"], tmp_path / "t", lim,
                                  token_file=tmp_path / "token", opener=opener)
