@@ -27,6 +27,15 @@ model = DeepArbModel(k=5, epochs=1)
 model._col = {c: i for i, c in enumerate(rets.columns)}
 pos = {d: i for i, d in enumerate(rets.index)}
 days = [d for d in rets.index if d in load][30:1030]
+E, Rn = eps.to_numpy(float), rets.to_numpy(float)
 t = time.time()
-model._fit(days, eps.to_numpy(float), rets.to_numpy(float), load, pos)
-print("one epoch on 1000 days, seconds", round(time.time() - t, 1), flush=True)
+model._batches(days, E, Rn, load, pos)
+prep = time.time() - t
+print("batch preparation, seconds", round(prep, 1), flush=True)
+import torch
+print("torch threads", torch.get_num_threads(), flush=True)
+for epochs in (1, 3):
+    model.epochs = epochs
+    t = time.time()
+    model._fit(days, E, Rn, load, pos)
+    print(f"{epochs} epoch(s) incl. preparation, seconds", round(time.time() - t, 1), flush=True)

@@ -15,7 +15,10 @@ Science 2025; arXiv 2106.04028), benchmark model with PCA residuals:
    normalised to sum(|w|) = 1 (market neutral by construction, leverage 1).
 4. **Training.** Maximise the Sharpe ratio of the daily returns net of costs
    (`cost_bps` x turnover + `short_bps` x short weight), Adam, learning rate 0.001,
-   on the previous 1,000 days, refitted every 125 days, batches of 125 days.
+   on the previous 1,000 days, refitted every 125 days, batches of 125 days; 100
+   epochs for the first fit, later refits warm-started from the previous model for
+   `warm_epochs` (20) epochs (the paper retrains from scratch; 100 epochs per refit
+   would take ~50 hours on our 2-core server).
 
 Deviation: the paper uses CRSP's 550 largest stocks 1998-2016 with 5 bp + 1 bp a day on
 shorts in training; we use point-in-time S&P 500 members, our cost model (about
@@ -123,6 +126,7 @@ class DeepArbModel:
     refit_days: int = 125
     batch_days: int = 125
     epochs: int = 100
+    warm_epochs: int | None = 20       # later refits start from the previous model
     lr: float = 1e-3
     cost_bps: float = 2.5
     short_bps_year: float = 50.0
@@ -150,7 +154,8 @@ class DeepArbModel:
         out = pd.DataFrame(0.0, index=returns.index, columns=returns.columns)
         model, start = None, self.train_days
         for i in range(start, len(dates), self.refit_days):
-            model = self._fit([dates[j] for j in range(i - self.train_days, i)], E, R, loadings, pos)
+            model = self._fit([dates[j] for j in range(i - self.train_days, i)], E, R, loadings, pos,
+                              init=model)
             model.eval()
             with torch.no_grad():
                 for d in dates[i:i + self.refit_days]:
@@ -185,16 +190,21 @@ class DeepArbModel:
             out.append(tuple(torch.from_numpy(a) for a in (X, M, Wt, Bt, Rt, C)))
         return out
 
-    def _fit(self, days, E, R, loadings, pos):
+    def _fit(self, days, E, R, loadings, pos, init=None):
         """Adam on the negative Sharpe of each batch's daily net returns (vectorised
-        over the days of a batch; same objective as one day at a time)."""
+        over the days of a batch). With `init` (the previous refit's model) and
+        `warm_epochs`, training starts from its weights and runs `warm_epochs` epochs."""
         torch = _torch()
         model = build_model(seed=self.seed)
+        epochs = self.epochs
+        if init is not None and self.warm_epochs is not None:
+            model.load_state_dict(init.state_dict())
+            epochs = self.warm_epochs
         opt = torch.optim.Adam(model.parameters(), lr=self.lr)
         batches = self._batches(days, E, R, loadings, pos)
         c, s = self.cost_bps / 1e4, self.short_bps_year / 1e4 / 252
         ncol = len(self._col) + 1
-        for epoch in range(self.epochs):
+        for epoch in range(epochs):
             model.train()
             total = []
             for X, M, W, Bt, Rn, C in batches:
