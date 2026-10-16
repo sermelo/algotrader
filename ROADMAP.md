@@ -39,6 +39,34 @@ Background evidence used throughout:
   bar at 1.59 (Bailey & Lopez de Prado 2014). **This is the main reason data comes
   first.**
 
+## Constraints for trading it live (from the investment-portfolio session, 2026-10-16)
+
+sergio would trade through Interactive Brokers Ireland (IBKR Pro; Spanish tax resident).
+Unverified figures, see https://www.interactivebrokers.com/en/pricing/commissions-stocks.php.
+
+- **Costs:** the backtester models IBKR Pro Fixed ($0.005/share, $1 minimum, fees
+  included; no 1% cap, irrelevant above penny stocks) + 2 bp half-spread (stress 5 bp).
+  IBKR Pro Tiered ($0.0035/share, $0.35 minimum, plus exchange ~$0.003/share when taking
+  liquidity, clearing ~$0.0002/share, SEC and FINRA fees on sales) is about 30% cheaper
+  per order at our sizes (e.g. 66 shares of a $150 stock: Fixed $1.00, Tiered about
+  $0.56 to buy and $0.77 to sell), still small next to the spread. Base round trip ~6 bp
+  all-in vs the session's realistic 5-10 bp: the model is in range, slightly conservative.
+- **PRIIPs:** EU retail investors cannot buy US-domiciled ETFs (SPY, QQQ, IWM, DIA, TLT,
+  GLD, sector ETFs). Strategies that trade them (dual momentum, multi-horizon trend,
+  sector momentum, pairs on SPY/DIA and QQQ/XLK, buy-and-hold of the index ETFs) are
+  not tradable as tested; UCITS ETFs (EU-listed) or individual stocks would be needed.
+  Using SPY only as a signal (regime filter) or benchmark is fine.
+- **Pattern day trading:** the $25k rule was removed by the SEC on 2026-06-04 but brokers
+  have until 2027-10-20; if IBKR still applies it, a margin account under $25k can make
+  3 day trades in 5 days (matters for the intraday strategies only).
+- **Spanish two-month rule:** a loss is deferred if the same stock is bought back within
+  two months: frequent trading of the same tickers changes after-tax results (results
+  here are pre-tax; ask a tax adviser).
+- **FX:** keep a USD balance (EUR->USD ~0.2 bp, $2 minimum per conversion); market data
+  a few $ to ~$15 a month.
+- **Paper trading** fills at best bid/ask with no queue or depth, so it overstates live
+  results.
+
 ## Priority list
 
 ### P1. Data (unblocks everything else)
