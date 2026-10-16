@@ -2,7 +2,8 @@
 
 Backtesting different algorithmic trading strategies on US equity 1-minute IEX bars
 (HF Data Library). Read `README.md` (usage, design, results) and `STRATEGY.md`
-(exact rules) before changing code. **Read `HANDOFF.md` first**: it records the work in
+(exact rules) before changing code. **Read `HANDOFF.md` first**, and `ROADMAP.md` for the research-based priority list of
+what to implement next (keep it updated as items are done): it records the work in
 progress (runs on the VPS, what is committed and what is not, next steps).
 
 @README.md
@@ -13,7 +14,7 @@ progress (runs on the VPS, what is committed and what is not, next steps).
 - Code lives in `algotrader/` (object-oriented: `BarLoader`, `CostModel`,
   `PositionSizer`, strategy classes in `strategy.py`, `tree.py`, `ml.py`, `intraday.py`,
   `meanrev.py`, `momentum.py`, overlays in `overlays.py`, the portfolio engine and
-  cross-sectional strategies in `portfolio.py`, `Backtester`, `Metrics`, `stats.py`, and
+  cross-sectional strategies in `portfolio.py` and `factors.py`, `Backtester`, `Metrics`, `stats.py`, and
   the `experiments.py` runner). Add new strategies as
   new classes satisfying the `Strategy` protocol (`indicators(bars)` returning
   `want_long` and `atr`, plus an `atr_mult` attribute; `average_true_range` is

@@ -1,4 +1,303 @@
 {
+  "dual_momentum_daily": {
+    "capital": 100000.0,
+    "code_sha256": "568ac9d78d56be1e",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Antonacci dual momentum (SPY/QQQ/IWM/GLD, TLT)",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": "TLT",
+        "top_n": 2
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": "TLT",
+        "top_n": 2
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": "TLT",
+        "top_n": 2
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": "TLT",
+        "top_n": 2
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 252,
+        "safe": "TLT",
+        "top_n": 1
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "safe": "TLT",
+        "top_n": 1
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "126",
+        "252"
+      ],
+      "safe": [
+        "TLT",
+        "None"
+      ],
+      "top_n": [
+        "1",
+        "2"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 126,
+      "safe": "TLT",
+      "top_n": 2
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.12330848543336215,
+        "max_drawdown": -0.1263229479260879,
+        "return": 0.3812589650976055,
+        "sharpe": 0.8437012456434473
+      },
+      "stress": {
+        "cagr": 0.12095696293907787,
+        "max_drawdown": -0.12673980255910777,
+        "return": 0.37324192118430366,
+        "sharpe": 0.8295315147817337
+      },
+      "test": {
+        "cagr": 0.12195760153091384,
+        "max_drawdown": -0.12670066595796914,
+        "return": 0.3766497471545216,
+        "sharpe": 0.8359939425538764
+      },
+      "train": {
+        "cagr": 0.13241373665286393,
+        "max_drawdown": -0.1007503628569979,
+        "return": 0.2535803581099978,
+        "sharpe": 1.2994434737321803
+      }
+    },
+    "run_at": "2026-10-16T20:19:52+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "DualMomentum",
+    "test_exposure": 0.9385714285714286,
+    "test_trades_per_year": 4.664292730844793,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 24,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.09163591223994483,
+        "max_drawdown": -0.12670066595796947,
+        "return": 0.332940040944816,
+        "sharpe": 0.6401401819772236
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 1.350106473545026,
+        "2024-01-01": 2.3907743963405603,
+        "2024-07-01": 0.18439463697031236,
+        "2025-01-01": -0.5464329169062941,
+        "2025-07-01": 1.5066196002024737,
+        "2026-01-01": -0.04696812196656935
+      },
+      "gross": {
+        "cagr": 0.09287673205156421,
+        "max_drawdown": -0.12632294792608667,
+        "return": 0.3379126365403087,
+        "sharpe": 0.6474306873305045
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        -0.11997657749676854,
+        1.5200312364986854
+      ],
+      "stress": {
+        "cagr": 0.09047364776150268,
+        "max_drawdown": -0.12673980255910744,
+        "return": 0.3282939193012797,
+        "sharpe": 0.6330420654566841
+      },
+      "vs_hold": {
+        "alpha": -0.03380937141846992,
+        "alpha_t": -0.5215583765559797,
+        "beta": 0.7270909833474265
+      }
+    }
+  },
   "gbm_30min": {
     "capital": 10000.0,
     "code_sha256": "5b5c3d060da491cd",
@@ -583,6 +882,295 @@
       }
     }
   },
+  "high52_daily": {
+    "capital": 100000.0,
+    "code_sha256": "354d93ac5343d606",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "George & Hwang (2004) 52-week-high momentum",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "126",
+        "252"
+      ],
+      "top_n": [
+        "5",
+        "10",
+        "20"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 126,
+      "top_n": 20
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.20083905366507793,
+        "max_drawdown": -0.17342056081820567,
+        "return": 0.6626128052364668,
+        "sharpe": 1.4866846356584973
+      },
+      "stress": {
+        "cagr": 0.1977343688721005,
+        "max_drawdown": -0.17367437496191662,
+        "return": 0.6506997604321578,
+        "sharpe": 1.46475842693829
+      },
+      "test": {
+        "cagr": 0.19825744531310563,
+        "max_drawdown": -0.17366404664223267,
+        "return": 0.6527030273266063,
+        "sharpe": 1.468500657556856
+      },
+      "train": {
+        "cagr": 0.18111603105673124,
+        "max_drawdown": -0.08306841717559499,
+        "return": 0.3532837489537335,
+        "sharpe": 1.435759647784704
+      }
+    },
+    "run_at": "2026-10-16T20:18:48+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "High52Week",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 12.198919449901767,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 653,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.17084378753328355,
+        "max_drawdown": -0.1736640466422329,
+        "return": 0.6769663785750228,
+        "sharpe": 1.298887547364292
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 0.3002135846325578,
+        "2024-01-01": 3.335083444529189,
+        "2024-07-01": 1.22980440817751,
+        "2025-01-01": 0.42262000924247806,
+        "2025-07-01": 2.1493099977935817,
+        "2026-01-01": 1.6233713411354178
+      },
+      "gross": {
+        "cagr": 0.1734210758145298,
+        "max_drawdown": -0.17342056081820523,
+        "return": 0.6890962532836835,
+        "sharpe": 1.3172926208544584
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        0.4978234888193632,
+        2.2668748932246694
+      ],
+      "stress": {
+        "cagr": 0.16997024187220244,
+        "max_drawdown": -0.17367437496191707,
+        "return": 0.6728688550514923,
+        "sharpe": 1.2926972820229856
+      },
+      "vs_hold": {
+        "alpha": 0.015592933402222757,
+        "alpha_t": 0.5297898635867699,
+        "beta": 0.8175672897061925
+      }
+    }
+  },
   "intraday_momentum_5min": {
     "capital": 10000.0,
     "code_sha256": "74be776b6eb178f4",
@@ -862,6 +1450,295 @@
         "alpha": -0.029578295811681185,
         "alpha_t": -7.018498065435256,
         "beta": 0.003199260152802688
+      }
+    }
+  },
+  "low_vol_daily": {
+    "capital": 100000.0,
+    "code_sha256": "7c5de634ad5f815e",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Ang et al. (2006) low volatility, lowest-vol N",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 5
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 5
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 5
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 5
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "63",
+        "126"
+      ],
+      "top_n": [
+        "5",
+        "10",
+        "20"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 126,
+      "top_n": 5
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.13346870159379676,
+        "max_drawdown": -0.120663867316266,
+        "return": 0.4162423931624528,
+        "sharpe": 1.2021265036271376
+      },
+      "stress": {
+        "cagr": 0.13148079225168785,
+        "max_drawdown": -0.12114685244835666,
+        "return": 0.4093535727246791,
+        "sharpe": 1.187068364058322
+      },
+      "test": {
+        "cagr": 0.13251090626302076,
+        "max_drawdown": -0.12087824636065259,
+        "return": 0.41292060438749423,
+        "sharpe": 1.1946017983881525
+      },
+      "train": {
+        "cagr": 0.08711949417210407,
+        "max_drawdown": -0.11249220486067335,
+        "return": 0.16394517220306049,
+        "sharpe": 0.9394106090379013
+      }
+    },
+    "run_at": "2026-10-16T20:18:18+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "LowVolatility",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 5.023084479371316,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 195,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.13434586409805682,
+        "max_drawdown": -0.12087824636065247,
+        "return": 0.5116232282215984,
+        "sharpe": 1.2448439974154033
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 0.6682694820507009,
+        "2024-01-01": 1.950803761093945,
+        "2024-07-01": 0.6766787108174599,
+        "2025-01-01": 0.5472771513131129,
+        "2025-07-01": 1.3773775061262958,
+        "2026-01-01": 2.3997884469294792
+      },
+      "gross": {
+        "cagr": 0.13570753052289297,
+        "max_drawdown": -0.1206638673162661,
+        "return": 0.5175790532544244,
+        "sharpe": 1.2567932095582495
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        0.3612871805426329,
+        2.2087943874208844
+      ],
+      "stress": {
+        "cagr": 0.13376157728151994,
+        "max_drawdown": -0.12114685244835632,
+        "return": 0.5090725899544579,
+        "sharpe": 1.2396775825196193
+      },
+      "vs_hold": {
+        "alpha": 0.027028560928198043,
+        "alpha_t": 0.715068848325174,
+        "beta": 0.5691451833990782
       }
     }
   },
@@ -3761,6 +4638,303 @@
         "alpha": 0.020441940259919435,
         "alpha_t": 1.3925756441299628,
         "beta": 0.12125195601665047
+      }
+    }
+  },
+  "sector_momentum_daily": {
+    "capital": 100000.0,
+    "code_sha256": "af6013f2429fb8f4",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Moskowitz & Grinblatt (1999) sector ETFs",
+    "fit": "",
+    "fold_notes": {
+      "2023-07-01": "no grid point reached 5 median trades; best of all used",
+      "2024-01-01": "no grid point reached 5 median trades; best of all used",
+      "2024-07-01": "no grid point reached 5 median trades; best of all used",
+      "2025-01-01": "no grid point reached 5 median trades; best of all used",
+      "2025-07-01": "no grid point reached 5 median trades; best of all used",
+      "2026-01-01": "no grid point reached 5 median trades; best of all used"
+    },
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "63",
+        "126",
+        "252"
+      ],
+      "top_n": [
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 63,
+      "top_n": 2
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      },
+      "stress": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      },
+      "test": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      },
+      "train": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      }
+    },
+    "run_at": "2026-10-16T20:19:19+00:00",
+    "selection_note": "no grid point reached 5 median trades; best of all used",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "SectorMomentum",
+    "test_exposure": 0.0,
+    "test_trades_per_year": 0.0,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 0,
+      "written": false
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": NaN,
+        "2024-01-01": NaN,
+        "2024-07-01": NaN,
+        "2025-01-01": NaN,
+        "2025-07-01": NaN,
+        "2026-01-01": NaN
+      },
+      "gross": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        0.0,
+        0.0
+      ],
+      "stress": {
+        "cagr": 0.0,
+        "max_drawdown": 0.0,
+        "return": 0.0,
+        "sharpe": NaN
+      },
+      "vs_hold": {
+        "alpha": 0.0,
+        "alpha_t": NaN,
+        "beta": 0.0
       }
     }
   },

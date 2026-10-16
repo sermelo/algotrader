@@ -243,6 +243,26 @@ EXPERIMENTS = [
                         {"horizon": [5, 21], "top_n": [5, 10], "short_n": [5, 10]},
                         fit="pooled", allow_short=True),
 ]
+
+# Later additions import their strategies here, inside the registry section, which is
+# left out of the fingerprints: adding experiments then changes no other experiment's
+# fingerprint. (Move the imports above here too the next time the runner changes.)
+from .factors import DualMomentum, High52Week, LowVolatility, SectorMomentum  # noqa: E402
+
+EXPERIMENTS += [
+    PortfolioExperiment("low_vol_daily", "Ang et al. (2006) low volatility, lowest-vol N",
+                        LowVolatility, "1D", {"every": "M"},
+                        {"lookback": [63, 126], "top_n": [5, 10, 20]}),
+    PortfolioExperiment("high52_daily", "George & Hwang (2004) 52-week-high momentum",
+                        High52Week, "1D", {"every": "M"},
+                        {"lookback": [126, 252], "top_n": [5, 10, 20]}),
+    PortfolioExperiment("sector_momentum_daily", "Moskowitz & Grinblatt (1999) sector ETFs",
+                        SectorMomentum, "1D", {"every": "M"},
+                        {"lookback": [63, 126, 252], "top_n": [2, 3, 4]}),
+    PortfolioExperiment("dual_momentum_daily", "Antonacci dual momentum (SPY/QQQ/IWM/GLD, TLT)",
+                        DualMomentum, "1D", {"every": "M"},
+                        {"lookback": [126, 252], "top_n": [1, 2], "safe": ["TLT", None]}),
+]
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
 

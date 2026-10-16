@@ -132,6 +132,15 @@ Wrappers around any strategy, selected by parameters in an experiment's grid:
   rows whose future lies after the training data are dropped. At each period end hold
   the `top_n` highest predictions (and short the `short_n` lowest). In the runner it is
   fitted before F - 6 months for tuning and refitted before each fold start F.
+- **Factor portfolios** (`algotrader/factors.py`), equal weight, monthly:
+  `LowVolatility` holds the `top_n` tickers with the lowest standard deviation of daily
+  returns over `lookback` days (Ang et al. 2006); `High52Week` the `top_n` with the
+  highest close / max close of the last `lookback` days (George & Hwang 2004);
+  `SectorMomentum` the `top_n` of the nine sector ETFs (XLF XLK XLE XLV XLI XLP XLY XLU
+  XLB, only in the broad universe) by return from `lookback` to `skip` days ago
+  (Moskowitz & Grinblatt 1999); `DualMomentum` (Antonacci) ranks SPY, QQQ, IWM, GLD by
+  `lookback`-day return, holds the best `top_n` (1/`top_n` each) only if their return
+  is positive and puts the rest in `safe` (TLT, or cash if None).
 - In the experiments a portfolio starts with $100,000 in total; the activity rule
   counts rebalance days.
 

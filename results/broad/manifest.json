@@ -1,4 +1,623 @@
 {
+  "dual_momentum_daily": {
+    "capital": 100000.0,
+    "code_sha256": "568ac9d78d56be1e",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ABC": {
+        "bytes": 2177595,
+        "sha256": "b311d3b24492c67d"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "ADT": {
+        "bytes": 4240167,
+        "sha256": "f156462a6b28f5d2"
+      },
+      "AFL": {
+        "bytes": 6077160,
+        "sha256": "0383435d7f35434d"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "ANET": {
+        "bytes": 8093565,
+        "sha256": "1703f5a70d1c5f6a"
+      },
+      "ANF": {
+        "bytes": 6187104,
+        "sha256": "22d503c5265b41f3"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "BHF": {
+        "bytes": 4035411,
+        "sha256": "909df6f367efe8e1"
+      },
+      "CEG": {
+        "bytes": 7467178,
+        "sha256": "c2b7abc5e58acc03"
+      },
+      "CHTR": {
+        "bytes": 7542880,
+        "sha256": "c31f41f7aa7ada30"
+      },
+      "CNP": {
+        "bytes": 5900642,
+        "sha256": "5736e89b7e246dfe"
+      },
+      "COIN": {
+        "bytes": 8199606,
+        "sha256": "e44ba002b7a5e4c5"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CSGP": {
+        "bytes": 6354730,
+        "sha256": "ad84a09c21bba5f0"
+      },
+      "CVNA": {
+        "bytes": 8210103,
+        "sha256": "eb0c4e753b39d940"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DGX": {
+        "bytes": 5586133,
+        "sha256": "fc72969335c6f0c6"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "DISCA": {
+        "bytes": 162452,
+        "sha256": "6283e6508f0e3436"
+      },
+      "DLR": {
+        "bytes": 6416817,
+        "sha256": "f270232c02e67729"
+      },
+      "DT": {
+        "bytes": 6357861,
+        "sha256": "b18a7fe52f20ed31"
+      },
+      "GLD": {
+        "bytes": 6067952,
+        "sha256": "a011f0e9b4a56bac"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "HPQ": {
+        "bytes": 6615816,
+        "sha256": "1797e65400dce262"
+      },
+      "HRI": {
+        "bytes": 4180195,
+        "sha256": "94e3088222b2481a"
+      },
+      "INCY": {
+        "bytes": 5848895,
+        "sha256": "d8149e5765d1f4b7"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "ISRG": {
+        "bytes": 7905647,
+        "sha256": "194b1a14aeeeff7f"
+      },
+      "ITB": {
+        "bytes": 4384511,
+        "sha256": "1bb0333c450b30b8"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KDP": {
+        "bytes": 6356042,
+        "sha256": "e1c46b5198dd0f58"
+      },
+      "KEX": {
+        "bytes": 4438610,
+        "sha256": "79b894ca14e436bc"
+      },
+      "KMX": {
+        "bytes": 6389428,
+        "sha256": "1207fdb0eac8de0c"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "KRTX": {
+        "bytes": 2271184,
+        "sha256": "4cfb226235316c68"
+      },
+      "LUV": {
+        "bytes": 6644188,
+        "sha256": "532c906ef17536a5"
+      },
+      "LW": {
+        "bytes": 6024534,
+        "sha256": "206c260f7d6e1dc8"
+      },
+      "MAT": {
+        "bytes": 5476687,
+        "sha256": "134c07c1229b02c0"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NDSN": {
+        "bytes": 4422620,
+        "sha256": "519ba4674c5b93b3"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NOW": {
+        "bytes": 8935980,
+        "sha256": "5a4e017ba85fe06f"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "OKE": {
+        "bytes": 6372005,
+        "sha256": "685128cad3d8caab"
+      },
+      "ORLY": {
+        "bytes": 8048795,
+        "sha256": "6d999718f4d00aa9"
+      },
+      "PEP": {
+        "bytes": 6955582,
+        "sha256": "7b774d49015c6177"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "PRU": {
+        "bytes": 5943692,
+        "sha256": "8c51152fb4761685"
+      },
+      "PSA": {
+        "bytes": 5948584,
+        "sha256": "0a47540761009423"
+      },
+      "PSTG": {
+        "bytes": 6390125,
+        "sha256": "8d8be336e33024b5"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "RCL": {
+        "bytes": 7608755,
+        "sha256": "85cedb0c4fd2f0f5"
+      },
+      "REGN": {
+        "bytes": 7162401,
+        "sha256": "0d952c03892a22f2"
+      },
+      "RMBS": {
+        "bytes": 5659179,
+        "sha256": "1a476847e70f0a13"
+      },
+      "RTX": {
+        "bytes": 7138660,
+        "sha256": "02f4c9fe7cc083a1"
+      },
+      "SBAC": {
+        "bytes": 6226985,
+        "sha256": "c873f07f9b3f112d"
+      },
+      "SDS": {
+        "bytes": 2614700,
+        "sha256": "c4e6027a7cf358b4"
+      },
+      "SEDG": {
+        "bytes": 7075092,
+        "sha256": "103ae4efc5c21847"
+      },
+      "SHOP": {
+        "bytes": 8002952,
+        "sha256": "bf7a573db81f8e7b"
+      },
+      "SLG": {
+        "bytes": 5110497,
+        "sha256": "a3be266b2cd8821a"
+      },
+      "SMH": {
+        "bytes": 7890844,
+        "sha256": "a958fcfd7abfed26"
+      },
+      "SPG": {
+        "bytes": 6188089,
+        "sha256": "3ea1bb84276b1906"
+      },
+      "SPOT": {
+        "bytes": 8142240,
+        "sha256": "61ed527e5950d634"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "SQ": {
+        "bytes": 4729694,
+        "sha256": "6ec987b0fbe1ce02"
+      },
+      "SQSP": {
+        "bytes": 2114636,
+        "sha256": "7e75d168e2ca4ff3"
+      },
+      "SWI": {
+        "bytes": 1828448,
+        "sha256": "047f3901a2924f03"
+      },
+      "TECH": {
+        "bytes": 5904753,
+        "sha256": "e964afb8165d1c73"
+      },
+      "TIP": {
+        "bytes": 3234901,
+        "sha256": "79ffc696986f447f"
+      },
+      "TJX": {
+        "bytes": 7077066,
+        "sha256": "75cb6cb4e8c48260"
+      },
+      "TLRY": {
+        "bytes": 3920292,
+        "sha256": "e6294915a7841558"
+      },
+      "TLT": {
+        "bytes": 6986199,
+        "sha256": "b16eaa9129fa8617"
+      },
+      "TM": {
+        "bytes": 3366087,
+        "sha256": "6518a8b94ac2120e"
+      },
+      "TOST": {
+        "bytes": 6511167,
+        "sha256": "c1bf791426150400"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "TSM": {
+        "bytes": 8321014,
+        "sha256": "73e197cd3b3953a4"
+      },
+      "TSN": {
+        "bytes": 6228763,
+        "sha256": "b45fed9e905b524d"
+      },
+      "TTWO": {
+        "bytes": 6731489,
+        "sha256": "5fc33668d3c28331"
+      },
+      "UNH": {
+        "bytes": 8135254,
+        "sha256": "2b4d2db650d27b57"
+      },
+      "VRSN": {
+        "bytes": 5616865,
+        "sha256": "5d767640454ad8f3"
+      },
+      "VVV": {
+        "bytes": 5078616,
+        "sha256": "5736a0a68ec917a6"
+      },
+      "WAT": {
+        "bytes": 5753791,
+        "sha256": "c628ad4737bd055d"
+      },
+      "WHR": {
+        "bytes": 5888476,
+        "sha256": "1003167fff1c8871"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XBI": {
+        "bytes": 6650037,
+        "sha256": "7bdd6a6e0a27006c"
+      },
+      "XLB": {
+        "bytes": 6390157,
+        "sha256": "8414485830a5d70f"
+      },
+      "XLE": {
+        "bytes": 7147384,
+        "sha256": "c5117cd3808b9200"
+      },
+      "XLF": {
+        "bytes": 6795492,
+        "sha256": "2186f3172f1b1210"
+      },
+      "XLI": {
+        "bytes": 7069711,
+        "sha256": "b03e1b09a9873d6d"
+      },
+      "XLK": {
+        "bytes": 7056315,
+        "sha256": "e83a5ebaedc227b4"
+      },
+      "XLP": {
+        "bytes": 6459764,
+        "sha256": "eb78e491e24bb35f"
+      },
+      "XLU": {
+        "bytes": 6679738,
+        "sha256": "dcae0a8153926377"
+      },
+      "XLV": {
+        "bytes": 6750544,
+        "sha256": "5f07ce9d689daf21"
+      },
+      "XLY": {
+        "bytes": 6425437,
+        "sha256": "24d115e994d6f4b6"
+      },
+      "XM": {
+        "bytes": 1222982,
+        "sha256": "8223b9323207806e"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      },
+      "YUMC": {
+        "bytes": 5806254,
+        "sha256": "890654104acf02f6"
+      },
+      "ZBH": {
+        "bytes": 6130290,
+        "sha256": "ad68555c4cdd67df"
+      }
+    },
+    "description": "Antonacci dual momentum (SPY/QQQ/IWM/GLD, TLT)",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": "TLT",
+        "top_n": 2
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": null,
+        "top_n": 2
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "safe": null,
+        "top_n": 2
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "safe": "TLT",
+        "top_n": 1
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 252,
+        "safe": "TLT",
+        "top_n": 1
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "safe": "TLT",
+        "top_n": 1
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "126",
+        "252"
+      ],
+      "safe": [
+        "TLT",
+        "None"
+      ],
+      "top_n": [
+        "1",
+        "2"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.15820414200529176,
+        "max_drawdown": -0.17483450949108614,
+        "return": 0.503768113012955,
+        "sharpe": 1.1012886340796084
+      },
+      "train": {
+        "cagr": 0.0751947186578148,
+        "max_drawdown": -0.23975311637212915,
+        "return": 0.14084487454530503,
+        "sharpe": 0.4491496435193151
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 126,
+      "safe": null,
+      "top_n": 2
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.20603614248285052,
+        "max_drawdown": -0.1316313541416686,
+        "return": 0.6826775366429034,
+        "sharpe": 1.2748199370760855
+      },
+      "stress": {
+        "cagr": 0.20273044311325106,
+        "max_drawdown": -0.1319604809525946,
+        "return": 0.6698971859415417,
+        "sharpe": 1.2569227063512725
+      },
+      "test": {
+        "cagr": 0.20437599967462483,
+        "max_drawdown": -0.13181069148902758,
+        "return": 0.6762513698749586,
+        "sharpe": 1.2656720863681394
+      },
+      "train": {
+        "cagr": 0.1072443585211087,
+        "max_drawdown": -0.10048308437104325,
+        "return": 0.2034020924799982,
+        "sharpe": 1.1377498662981547
+      }
+    },
+    "run_at": "2026-10-16T20:23:36+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "DualMomentum",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 5.023084479371316,
+    "tickers": 107,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 30,
+      "written": true
+    },
+    "universe": "broad",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.2450996525887652,
+        "max_drawdown": -0.20304683216724262,
+        "return": 1.051435763531709,
+        "sharpe": 1.1988419142969138
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 1.3630765389503958,
+        "2024-01-01": 2.3982360699675658,
+        "2024-07-01": 0.08502567304642968,
+        "2025-01-01": 2.4707408461576454,
+        "2025-07-01": 2.731620662549679,
+        "2026-01-01": 0.12640660391221525
+      },
+      "gross": {
+        "cagr": 0.24667446118609826,
+        "max_drawdown": -0.20114380800444864,
+        "return": 1.0599527620146407,
+        "sharpe": 1.2055678044246712
+      },
+      "hold": {
+        "cagr": 0.1597155711621583,
+        "max_drawdown": -0.18187832188391984,
+        "return": 0.6252863145481757,
+        "sharpe": 1.0968584654435536
+      },
+      "sharpe_90": [
+        0.42617959457220894,
+        2.0585007100388646
+      ],
+      "stress": {
+        "cagr": 0.2426644107672249,
+        "max_drawdown": -0.20567976613741246,
+        "return": 1.0383135305421356,
+        "sharpe": 1.1890957766293093
+      },
+      "vs_hold": {
+        "alpha": 0.1621217040061597,
+        "alpha_t": 1.5663579190399721,
+        "beta": 0.4868667689990319
+      }
+    }
+  },
   "gbm_30min": {
     "capital": 10000.0,
     "code_sha256": "5b5c3d060da491cd",
@@ -1223,6 +1842,615 @@
       }
     }
   },
+  "high52_daily": {
+    "capital": 100000.0,
+    "code_sha256": "354d93ac5343d606",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ABC": {
+        "bytes": 2177595,
+        "sha256": "b311d3b24492c67d"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "ADT": {
+        "bytes": 4240167,
+        "sha256": "f156462a6b28f5d2"
+      },
+      "AFL": {
+        "bytes": 6077160,
+        "sha256": "0383435d7f35434d"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "ANET": {
+        "bytes": 8093565,
+        "sha256": "1703f5a70d1c5f6a"
+      },
+      "ANF": {
+        "bytes": 6187104,
+        "sha256": "22d503c5265b41f3"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "BHF": {
+        "bytes": 4035411,
+        "sha256": "909df6f367efe8e1"
+      },
+      "CEG": {
+        "bytes": 7467178,
+        "sha256": "c2b7abc5e58acc03"
+      },
+      "CHTR": {
+        "bytes": 7542880,
+        "sha256": "c31f41f7aa7ada30"
+      },
+      "CNP": {
+        "bytes": 5900642,
+        "sha256": "5736e89b7e246dfe"
+      },
+      "COIN": {
+        "bytes": 8199606,
+        "sha256": "e44ba002b7a5e4c5"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CSGP": {
+        "bytes": 6354730,
+        "sha256": "ad84a09c21bba5f0"
+      },
+      "CVNA": {
+        "bytes": 8210103,
+        "sha256": "eb0c4e753b39d940"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DGX": {
+        "bytes": 5586133,
+        "sha256": "fc72969335c6f0c6"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "DISCA": {
+        "bytes": 162452,
+        "sha256": "6283e6508f0e3436"
+      },
+      "DLR": {
+        "bytes": 6416817,
+        "sha256": "f270232c02e67729"
+      },
+      "DT": {
+        "bytes": 6357861,
+        "sha256": "b18a7fe52f20ed31"
+      },
+      "GLD": {
+        "bytes": 6067952,
+        "sha256": "a011f0e9b4a56bac"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "HPQ": {
+        "bytes": 6615816,
+        "sha256": "1797e65400dce262"
+      },
+      "HRI": {
+        "bytes": 4180195,
+        "sha256": "94e3088222b2481a"
+      },
+      "INCY": {
+        "bytes": 5848895,
+        "sha256": "d8149e5765d1f4b7"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "ISRG": {
+        "bytes": 7905647,
+        "sha256": "194b1a14aeeeff7f"
+      },
+      "ITB": {
+        "bytes": 4384511,
+        "sha256": "1bb0333c450b30b8"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KDP": {
+        "bytes": 6356042,
+        "sha256": "e1c46b5198dd0f58"
+      },
+      "KEX": {
+        "bytes": 4438610,
+        "sha256": "79b894ca14e436bc"
+      },
+      "KMX": {
+        "bytes": 6389428,
+        "sha256": "1207fdb0eac8de0c"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "KRTX": {
+        "bytes": 2271184,
+        "sha256": "4cfb226235316c68"
+      },
+      "LUV": {
+        "bytes": 6644188,
+        "sha256": "532c906ef17536a5"
+      },
+      "LW": {
+        "bytes": 6024534,
+        "sha256": "206c260f7d6e1dc8"
+      },
+      "MAT": {
+        "bytes": 5476687,
+        "sha256": "134c07c1229b02c0"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NDSN": {
+        "bytes": 4422620,
+        "sha256": "519ba4674c5b93b3"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NOW": {
+        "bytes": 8935980,
+        "sha256": "5a4e017ba85fe06f"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "OKE": {
+        "bytes": 6372005,
+        "sha256": "685128cad3d8caab"
+      },
+      "ORLY": {
+        "bytes": 8048795,
+        "sha256": "6d999718f4d00aa9"
+      },
+      "PEP": {
+        "bytes": 6955582,
+        "sha256": "7b774d49015c6177"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "PRU": {
+        "bytes": 5943692,
+        "sha256": "8c51152fb4761685"
+      },
+      "PSA": {
+        "bytes": 5948584,
+        "sha256": "0a47540761009423"
+      },
+      "PSTG": {
+        "bytes": 6390125,
+        "sha256": "8d8be336e33024b5"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "RCL": {
+        "bytes": 7608755,
+        "sha256": "85cedb0c4fd2f0f5"
+      },
+      "REGN": {
+        "bytes": 7162401,
+        "sha256": "0d952c03892a22f2"
+      },
+      "RMBS": {
+        "bytes": 5659179,
+        "sha256": "1a476847e70f0a13"
+      },
+      "RTX": {
+        "bytes": 7138660,
+        "sha256": "02f4c9fe7cc083a1"
+      },
+      "SBAC": {
+        "bytes": 6226985,
+        "sha256": "c873f07f9b3f112d"
+      },
+      "SDS": {
+        "bytes": 2614700,
+        "sha256": "c4e6027a7cf358b4"
+      },
+      "SEDG": {
+        "bytes": 7075092,
+        "sha256": "103ae4efc5c21847"
+      },
+      "SHOP": {
+        "bytes": 8002952,
+        "sha256": "bf7a573db81f8e7b"
+      },
+      "SLG": {
+        "bytes": 5110497,
+        "sha256": "a3be266b2cd8821a"
+      },
+      "SMH": {
+        "bytes": 7890844,
+        "sha256": "a958fcfd7abfed26"
+      },
+      "SPG": {
+        "bytes": 6188089,
+        "sha256": "3ea1bb84276b1906"
+      },
+      "SPOT": {
+        "bytes": 8142240,
+        "sha256": "61ed527e5950d634"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "SQ": {
+        "bytes": 4729694,
+        "sha256": "6ec987b0fbe1ce02"
+      },
+      "SQSP": {
+        "bytes": 2114636,
+        "sha256": "7e75d168e2ca4ff3"
+      },
+      "SWI": {
+        "bytes": 1828448,
+        "sha256": "047f3901a2924f03"
+      },
+      "TECH": {
+        "bytes": 5904753,
+        "sha256": "e964afb8165d1c73"
+      },
+      "TIP": {
+        "bytes": 3234901,
+        "sha256": "79ffc696986f447f"
+      },
+      "TJX": {
+        "bytes": 7077066,
+        "sha256": "75cb6cb4e8c48260"
+      },
+      "TLRY": {
+        "bytes": 3920292,
+        "sha256": "e6294915a7841558"
+      },
+      "TLT": {
+        "bytes": 6986199,
+        "sha256": "b16eaa9129fa8617"
+      },
+      "TM": {
+        "bytes": 3366087,
+        "sha256": "6518a8b94ac2120e"
+      },
+      "TOST": {
+        "bytes": 6511167,
+        "sha256": "c1bf791426150400"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "TSM": {
+        "bytes": 8321014,
+        "sha256": "73e197cd3b3953a4"
+      },
+      "TSN": {
+        "bytes": 6228763,
+        "sha256": "b45fed9e905b524d"
+      },
+      "TTWO": {
+        "bytes": 6731489,
+        "sha256": "5fc33668d3c28331"
+      },
+      "UNH": {
+        "bytes": 8135254,
+        "sha256": "2b4d2db650d27b57"
+      },
+      "VRSN": {
+        "bytes": 5616865,
+        "sha256": "5d767640454ad8f3"
+      },
+      "VVV": {
+        "bytes": 5078616,
+        "sha256": "5736a0a68ec917a6"
+      },
+      "WAT": {
+        "bytes": 5753791,
+        "sha256": "c628ad4737bd055d"
+      },
+      "WHR": {
+        "bytes": 5888476,
+        "sha256": "1003167fff1c8871"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XBI": {
+        "bytes": 6650037,
+        "sha256": "7bdd6a6e0a27006c"
+      },
+      "XLB": {
+        "bytes": 6390157,
+        "sha256": "8414485830a5d70f"
+      },
+      "XLE": {
+        "bytes": 7147384,
+        "sha256": "c5117cd3808b9200"
+      },
+      "XLF": {
+        "bytes": 6795492,
+        "sha256": "2186f3172f1b1210"
+      },
+      "XLI": {
+        "bytes": 7069711,
+        "sha256": "b03e1b09a9873d6d"
+      },
+      "XLK": {
+        "bytes": 7056315,
+        "sha256": "e83a5ebaedc227b4"
+      },
+      "XLP": {
+        "bytes": 6459764,
+        "sha256": "eb78e491e24bb35f"
+      },
+      "XLU": {
+        "bytes": 6679738,
+        "sha256": "dcae0a8153926377"
+      },
+      "XLV": {
+        "bytes": 6750544,
+        "sha256": "5f07ce9d689daf21"
+      },
+      "XLY": {
+        "bytes": 6425437,
+        "sha256": "24d115e994d6f4b6"
+      },
+      "XM": {
+        "bytes": 1222982,
+        "sha256": "8223b9323207806e"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      },
+      "YUMC": {
+        "bytes": 5806254,
+        "sha256": "890654104acf02f6"
+      },
+      "ZBH": {
+        "bytes": 6130290,
+        "sha256": "ad68555c4cdd67df"
+      }
+    },
+    "description": "George & Hwang (2004) 52-week-high momentum",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 5
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 20
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 20
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 20
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 20
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 20
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "126",
+        "252"
+      ],
+      "top_n": [
+        "5",
+        "10",
+        "20"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.15820414200529176,
+        "max_drawdown": -0.17483450949108614,
+        "return": 0.503768113012955,
+        "sharpe": 1.1012886340796084
+      },
+      "train": {
+        "cagr": 0.0751947186578148,
+        "max_drawdown": -0.23975311637212915,
+        "return": 0.14084487454530503,
+        "sharpe": 0.4491496435193151
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 252,
+      "top_n": 20
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.1282294793322074,
+        "max_drawdown": -0.11085747646034816,
+        "return": 0.3981328929615,
+        "sharpe": 1.0522784788513722
+      },
+      "stress": {
+        "cagr": 0.11889202560989198,
+        "max_drawdown": -0.11224485512070359,
+        "return": 0.36622654256991716,
+        "sharpe": 0.9816710572637339
+      },
+      "test": {
+        "cagr": 0.12301163573650076,
+        "max_drawdown": -0.11141299571858432,
+        "return": 0.38024526810499304,
+        "sharpe": 1.013487048651173
+      },
+      "train": {
+        "cagr": 0.06348970824188993,
+        "max_drawdown": -0.10980530312472425,
+        "return": 0.11837305833019962,
+        "sharpe": 0.8933527996480066
+      }
+    },
+    "run_at": "2026-10-16T20:21:38+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "High52Week",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 13.275294695481335,
+    "tickers": 107,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 1004,
+      "written": true
+    },
+    "universe": "broad",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.09224762877228265,
+        "max_drawdown": -0.13964985859931467,
+        "return": 0.3353898919184166,
+        "sharpe": 0.7682640257646386
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": -0.3949635331646022,
+        "2024-01-01": 2.1139318291735516,
+        "2024-07-01": 1.6440453649612237,
+        "2025-01-01": 0.7388507226349882,
+        "2025-07-01": 0.23584949002184455,
+        "2026-01-01": 0.6201598524742515
+      },
+      "gross": {
+        "cagr": 0.09761002393871832,
+        "max_drawdown": -0.13816351384225856,
+        "return": 0.35699974871426465,
+        "sharpe": 0.8079337440792865
+      },
+      "hold": {
+        "cagr": 0.1597155711621583,
+        "max_drawdown": -0.18187832188391984,
+        "return": 0.6252863145481757,
+        "sharpe": 1.0968584654435536
+      },
+      "sharpe_90": [
+        0.010411896195199994,
+        1.6522919959905904
+      ],
+      "stress": {
+        "cagr": 0.0878509815735875,
+        "max_drawdown": -0.14101091462956428,
+        "return": 0.31785124955884925,
+        "sharpe": 0.7351587558273085
+      },
+      "vs_hold": {
+        "alpha": -0.001343934132678482,
+        "alpha_t": -0.02755343080042359,
+        "beta": 0.6141446961406537
+      }
+    }
+  },
   "intraday_momentum_5min": {
     "capital": 10000.0,
     "code_sha256": "74be776b6eb178f4",
@@ -1822,6 +3050,615 @@
         "alpha": -0.029019595387191503,
         "alpha_t": -8.395515647461675,
         "beta": 0.0011114369614579564
+      }
+    }
+  },
+  "low_vol_daily": {
+    "capital": 100000.0,
+    "code_sha256": "7c5de634ad5f815e",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ABC": {
+        "bytes": 2177595,
+        "sha256": "b311d3b24492c67d"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "ADT": {
+        "bytes": 4240167,
+        "sha256": "f156462a6b28f5d2"
+      },
+      "AFL": {
+        "bytes": 6077160,
+        "sha256": "0383435d7f35434d"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "ANET": {
+        "bytes": 8093565,
+        "sha256": "1703f5a70d1c5f6a"
+      },
+      "ANF": {
+        "bytes": 6187104,
+        "sha256": "22d503c5265b41f3"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "BHF": {
+        "bytes": 4035411,
+        "sha256": "909df6f367efe8e1"
+      },
+      "CEG": {
+        "bytes": 7467178,
+        "sha256": "c2b7abc5e58acc03"
+      },
+      "CHTR": {
+        "bytes": 7542880,
+        "sha256": "c31f41f7aa7ada30"
+      },
+      "CNP": {
+        "bytes": 5900642,
+        "sha256": "5736e89b7e246dfe"
+      },
+      "COIN": {
+        "bytes": 8199606,
+        "sha256": "e44ba002b7a5e4c5"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CSGP": {
+        "bytes": 6354730,
+        "sha256": "ad84a09c21bba5f0"
+      },
+      "CVNA": {
+        "bytes": 8210103,
+        "sha256": "eb0c4e753b39d940"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DGX": {
+        "bytes": 5586133,
+        "sha256": "fc72969335c6f0c6"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "DISCA": {
+        "bytes": 162452,
+        "sha256": "6283e6508f0e3436"
+      },
+      "DLR": {
+        "bytes": 6416817,
+        "sha256": "f270232c02e67729"
+      },
+      "DT": {
+        "bytes": 6357861,
+        "sha256": "b18a7fe52f20ed31"
+      },
+      "GLD": {
+        "bytes": 6067952,
+        "sha256": "a011f0e9b4a56bac"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "HPQ": {
+        "bytes": 6615816,
+        "sha256": "1797e65400dce262"
+      },
+      "HRI": {
+        "bytes": 4180195,
+        "sha256": "94e3088222b2481a"
+      },
+      "INCY": {
+        "bytes": 5848895,
+        "sha256": "d8149e5765d1f4b7"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "ISRG": {
+        "bytes": 7905647,
+        "sha256": "194b1a14aeeeff7f"
+      },
+      "ITB": {
+        "bytes": 4384511,
+        "sha256": "1bb0333c450b30b8"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KDP": {
+        "bytes": 6356042,
+        "sha256": "e1c46b5198dd0f58"
+      },
+      "KEX": {
+        "bytes": 4438610,
+        "sha256": "79b894ca14e436bc"
+      },
+      "KMX": {
+        "bytes": 6389428,
+        "sha256": "1207fdb0eac8de0c"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "KRTX": {
+        "bytes": 2271184,
+        "sha256": "4cfb226235316c68"
+      },
+      "LUV": {
+        "bytes": 6644188,
+        "sha256": "532c906ef17536a5"
+      },
+      "LW": {
+        "bytes": 6024534,
+        "sha256": "206c260f7d6e1dc8"
+      },
+      "MAT": {
+        "bytes": 5476687,
+        "sha256": "134c07c1229b02c0"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NDSN": {
+        "bytes": 4422620,
+        "sha256": "519ba4674c5b93b3"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NOW": {
+        "bytes": 8935980,
+        "sha256": "5a4e017ba85fe06f"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "OKE": {
+        "bytes": 6372005,
+        "sha256": "685128cad3d8caab"
+      },
+      "ORLY": {
+        "bytes": 8048795,
+        "sha256": "6d999718f4d00aa9"
+      },
+      "PEP": {
+        "bytes": 6955582,
+        "sha256": "7b774d49015c6177"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "PRU": {
+        "bytes": 5943692,
+        "sha256": "8c51152fb4761685"
+      },
+      "PSA": {
+        "bytes": 5948584,
+        "sha256": "0a47540761009423"
+      },
+      "PSTG": {
+        "bytes": 6390125,
+        "sha256": "8d8be336e33024b5"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "RCL": {
+        "bytes": 7608755,
+        "sha256": "85cedb0c4fd2f0f5"
+      },
+      "REGN": {
+        "bytes": 7162401,
+        "sha256": "0d952c03892a22f2"
+      },
+      "RMBS": {
+        "bytes": 5659179,
+        "sha256": "1a476847e70f0a13"
+      },
+      "RTX": {
+        "bytes": 7138660,
+        "sha256": "02f4c9fe7cc083a1"
+      },
+      "SBAC": {
+        "bytes": 6226985,
+        "sha256": "c873f07f9b3f112d"
+      },
+      "SDS": {
+        "bytes": 2614700,
+        "sha256": "c4e6027a7cf358b4"
+      },
+      "SEDG": {
+        "bytes": 7075092,
+        "sha256": "103ae4efc5c21847"
+      },
+      "SHOP": {
+        "bytes": 8002952,
+        "sha256": "bf7a573db81f8e7b"
+      },
+      "SLG": {
+        "bytes": 5110497,
+        "sha256": "a3be266b2cd8821a"
+      },
+      "SMH": {
+        "bytes": 7890844,
+        "sha256": "a958fcfd7abfed26"
+      },
+      "SPG": {
+        "bytes": 6188089,
+        "sha256": "3ea1bb84276b1906"
+      },
+      "SPOT": {
+        "bytes": 8142240,
+        "sha256": "61ed527e5950d634"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "SQ": {
+        "bytes": 4729694,
+        "sha256": "6ec987b0fbe1ce02"
+      },
+      "SQSP": {
+        "bytes": 2114636,
+        "sha256": "7e75d168e2ca4ff3"
+      },
+      "SWI": {
+        "bytes": 1828448,
+        "sha256": "047f3901a2924f03"
+      },
+      "TECH": {
+        "bytes": 5904753,
+        "sha256": "e964afb8165d1c73"
+      },
+      "TIP": {
+        "bytes": 3234901,
+        "sha256": "79ffc696986f447f"
+      },
+      "TJX": {
+        "bytes": 7077066,
+        "sha256": "75cb6cb4e8c48260"
+      },
+      "TLRY": {
+        "bytes": 3920292,
+        "sha256": "e6294915a7841558"
+      },
+      "TLT": {
+        "bytes": 6986199,
+        "sha256": "b16eaa9129fa8617"
+      },
+      "TM": {
+        "bytes": 3366087,
+        "sha256": "6518a8b94ac2120e"
+      },
+      "TOST": {
+        "bytes": 6511167,
+        "sha256": "c1bf791426150400"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "TSM": {
+        "bytes": 8321014,
+        "sha256": "73e197cd3b3953a4"
+      },
+      "TSN": {
+        "bytes": 6228763,
+        "sha256": "b45fed9e905b524d"
+      },
+      "TTWO": {
+        "bytes": 6731489,
+        "sha256": "5fc33668d3c28331"
+      },
+      "UNH": {
+        "bytes": 8135254,
+        "sha256": "2b4d2db650d27b57"
+      },
+      "VRSN": {
+        "bytes": 5616865,
+        "sha256": "5d767640454ad8f3"
+      },
+      "VVV": {
+        "bytes": 5078616,
+        "sha256": "5736a0a68ec917a6"
+      },
+      "WAT": {
+        "bytes": 5753791,
+        "sha256": "c628ad4737bd055d"
+      },
+      "WHR": {
+        "bytes": 5888476,
+        "sha256": "1003167fff1c8871"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XBI": {
+        "bytes": 6650037,
+        "sha256": "7bdd6a6e0a27006c"
+      },
+      "XLB": {
+        "bytes": 6390157,
+        "sha256": "8414485830a5d70f"
+      },
+      "XLE": {
+        "bytes": 7147384,
+        "sha256": "c5117cd3808b9200"
+      },
+      "XLF": {
+        "bytes": 6795492,
+        "sha256": "2186f3172f1b1210"
+      },
+      "XLI": {
+        "bytes": 7069711,
+        "sha256": "b03e1b09a9873d6d"
+      },
+      "XLK": {
+        "bytes": 7056315,
+        "sha256": "e83a5ebaedc227b4"
+      },
+      "XLP": {
+        "bytes": 6459764,
+        "sha256": "eb78e491e24bb35f"
+      },
+      "XLU": {
+        "bytes": 6679738,
+        "sha256": "dcae0a8153926377"
+      },
+      "XLV": {
+        "bytes": 6750544,
+        "sha256": "5f07ce9d689daf21"
+      },
+      "XLY": {
+        "bytes": 6425437,
+        "sha256": "24d115e994d6f4b6"
+      },
+      "XM": {
+        "bytes": 1222982,
+        "sha256": "8223b9323207806e"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      },
+      "YUMC": {
+        "bytes": 5806254,
+        "sha256": "890654104acf02f6"
+      },
+      "ZBH": {
+        "bytes": 6130290,
+        "sha256": "ad68555c4cdd67df"
+      }
+    },
+    "description": "Ang et al. (2006) low volatility, lowest-vol N",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 20
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 126,
+        "top_n": 10
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "63",
+        "126"
+      ],
+      "top_n": [
+        "5",
+        "10",
+        "20"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.15820414200529176,
+        "max_drawdown": -0.17483450949108614,
+        "return": 0.503768113012955,
+        "sharpe": 1.1012886340796084
+      },
+      "train": {
+        "cagr": 0.0751947186578148,
+        "max_drawdown": -0.23975311637212915,
+        "return": 0.14084487454530503,
+        "sharpe": 0.4491496435193151
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 126,
+      "top_n": 10
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.05682914102223657,
+        "max_drawdown": -0.09576425571946978,
+        "return": 0.16595004757861376,
+        "sharpe": 0.6585974082502527
+      },
+      "stress": {
+        "cagr": 0.054944170835446116,
+        "max_drawdown": -0.0970811830845999,
+        "return": 0.16018253728593268,
+        "sharpe": 0.6383344409698806
+      },
+      "test": {
+        "cagr": 0.05573759780818599,
+        "max_drawdown": -0.09658280869308622,
+        "return": 0.16260798327663561,
+        "sharpe": 0.6468307629596176
+      },
+      "train": {
+        "cagr": 0.06255122729388085,
+        "max_drawdown": -0.09160259191427034,
+        "return": 0.1165800301213562,
+        "sharpe": 0.8100968369237713
+      }
+    },
+    "run_at": "2026-10-16T20:20:47+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "LowVolatility",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 8.252210216110019,
+    "tickers": 107,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 335,
+      "written": true
+    },
+    "universe": "broad",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.04601958448395638,
+        "max_drawdown": -0.10153350144458706,
+        "return": 0.15890323229746706,
+        "sharpe": 0.5465272591177269
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": -0.02969398115094475,
+        "2024-01-01": 1.7021727613180042,
+        "2024-07-01": 0.5806575337241231,
+        "2025-01-01": 0.4305800977047731,
+        "2025-07-01": 1.0397127924650558,
+        "2026-01-01": 0.14183184781878427
+      },
+      "gross": {
+        "cagr": 0.047268870280158914,
+        "max_drawdown": -0.1010752445087465,
+        "return": 0.16344619628340817,
+        "sharpe": 0.5600928156283916
+      },
+      "hold": {
+        "cagr": 0.1597155711621583,
+        "max_drawdown": -0.18187832188391984,
+        "return": 0.6252863145481757,
+        "sharpe": 1.0968584654435536
+      },
+      "sharpe_90": [
+        -0.33841992497158263,
+        1.5059283194886728
+      ],
+      "stress": {
+        "cagr": 0.04519031152056807,
+        "max_drawdown": -0.10181950168757992,
+        "return": 0.15589444004098207,
+        "sharpe": 0.5375281770576931
+      },
+      "vs_hold": {
+        "alpha": -0.02672737659638866,
+        "alpha_t": -0.8431447412256868,
+        "beta": 0.4774327593476274
       }
     }
   },
@@ -7921,6 +9758,616 @@
         "alpha": -0.0005305861449870679,
         "alpha_t": -0.04476434596447985,
         "beta": 0.16191830433698304
+      }
+    }
+  },
+  "sector_momentum_daily": {
+    "capital": 100000.0,
+    "code_sha256": "af6013f2429fb8f4",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ABC": {
+        "bytes": 2177595,
+        "sha256": "b311d3b24492c67d"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "ADT": {
+        "bytes": 4240167,
+        "sha256": "f156462a6b28f5d2"
+      },
+      "AFL": {
+        "bytes": 6077160,
+        "sha256": "0383435d7f35434d"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "ANET": {
+        "bytes": 8093565,
+        "sha256": "1703f5a70d1c5f6a"
+      },
+      "ANF": {
+        "bytes": 6187104,
+        "sha256": "22d503c5265b41f3"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "BHF": {
+        "bytes": 4035411,
+        "sha256": "909df6f367efe8e1"
+      },
+      "CEG": {
+        "bytes": 7467178,
+        "sha256": "c2b7abc5e58acc03"
+      },
+      "CHTR": {
+        "bytes": 7542880,
+        "sha256": "c31f41f7aa7ada30"
+      },
+      "CNP": {
+        "bytes": 5900642,
+        "sha256": "5736e89b7e246dfe"
+      },
+      "COIN": {
+        "bytes": 8199606,
+        "sha256": "e44ba002b7a5e4c5"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CSGP": {
+        "bytes": 6354730,
+        "sha256": "ad84a09c21bba5f0"
+      },
+      "CVNA": {
+        "bytes": 8210103,
+        "sha256": "eb0c4e753b39d940"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DGX": {
+        "bytes": 5586133,
+        "sha256": "fc72969335c6f0c6"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "DISCA": {
+        "bytes": 162452,
+        "sha256": "6283e6508f0e3436"
+      },
+      "DLR": {
+        "bytes": 6416817,
+        "sha256": "f270232c02e67729"
+      },
+      "DT": {
+        "bytes": 6357861,
+        "sha256": "b18a7fe52f20ed31"
+      },
+      "GLD": {
+        "bytes": 6067952,
+        "sha256": "a011f0e9b4a56bac"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "HPQ": {
+        "bytes": 6615816,
+        "sha256": "1797e65400dce262"
+      },
+      "HRI": {
+        "bytes": 4180195,
+        "sha256": "94e3088222b2481a"
+      },
+      "INCY": {
+        "bytes": 5848895,
+        "sha256": "d8149e5765d1f4b7"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "ISRG": {
+        "bytes": 7905647,
+        "sha256": "194b1a14aeeeff7f"
+      },
+      "ITB": {
+        "bytes": 4384511,
+        "sha256": "1bb0333c450b30b8"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KDP": {
+        "bytes": 6356042,
+        "sha256": "e1c46b5198dd0f58"
+      },
+      "KEX": {
+        "bytes": 4438610,
+        "sha256": "79b894ca14e436bc"
+      },
+      "KMX": {
+        "bytes": 6389428,
+        "sha256": "1207fdb0eac8de0c"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "KRTX": {
+        "bytes": 2271184,
+        "sha256": "4cfb226235316c68"
+      },
+      "LUV": {
+        "bytes": 6644188,
+        "sha256": "532c906ef17536a5"
+      },
+      "LW": {
+        "bytes": 6024534,
+        "sha256": "206c260f7d6e1dc8"
+      },
+      "MAT": {
+        "bytes": 5476687,
+        "sha256": "134c07c1229b02c0"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NDSN": {
+        "bytes": 4422620,
+        "sha256": "519ba4674c5b93b3"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NOW": {
+        "bytes": 8935980,
+        "sha256": "5a4e017ba85fe06f"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "OKE": {
+        "bytes": 6372005,
+        "sha256": "685128cad3d8caab"
+      },
+      "ORLY": {
+        "bytes": 8048795,
+        "sha256": "6d999718f4d00aa9"
+      },
+      "PEP": {
+        "bytes": 6955582,
+        "sha256": "7b774d49015c6177"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "PRU": {
+        "bytes": 5943692,
+        "sha256": "8c51152fb4761685"
+      },
+      "PSA": {
+        "bytes": 5948584,
+        "sha256": "0a47540761009423"
+      },
+      "PSTG": {
+        "bytes": 6390125,
+        "sha256": "8d8be336e33024b5"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "RCL": {
+        "bytes": 7608755,
+        "sha256": "85cedb0c4fd2f0f5"
+      },
+      "REGN": {
+        "bytes": 7162401,
+        "sha256": "0d952c03892a22f2"
+      },
+      "RMBS": {
+        "bytes": 5659179,
+        "sha256": "1a476847e70f0a13"
+      },
+      "RTX": {
+        "bytes": 7138660,
+        "sha256": "02f4c9fe7cc083a1"
+      },
+      "SBAC": {
+        "bytes": 6226985,
+        "sha256": "c873f07f9b3f112d"
+      },
+      "SDS": {
+        "bytes": 2614700,
+        "sha256": "c4e6027a7cf358b4"
+      },
+      "SEDG": {
+        "bytes": 7075092,
+        "sha256": "103ae4efc5c21847"
+      },
+      "SHOP": {
+        "bytes": 8002952,
+        "sha256": "bf7a573db81f8e7b"
+      },
+      "SLG": {
+        "bytes": 5110497,
+        "sha256": "a3be266b2cd8821a"
+      },
+      "SMH": {
+        "bytes": 7890844,
+        "sha256": "a958fcfd7abfed26"
+      },
+      "SPG": {
+        "bytes": 6188089,
+        "sha256": "3ea1bb84276b1906"
+      },
+      "SPOT": {
+        "bytes": 8142240,
+        "sha256": "61ed527e5950d634"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "SQ": {
+        "bytes": 4729694,
+        "sha256": "6ec987b0fbe1ce02"
+      },
+      "SQSP": {
+        "bytes": 2114636,
+        "sha256": "7e75d168e2ca4ff3"
+      },
+      "SWI": {
+        "bytes": 1828448,
+        "sha256": "047f3901a2924f03"
+      },
+      "TECH": {
+        "bytes": 5904753,
+        "sha256": "e964afb8165d1c73"
+      },
+      "TIP": {
+        "bytes": 3234901,
+        "sha256": "79ffc696986f447f"
+      },
+      "TJX": {
+        "bytes": 7077066,
+        "sha256": "75cb6cb4e8c48260"
+      },
+      "TLRY": {
+        "bytes": 3920292,
+        "sha256": "e6294915a7841558"
+      },
+      "TLT": {
+        "bytes": 6986199,
+        "sha256": "b16eaa9129fa8617"
+      },
+      "TM": {
+        "bytes": 3366087,
+        "sha256": "6518a8b94ac2120e"
+      },
+      "TOST": {
+        "bytes": 6511167,
+        "sha256": "c1bf791426150400"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "TSM": {
+        "bytes": 8321014,
+        "sha256": "73e197cd3b3953a4"
+      },
+      "TSN": {
+        "bytes": 6228763,
+        "sha256": "b45fed9e905b524d"
+      },
+      "TTWO": {
+        "bytes": 6731489,
+        "sha256": "5fc33668d3c28331"
+      },
+      "UNH": {
+        "bytes": 8135254,
+        "sha256": "2b4d2db650d27b57"
+      },
+      "VRSN": {
+        "bytes": 5616865,
+        "sha256": "5d767640454ad8f3"
+      },
+      "VVV": {
+        "bytes": 5078616,
+        "sha256": "5736a0a68ec917a6"
+      },
+      "WAT": {
+        "bytes": 5753791,
+        "sha256": "c628ad4737bd055d"
+      },
+      "WHR": {
+        "bytes": 5888476,
+        "sha256": "1003167fff1c8871"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XBI": {
+        "bytes": 6650037,
+        "sha256": "7bdd6a6e0a27006c"
+      },
+      "XLB": {
+        "bytes": 6390157,
+        "sha256": "8414485830a5d70f"
+      },
+      "XLE": {
+        "bytes": 7147384,
+        "sha256": "c5117cd3808b9200"
+      },
+      "XLF": {
+        "bytes": 6795492,
+        "sha256": "2186f3172f1b1210"
+      },
+      "XLI": {
+        "bytes": 7069711,
+        "sha256": "b03e1b09a9873d6d"
+      },
+      "XLK": {
+        "bytes": 7056315,
+        "sha256": "e83a5ebaedc227b4"
+      },
+      "XLP": {
+        "bytes": 6459764,
+        "sha256": "eb78e491e24bb35f"
+      },
+      "XLU": {
+        "bytes": 6679738,
+        "sha256": "dcae0a8153926377"
+      },
+      "XLV": {
+        "bytes": 6750544,
+        "sha256": "5f07ce9d689daf21"
+      },
+      "XLY": {
+        "bytes": 6425437,
+        "sha256": "24d115e994d6f4b6"
+      },
+      "XM": {
+        "bytes": 1222982,
+        "sha256": "8223b9323207806e"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      },
+      "YUMC": {
+        "bytes": 5806254,
+        "sha256": "890654104acf02f6"
+      },
+      "ZBH": {
+        "bytes": 6130290,
+        "sha256": "ad68555c4cdd67df"
+      }
+    },
+    "description": "Moskowitz & Grinblatt (1999) sector ETFs",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2024-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 3
+      },
+      "2024-07-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 3
+      },
+      "2025-01-01": {
+        "every": "M",
+        "lookback": 63,
+        "top_n": 2
+      },
+      "2025-07-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 3
+      },
+      "2026-01-01": {
+        "every": "M",
+        "lookback": 252,
+        "top_n": 3
+      }
+    },
+    "git": {
+      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "dirty": true
+    },
+    "grid": {
+      "lookback": [
+        "63",
+        "126",
+        "252"
+      ],
+      "top_n": [
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.15820414200529176,
+        "max_drawdown": -0.17483450949108614,
+        "return": 0.503768113012955,
+        "sharpe": 1.1012886340796084
+      },
+      "train": {
+        "cagr": 0.0751947186578148,
+        "max_drawdown": -0.23975311637212915,
+        "return": 0.14084487454530503,
+        "sharpe": 0.4491496435193151
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "63738f9b5333cb89",
+    "params": {
+      "every": "M",
+      "lookback": 252,
+      "top_n": 3
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.1830999353623879,
+        "max_drawdown": -0.17935240906008898,
+        "return": 0.5952814209184072,
+        "sharpe": 1.223956614662043
+      },
+      "stress": {
+        "cagr": 0.17906692539663283,
+        "max_drawdown": -0.1809032614599546,
+        "return": 0.5802213891052288,
+        "sharpe": 1.1997979875238227
+      },
+      "test": {
+        "cagr": 0.1810678045642624,
+        "max_drawdown": -0.180125470346705,
+        "return": 0.5876816281719388,
+        "sharpe": 1.2118643420777493
+      },
+      "train": {
+        "cagr": 0.1085642871870216,
+        "max_drawdown": -0.09105045094189068,
+        "return": 0.20601061279499966,
+        "sharpe": 1.270583893697729
+      }
+    },
+    "run_at": "2026-10-16T20:22:37+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "SectorMomentum",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 7.534626719056974,
+    "tickers": 107,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 90,
+      "written": true
+    },
+    "universe": "broad",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.12552031686346266,
+        "max_drawdown": -0.21373932884774827,
+        "return": 0.4734141389265809,
+        "sharpe": 0.8533389655811049
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 0.6353956021706262,
+        "2024-01-01": 1.3099182152568463,
+        "2024-07-01": 0.7851700143195073,
+        "2025-01-01": -0.6432506134615669,
+        "2025-07-01": 0.6140203919628455,
+        "2026-01-01": 2.488541558372607
+      },
+      "gross": {
+        "cagr": 0.1276562083132846,
+        "max_drawdown": -0.2132076734116003,
+        "return": 0.48259891443495495,
+        "sharpe": 0.8659667749140719
+      },
+      "hold": {
+        "cagr": 0.1597155711621583,
+        "max_drawdown": -0.18187832188391984,
+        "return": 0.6252863145481757,
+        "sharpe": 1.0968584654435536
+      },
+      "sharpe_90": [
+        0.04727255871451334,
+        1.8145298164110977
+      ],
+      "stress": {
+        "cagr": 0.12334380791147259,
+        "max_drawdown": -0.21439726247242696,
+        "return": 0.46409545202957325,
+        "sharpe": 0.8402039820939312
+      },
+      "vs_hold": {
+        "alpha": -0.0003524199668885154,
+        "alpha_t": -0.006679906817871659,
+        "beta": 0.8209860148377336
       }
     }
   },

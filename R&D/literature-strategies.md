@@ -136,3 +136,69 @@ claims, not reproduced by this code; our own results are in `results/summary.md`
 - **Here:** `CrossSectionalML` (`portfolio.py`): a much smaller version with nine
   price-based features ranked across tickers, gradient boosting, weekly top-N (and
   optional bottom-N short) portfolios, refitted at each walk-forward fold.
+
+## Low volatility (Ang, Hodrick, Xing & Zhang, 2006; Frazzini & Pedersen, 2014)
+
+- Ang et al., "The cross-section of volatility and expected returns", *Journal of
+  Finance* 61(1), 2006: stocks with high idiosyncratic volatility earned abysmally low
+  returns. Frazzini & Pedersen, "Betting against beta", *Journal of Financial
+  Economics* 111(1), 2014: low-beta assets earn higher risk-adjusted returns, across
+  markets.
+- **Here:** `LowVolatility` (`factors.py`), long-only: equal weight in the N tickers
+  with the lowest volatility of daily returns over a trailing window, monthly.
+
+## 52-week-high momentum (George & Hwang, 2004)
+
+- "The 52-week high and momentum investing", *Journal of Finance* 59(5), 2004: nearness
+  to the 52-week high explains most of the momentum profit and does not reverse later.
+- **Here:** `High52Week` (`factors.py`): the N tickers whose close is nearest their
+  highest close of the trailing window, monthly.
+
+## Industry momentum (Moskowitz & Grinblatt, 1999)
+
+- "Do industries explain momentum?", *Journal of Finance* 54(4), 1999: industry
+  portfolios show strong momentum, which accounts for much of individual-stock momentum.
+- **Here:** `SectorMomentum` (`factors.py`) on the nine SPDR sector ETFs (broad
+  universe only): hold the top N by trailing return, monthly.
+
+## Dual momentum (Antonacci, 2014)
+
+- *Dual Momentum Investing* (McGraw-Hill, 2014; a practitioner book, not peer-reviewed):
+  pick the asset with the best 12-month return (relative momentum), but only if that
+  return is positive (absolute momentum); otherwise hold bonds.
+- **Here:** `DualMomentum` (`factors.py`): risky set SPY, QQQ, IWM, GLD; safe asset TLT
+  (or cash); monthly.
+
+## Deep learning (researched 2026-10-16, not implemented)
+
+Ranked by the published evidence (peer review, out of sample after costs, independent
+replication, evidence on liquid US large caps like ours). Avramov, Cheng & Metzker,
+"Machine learning vs. economic restrictions", *Management Science* 69(5), 2023: deep
+learning signals earn mostly in microcaps, distressed stocks and high-volatility
+periods, and deteriorate after realistic trading costs, so large-cap evidence weighs
+most. Numbers below are the authors' claims, from abstracts and secondary sources.
+
+1. **Deep learning statistical arbitrage** (Guijarro-Ordonez, Pelger & Zanotti,
+   arXiv 2106.04028, *Management Science* 2025): residuals of latent factor models
+   traded by a convolutional transformer, daily US large caps, reported profitable
+   after costs. An independent replication on 2016-2024 (arXiv 2412.11432) finds even
+   higher Sharpe ratios but suspects overfitting or missing costs.
+2. **Price-chart CNN** (Jiang, Kelly & Xiu, "(Re-)Imag(in)ing Price Trends",
+   *Journal of Finance* 78(6), 2023): CNN on OHLC/volume chart images predicts 1 to
+   4-week returns; authors report transfer to other markets. Only an unreviewed GitHub
+   replication; the quoted high Sharpe ratios are equal-weighted (small-stock driven).
+3. **Deep momentum networks / Momentum Transformer** (Lim, Zohren & Roberts, arXiv
+   1904.04912, *Journal of Financial Data Science* 2019; Wood et al., arXiv 2112.08534):
+   Sharpe-trained LSTM / attention position sizing on 88 futures; edge survives costs
+   only to about 2-3 bp (10 bp with a turnover penalty). Pollok & Robik (arXiv
+   2607.00475) find learned policies beat simple rules on 16 futures in some but not
+   all cases, the transformer surviving costs better. No equity evidence.
+4. **Neural or transformer cross-sectional ranking** (Gu, Kelly & Xiu 2020; Kelly,
+   Kuznetsov, Malamud & Xu, "Artificial intelligence asset pricing models", NBER
+   w33351, 2025): strong on the full US market; weak evidence for large caps only.
+5. **Pretrained time-series models** (Chronos, TimesFM): zero-shot they lose clearly
+   to CatBoost on daily returns (Rahimikia et al., arXiv 2511.18578) and do not
+   reliably beat simple volatility models.
+6. Not worth testing: LSTM next-day direction (Fischer & Krauss, *EJOR* 2018: no profit
+   after costs since 2010); papers reporting only forecast error or accuracy; order-book
+   models (no order-book data here).
