@@ -6113,6 +6113,593 @@
       }
     }
   },
+  "trend_multi_daily": {
+    "capital": 100000.0,
+    "code_sha256": "c977d1deffbd7920",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "1/3/12-month trend on ETFs, vol-scaled, long-short",
+    "fit": "",
+    "fold_notes": {
+      "2023-07-01": "no grid point reached 5 median trades; best of all used"
+    },
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "target_vol": 0.1,
+        "vol_lookback": 63
+      },
+      "2024-01-01": {
+        "every": "M",
+        "target_vol": 0.1,
+        "vol_lookback": 21
+      },
+      "2024-07-01": {
+        "every": "M",
+        "target_vol": 0.1,
+        "vol_lookback": 21
+      },
+      "2025-01-01": {
+        "every": "M",
+        "target_vol": 0.2,
+        "vol_lookback": 21
+      },
+      "2025-07-01": {
+        "every": "M",
+        "target_vol": 0.2,
+        "vol_lookback": 21
+      },
+      "2026-01-01": {
+        "every": "M",
+        "target_vol": 0.1,
+        "vol_lookback": 21
+      }
+    },
+    "git": {
+      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "dirty": true
+    },
+    "grid": {
+      "target_vol": [
+        "0.1",
+        "0.2"
+      ],
+      "vol_lookback": [
+        "21",
+        "63"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "6b48c906e7dcaed4",
+    "params": {
+      "every": "M",
+      "target_vol": 0.1,
+      "vol_lookback": 21
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.06277656423946443,
+        "max_drawdown": -0.05123368900683267,
+        "return": 0.18426778060884597,
+        "sharpe": 0.8093116732051723
+      },
+      "stress": {
+        "cagr": 0.0593353673708128,
+        "max_drawdown": -0.05258851760884509,
+        "return": 0.17364680909148977,
+        "sharpe": 0.7671692057450072
+      },
+      "test": {
+        "cagr": 0.060926324159696676,
+        "max_drawdown": -0.051645329747875834,
+        "return": 0.1785495556529575,
+        "sharpe": 0.78683765675215
+      },
+      "train": {
+        "cagr": 0.0010354035529969163,
+        "max_drawdown": -0.06574772917899818,
+        "return": 0.0018826012010322302,
+        "sharpe": 0.04617559105506357
+      }
+    },
+    "run_at": "2026-10-16T20:57:43+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "MultiHorizonTrend",
+    "test_exposure": 0.9385714285714286,
+    "test_trades_per_year": 12.55771119842829,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 161,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.05598562947957264,
+        "max_drawdown": -0.06876792662420061,
+        "return": 0.1954892993538384,
+        "sharpe": 0.6625186824807219
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": -0.5720069127904645,
+        "2024-01-01": 0.6181568167569295,
+        "2024-07-01": 0.7848792361686705,
+        "2025-01-01": 0.7819391834548158,
+        "2025-07-01": 1.6905798905741873,
+        "2026-01-01": 0.2079095796552138
+      },
+      "gross": {
+        "cagr": 0.05770145526848802,
+        "max_drawdown": -0.06788319778688445,
+        "return": 0.20186817110853994,
+        "sharpe": 0.6818928858430475
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        -0.029684582497549277,
+        1.352744434503389
+      ],
+      "stress": {
+        "cagr": 0.054242680106385555,
+        "max_drawdown": -0.06951585374548397,
+        "return": 0.18903371752243303,
+        "sharpe": 0.6435952805816512
+      },
+      "vs_hold": {
+        "alpha": 0.020995092701808698,
+        "alpha_t": 0.4549621341718204,
+        "beta": 0.20322645368697473
+      }
+    }
+  },
+  "trend_multi_long_daily": {
+    "capital": 100000.0,
+    "code_sha256": "e1309fb40322c358",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "1/3/12-month trend on ETFs, long or cash",
+    "fit": "",
+    "fold_notes": {
+      "2023-07-01": "no grid point reached 5 median trades; best of all used"
+    },
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "long_only": true,
+        "target_vol": 0.2,
+        "vol_lookback": 63
+      },
+      "2024-01-01": {
+        "every": "M",
+        "long_only": true,
+        "target_vol": 0.2,
+        "vol_lookback": 63
+      },
+      "2024-07-01": {
+        "every": "M",
+        "long_only": true,
+        "target_vol": 0.2,
+        "vol_lookback": 21
+      },
+      "2025-01-01": {
+        "every": "M",
+        "long_only": true,
+        "target_vol": 0.2,
+        "vol_lookback": 21
+      },
+      "2025-07-01": {
+        "every": "M",
+        "long_only": true,
+        "target_vol": 0.2,
+        "vol_lookback": 21
+      },
+      "2026-01-01": {
+        "every": "M",
+        "long_only": true,
+        "target_vol": 0.2,
+        "vol_lookback": 21
+      }
+    },
+    "git": {
+      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "dirty": true
+    },
+    "grid": {
+      "target_vol": [
+        "0.1",
+        "0.2"
+      ],
+      "vol_lookback": [
+        "21",
+        "63"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "6b48c906e7dcaed4",
+    "params": {
+      "every": "M",
+      "long_only": true,
+      "target_vol": 0.2,
+      "vol_lookback": 63
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.09248202538409322,
+        "max_drawdown": -0.09130421372846298,
+        "return": 0.2785166541510211,
+        "sharpe": 0.8524646113665465
+      },
+      "stress": {
+        "cagr": 0.08963233840375429,
+        "max_drawdown": -0.09180549712718378,
+        "return": 0.2692743704690044,
+        "sharpe": 0.8280647892912103
+      },
+      "test": {
+        "cagr": 0.09125553275116172,
+        "max_drawdown": -0.0914559576573607,
+        "return": 0.2745335556289936,
+        "sharpe": 0.8417043268175795
+      },
+      "train": {
+        "cagr": 0.03220282907555827,
+        "max_drawdown": -0.07685054160871696,
+        "return": 0.05929622148999991,
+        "sharpe": 0.6207557452960869
+      }
+    },
+    "run_at": "2026-10-16T20:58:08+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "MultiHorizonTrend",
+    "test_exposure": 0.9385714285714286,
+    "test_trades_per_year": 12.55771119842829,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 146,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.0881653129327058,
+        "max_drawdown": -0.09083685728178403,
+        "return": 0.3190998029333074,
+        "sharpe": 0.8308282232533234
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 0.2574829481049657,
+        "2024-01-01": 1.1321714814533264,
+        "2024-07-01": 0.9131989063182648,
+        "2025-01-01": 0.7581399337844261,
+        "2025-07-01": 1.687751178389938,
+        "2026-01-01": 0.402837353126531
+      },
+      "gross": {
+        "cagr": 0.08974574918154388,
+        "max_drawdown": -0.09061821434958195,
+        "return": 0.3253899020030777,
+        "sharpe": 0.8451338621542382
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        0.09887437508628394,
+        1.590013544000016
+      ],
+      "stress": {
+        "cagr": 0.08594447462510413,
+        "max_drawdown": -0.0912363930903749,
+        "return": 0.31029601704566545,
+        "sharpe": 0.8116004732729084
+      },
+      "vs_hold": {
+        "alpha": -0.001024743369265147,
+        "alpha_t": -0.022328254049007873,
+        "beta": 0.4974039958721527
+      }
+    }
+  },
   "tsmom_daily": {
     "capital": 10000.0,
     "code_sha256": "535d14bc47f77641",
@@ -7274,6 +7861,637 @@
         "alpha": -0.07835877260090768,
         "alpha_t": -1.2257397670834,
         "beta": 0.21824715221616045
+      }
+    }
+  },
+  "xs_momentum_buffer_daily": {
+    "capital": 100000.0,
+    "code_sha256": "cc948062f567ea18",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Momentum top N with a keep-N buffer",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 126,
+        "skip": 21,
+        "top_n": 5
+      },
+      "2024-01-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 126,
+        "skip": 21,
+        "top_n": 5
+      },
+      "2024-07-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 252,
+        "skip": 0,
+        "top_n": 5
+      },
+      "2025-01-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 126,
+        "skip": 21,
+        "top_n": 5
+      },
+      "2025-07-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 126,
+        "skip": 21,
+        "top_n": 5
+      },
+      "2026-01-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 126,
+        "skip": 21,
+        "top_n": 5
+      }
+    },
+    "git": {
+      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "dirty": true
+    },
+    "grid": {
+      "keep_n": [
+        "10",
+        "20"
+      ],
+      "lookback": [
+        "126",
+        "252"
+      ],
+      "skip": [
+        "0",
+        "21"
+      ],
+      "top_n": [
+        "5",
+        "10"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "6b48c906e7dcaed4",
+    "params": {
+      "every": "M",
+      "keep_n": 10,
+      "lookback": 126,
+      "skip": 21,
+      "top_n": 5
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.3127321395482534,
+        "max_drawdown": -0.23737124803397602,
+        "return": 1.1294477825456806,
+        "sharpe": 1.2843287780515966
+      },
+      "stress": {
+        "cagr": 0.3082067583617758,
+        "max_drawdown": -0.2373723532079549,
+        "return": 1.1091189752453618,
+        "sharpe": 1.268938082615214
+      },
+      "test": {
+        "cagr": 0.31066417132974977,
+        "max_drawdown": -0.23727303776878694,
+        "return": 1.1201426208502059,
+        "sharpe": 1.2775811221252726
+      },
+      "train": {
+        "cagr": 0.3393275977854846,
+        "max_drawdown": -0.12326970525665548,
+        "return": 0.7006375196090049,
+        "sharpe": 1.79941214146183
+      }
+    },
+    "run_at": "2026-10-16T20:55:44+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "BufferedMomentum",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 8.969793713163064,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 157,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.28616138401972946,
+        "max_drawdown": -0.23727303776878705,
+        "return": 1.2816354188552954,
+        "sharpe": 1.1828994268425606
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 1.3369363332753572,
+        "2024-01-01": 2.0889256298246766,
+        "2024-07-01": 0.7881998244741638,
+        "2025-01-01": 0.7096204960751837,
+        "2025-07-01": 0.7870176950282849,
+        "2026-01-01": 1.4427352088275671
+      },
+      "gross": {
+        "cagr": 0.2878975503880836,
+        "max_drawdown": -0.23737124803397625,
+        "return": 1.2917463038296413,
+        "sharpe": 1.1884540066294442
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        0.3596940751543838,
+        2.1006378784354744
+      ],
+      "stress": {
+        "cagr": 0.2842547768137913,
+        "max_drawdown": -0.2373723532079548,
+        "return": 1.270567699214196,
+        "sharpe": 1.1762637031942795
+      },
+      "vs_hold": {
+        "alpha": 0.06224349774402102,
+        "alpha_t": 0.6751637182834618,
+        "beta": 1.1819304413242522
+      }
+    }
+  },
+  "xs_momentum_buffer_ls_daily": {
+    "capital": 100000.0,
+    "code_sha256": "12b2aae3d6d6e325",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Long-short momentum with buffers",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 126,
+        "short_n": 10,
+        "skip": 0,
+        "top_n": 10
+      },
+      "2024-01-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 252,
+        "short_n": 10,
+        "skip": 21,
+        "top_n": 5
+      },
+      "2024-07-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 252,
+        "short_n": 10,
+        "skip": 0,
+        "top_n": 5
+      },
+      "2025-01-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 252,
+        "short_n": 10,
+        "skip": 0,
+        "top_n": 5
+      },
+      "2025-07-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 252,
+        "short_n": 10,
+        "skip": 0,
+        "top_n": 5
+      },
+      "2026-01-01": {
+        "every": "M",
+        "keep_n": 10,
+        "lookback": 252,
+        "short_n": 10,
+        "skip": 0,
+        "top_n": 5
+      }
+    },
+    "git": {
+      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "dirty": true
+    },
+    "grid": {
+      "keep_n": [
+        "10",
+        "20"
+      ],
+      "lookback": [
+        "126",
+        "252"
+      ],
+      "short_n": [
+        "5",
+        "10"
+      ],
+      "skip": [
+        "0",
+        "21"
+      ],
+      "top_n": [
+        "5",
+        "10"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.22433142871130562,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011111946430868658,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "kind": "portfolio",
+    "package_sha256": "6b48c906e7dcaed4",
+    "params": {
+      "every": "M",
+      "keep_n": 10,
+      "lookback": 252,
+      "short_n": 10,
+      "skip": 21,
+      "top_n": 5
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.10182798122820969,
+        "max_drawdown": -0.1270322247952893,
+        "return": 0.30912998420186755,
+        "sharpe": 0.8114989487100068
+      },
+      "stress": {
+        "cagr": 0.09699707115183576,
+        "max_drawdown": -0.1287082623722836,
+        "return": 0.29324811995458266,
+        "sharpe": 0.7771343581346452
+      },
+      "test": {
+        "cagr": 0.09796199282989537,
+        "max_drawdown": -0.12822380943495093,
+        "return": 0.29641043734587114,
+        "sharpe": 0.783351507668983
+      },
+      "train": {
+        "cagr": 0.07813790102517171,
+        "max_drawdown": -0.036399494365792706,
+        "return": 0.14652695181798325,
+        "sharpe": 1.176476371098723
+      }
+    },
+    "run_at": "2026-10-16T20:57:15+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "BufferedMomentum",
+    "test_exposure": 0.9985714285714286,
+    "test_trades_per_year": 6.817043222003929,
+    "tickers": 27,
+    "timeframe": "1D",
+    "trade_log": {
+      "rows": 357,
+      "written": true
+    },
+    "universe": "core",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.1413210637601141,
+        "max_drawdown": -0.13329944898648738,
+        "return": 0.5423044712891059,
+        "sharpe": 1.0530181720198295
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 1.8902634383633639,
+        "2024-01-01": 1.7387055482811171,
+        "2024-07-01": 0.7115495186374833,
+        "2025-01-01": 1.2236769057738,
+        "2025-07-01": -0.006779331143209532,
+        "2026-01-01": 0.8752335364473297
+      },
+      "gross": {
+        "cagr": 0.14589940139807567,
+        "max_drawdown": -0.131579517763612,
+        "return": 0.5626764200702283,
+        "sharpe": 1.0835069609446444
+      },
+      "hold": {
+        "cagr": 0.1897599269767365,
+        "max_drawdown": -0.18502647872289113,
+        "return": 0.7674166349942682,
+        "sharpe": 1.2938011196048154
+      },
+      "sharpe_90": [
+        0.1955070988466457,
+        2.0675896156541516
+      ],
+      "stress": {
+        "cagr": 0.14055980677730062,
+        "max_drawdown": -0.13388398681891822,
+        "return": 0.5389351444281163,
+        "sharpe": 1.0475174373710867
+      },
+      "vs_hold": {
+        "alpha": 0.1086157864671431,
+        "alpha_t": 1.487314687485848,
+        "beta": 0.17717402860281647
       }
     }
   },

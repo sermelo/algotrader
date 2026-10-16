@@ -169,6 +169,23 @@ claims, not reproduced by this code; our own results are in `results/summary.md`
 - **Here:** `DualMomentum` (`factors.py`): risky set SPY, QQQ, IWM, GLD; safe asset TLT
   (or cash); monthly.
 
+## Buy/hold spread (Novy-Marx & Velikov, 2016)
+
+- "A taxonomy of anomalies and their trading costs", *Review of Financial Studies*
+  29(1), 2016: anomalies with one-sided monthly turnover below 50% mostly survive
+  costs; the most effective simple cost reduction is a buy/hold spread (buy only top
+  ranks, sell only when a holding falls below a looser rank).
+- **Here:** `BufferedMomentum` (`buffered.py`), momentum with a `keep_n` buffer.
+
+## Multi-horizon trend following (Hurst, Ooi & Pedersen, 2017)
+
+- "A century of evidence on trend-following investing", *Journal of Portfolio
+  Management* 44(1), 2017: equal-weighted 1, 3 and 12-month time-series momentum on 67
+  markets (equity indices, bonds, commodities, currencies), volatility-scaled, positive
+  in every decade since 1880 (gross of costs; authors also report after-cost estimates).
+- **Here:** `MultiHorizonTrend` (`trend.py`) on the ETFs available (no commodities or
+  currencies beyond gold), long-short and long/cash.
+
 ## Deep learning (researched 2026-10-16, not implemented)
 
 Ranked by the published evidence (peer review, out of sample after costs, independent

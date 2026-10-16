@@ -1,0 +1,25 @@
+fold,params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_trades,eligible
+2023-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.0257721,0.0195018,1.05968,-0.0112997,3,False
+2023-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.0241322,0.0182645,1.14935,-0.00911223,3,False
+2023-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.052154,0.0393433,1.06438,-0.0226206,3,False
+2023-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.0494055,0.0372818,1.15991,-0.0182304,3,False
+2024-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.039014,0.0212814,0.588941,-0.04679,8,True
+2024-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.0357835,0.019533,0.608855,-0.0440013,8,True
+2024-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.0608274,0.0330235,0.615842,-0.0772857,8,True
+2024-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.0592962,0.0322028,0.620756,-0.0768505,8,True
+2024-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.0706115,0.0299836,0.628308,-0.0500723,14,True
+2024-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.0673013,0.0286035,0.650331,-0.0457938,14,True
+2024-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.121038,0.0507156,0.764979,-0.0772857,14,True
+2024-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.117672,0.0493484,0.759955,-0.0768505,14,True
+2025-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.105333,0.0361841,0.65019,-0.0515192,20,True
+2025-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.0908157,0.0313334,0.584785,-0.0584375,20,True
+2025-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.195519,0.0654353,0.759829,-0.0908369,20,True
+2025-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.176075,0.0592524,0.709202,-0.091456,20,True
+2025-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.11704,0.0340923,0.636051,-0.0515192,26,True
+2025-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.0983982,0.0288345,0.561148,-0.0584375,26,True
+2025-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.224157,0.0631745,0.75706,-0.0908369,26,True
+2025-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.192589,0.0547945,0.678479,-0.091456,26,True
+2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.213225,0.0520457,0.850326,-0.0515192,32,True
+2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.182111,0.0448953,0.779389,-0.0584375,32,True
+2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.347178,0.0813693,0.911447,-0.0908369,32,True
+2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.313266,0.0741566,0.85392,-0.091456,32,True

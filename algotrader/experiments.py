@@ -263,6 +263,29 @@ EXPERIMENTS += [
                         DualMomentum, "1D", {"every": "M"},
                         {"lookback": [126, 252], "top_n": [1, 2], "safe": ["TLT", None]}),
 ]
+
+# Roadmap S1 (buy/hold buffer, Novy-Marx & Velikov 2016) and S2 (multi-horizon trend,
+# Hurst, Ooi & Pedersen 2017).
+from .buffered import BufferedMomentum  # noqa: E402
+from .trend import MultiHorizonTrend  # noqa: E402
+
+EXPERIMENTS += [
+    PortfolioExperiment("xs_momentum_buffer_daily", "Momentum top N with a keep-N buffer",
+                        BufferedMomentum, "1D", {"every": "M"},
+                        {"lookback": [126, 252], "skip": [0, 21], "top_n": [5, 10],
+                         "keep_n": [10, 20]}),
+    PortfolioExperiment("xs_momentum_buffer_ls_daily", "Long-short momentum with buffers",
+                        BufferedMomentum, "1D", {"every": "M"},
+                        {"lookback": [126, 252], "skip": [0, 21], "top_n": [5, 10],
+                         "keep_n": [10, 20], "short_n": [5, 10]}, allow_short=True),
+    PortfolioExperiment("trend_multi_daily", "1/3/12-month trend on ETFs, vol-scaled, long-short",
+                        MultiHorizonTrend, "1D", {"every": "M"},
+                        {"target_vol": [0.10, 0.20], "vol_lookback": [21, 63]}, allow_short=True),
+    PortfolioExperiment("trend_multi_long_daily", "1/3/12-month trend on ETFs, long or cash",
+                        MultiHorizonTrend, "1D", {"every": "M", "long_only": True},
+                        {"target_vol": [0.10, 0.20], "vol_lookback": [21, 63]}),
+]
+
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
 

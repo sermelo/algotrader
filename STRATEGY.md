@@ -141,6 +141,17 @@ Wrappers around any strategy, selected by parameters in an experiment's grid:
   (Moskowitz & Grinblatt 1999); `DualMomentum` (Antonacci) ranks SPY, QQQ, IWM, GLD by
   `lookback`-day return, holds the best `top_n` (1/`top_n` each) only if their return
   is positive and puts the rest in `safe` (TLT, or cash if None).
+- **Buffered momentum** (`BufferedMomentum`, `algotrader/buffered.py`; Novy-Marx &
+  Velikov 2016 buy/hold spread): at each period end keep held names still ranked within
+  `keep_n` (and trading), keep at most `top_n` of them (best first), then add the best
+  others until `top_n` are held; equal weight. With `short_n`, the same on the bottom
+  ranks with buffer `short_keep` (default 2 x `short_n`), weights -1/`short_n`.
+- **Multi-horizon trend** (`MultiHorizonTrend`, `algotrader/trend.py`; Hurst, Ooi &
+  Pedersen 2017): for each ETF of SPY QQQ IWM DIA TLT GLD and the nine sector ETFs that
+  the universe has, signal = mean of sign(close / close h days ago - 1) for h = 21, 63,
+  252 (none until 252 days of history); weight = signal x `target_vol` / annualised
+  volatility of daily returns over `vol_lookback` days, divided by the number of assets
+  with a weight; `long_only` sets negative signals to 0. Monthly; gross capped at 1.
 - In the experiments a portfolio starts with $100,000 in total; the activity rule
   counts rebalance days.
 
