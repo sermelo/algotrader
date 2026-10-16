@@ -50,6 +50,8 @@ This repository contains the code, backtest results, and documentation for the S
    - Python 3.11+
    - Required packages: `pandas`, `numpy` (others may be imported by specific scripts)
    - The scripts expect minute‑OHLCV data in Parquet format under `$HERMES_CACHE/scratch/tickers/` (or adjust the path in the scripts).
+   - Commissions modeled: IBKR per‑share $0.005, minimum $1.00 per trade (as used in the backtest).
+   - Platform: Linux, Hermes agent environment (scripts tested on Hermes).
 
 3. **Data Acquisition** (if data not already present)
    - The backtest uses 1‑minute OHLCV data from the IEX feed via the Hugging Face Data Library (Mar 2022‑present).
