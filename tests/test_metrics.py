@@ -62,6 +62,11 @@ def test_trade_stats():
     assert stats["profit_factor"] == pytest.approx(16 / 4)
 
 
+def test_profit_factor_infinite_without_losses():
+    stats = Metrics(result([100, 100], [trade(5), trade(3)])).trade_stats()
+    assert stats["profit_factor"] == math.inf
+
+
 def test_trade_stats_with_no_trades():
     stats = Metrics(result([100, 100])).trade_stats()
     assert stats["trades"] == 0 and math.isnan(stats["win_rate"])
@@ -73,7 +78,14 @@ def test_buy_and_hold_from_first_open_to_last_close():
     assert math.isnan(Metrics(result([100, 100])).buy_and_hold())
 
 
+def test_exposure_is_fraction_of_bars_in_market():
+    res = result([100] * 4)
+    res.position = pd.Series([0, 5, 5, 0], index=res.equity.index)
+    assert Metrics(res).exposure() == pytest.approx(0.5)
+    assert math.isnan(Metrics(result([100] * 4)).exposure())
+
+
 def test_summary_has_all_keys():
     keys = Metrics(result([100, 110])).summary().keys()
-    assert {"total_return", "cagr", "sharpe", "max_drawdown", "buy_and_hold",
+    assert {"total_return", "cagr", "sharpe", "max_drawdown", "buy_and_hold", "exposure",
             "final_equity", "trades", "win_rate", "profit_factor"} <= set(keys)

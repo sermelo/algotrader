@@ -5,7 +5,7 @@ minute bars. Written to replace an earlier, unverified set of scripts (see
 [Removed legacy code](#removed-legacy-code)).
 
 - `algotrader/` is the package, in a handful of small classes (see [Design](#design)).
-- `tests/` has the unit tests (`pytest`, 44 tests, about 1 second).
+- `tests/` has the unit tests (`pytest`, 60 tests, about 1 second).
 - `STRATEGY.md` is the exact strategy and execution rules.
 
 ## Quick start
@@ -23,8 +23,9 @@ Get data (next section), then:
 ```
 
 Omit `--tickers` to run every `*_clean.parquet` in the folder. `--help` lists all
-options (`--fast`, `--slow`, `--trend-filter`, `--risk`, `--max-position`,
-`--slippage`, `--capital`).
+options (`--fast`, `--slow`, `--trend-filter`, `--atr-period`, `--atr-mult`,
+`--risk`, `--max-position`, `--commission`, `--min-commission`, `--slippage`,
+`--capital`).
 
 Or from Python:
 
@@ -58,34 +59,40 @@ Face repo `elkassabgi/hfdatalibrary` holds documentation only.
 4. Available tickers (about 1,250, public): `https://api.hfdatalibrary.com/v1/symbols`.
    Limits: 100 downloads per minute.
 
-Files have columns `datetime, Open, High, Low, Close, Volume, source`. `BarLoader`
-converts them to a `datetime` index with lowercase `open, high, low, close,
-volume`. `data/` and `.venv/` are git-ignored.
+Files have columns `datetime, Open, High, Low, Close, Volume, source`, with naive
+US Eastern timestamps covering the regular session only (09:30 to 15:59).
+`BarLoader` converts them to a `datetime` index with lowercase `open, high, low,
+close, volume`. Intraday resampling is anchored to the 09:30 open, so `1h` bars run
+09:30 to 10:30 and so on (the last bar of the day, 15:30 to 16:00, is a half bar).
+`data/` and `.venv/` are git-ignored.
 
 ## Design
 
 ```
 BarLoader ──bars──▶ Backtester ──▶ BacktestResult ──▶ Metrics
                       │  ▲  ▲  ▲        (equity, trades)    (summary stats)
-                      │  │  │  └─ SmaCrossStrategy  (indicators, want_long)
+                      │  │  │  └─ Strategy          (indicators, want_long)
                       │  │  └──── PositionSizer     (shares from risk/stop/cap)
                       │  └─────── CostModel         (commission, slippage)
 ```
 
 | Class | File | Responsibility |
 |---|---|---|
-| `BarLoader` | `data.py` | Read parquet, normalise columns/index, de-duplicate, resample to any pandas bar size (empty periods dropped). |
+| `BarLoader` | `data.py` | Read parquet, normalise columns/index, de-duplicate, resample to any pandas bar size (intraday sizes anchored to 09:30, empty periods dropped). |
 | `CostModel` | `costs.py` | Commission per share with a per-order minimum, plus fixed per-share slippage on each side. Frozen dataclass. |
 | `PositionSizer` | `sizing.py` | `min(equity*risk/stop_distance, equity*max_frac/price)` rounded down to whole shares. Returns 0 for invalid input. |
-| `SmaCrossStrategy` | `strategy.py` | Computes `sma_fast`, `sma_slow`, `atr`, and the boolean `want_long` (optionally also requiring close > long SMA). Pure function of the bars. |
-| `Backtester` | `engine.py` | Bar-by-bar loop: fills, stops, equity marking. Returns a `BacktestResult` holding the equity `Series` and a list of `Trade`s. |
+| `Strategy` | `strategy.py` | Protocol the engine relies on: `indicators(bars)` returning `want_long` and `atr` columns, plus an `atr_mult` attribute. |
+| `SmaCrossStrategy` | `strategy.py` | Computes `sma_fast`, `sma_slow`, `atr`, and the boolean `want_long` (optionally also requiring close > long SMA). Pure function of the bars. Validates its parameters. |
+| `average_true_range` | `strategy.py` | ATR helper (simple mean of true range), reusable by other strategies. |
+| `Backtester` | `engine.py` | Bar-by-bar loop: fills, stops, equity marking. Returns a `BacktestResult` holding the equity `Series`, the shares held at each bar (`position`) and a list of `Trade`s. |
 | `Trade` | `engine.py` | One round trip (fill prices after slippage, total commission, exit reason, net `pnl`). |
-| `Metrics` | `metrics.py` | Total return, CAGR, daily Sharpe, max drawdown, buy-and-hold, win rate, profit factor, commissions. |
+| `Metrics` | `metrics.py` | Total return, CAGR, daily Sharpe, max drawdown, buy-and-hold, exposure (time in market), win rate, profit factor, commissions. |
 | `run.py` | `run.py` | Command line wrapper (`python -m algotrader.run`). |
 
 Each class has one job and takes its collaborators in its constructor, so any of
-them can be swapped or tested alone (for example a new strategy only needs an
-`indicators(bars)` method returning `want_long`, plus `atr_mult`).
+them can be swapped or tested alone. A new strategy only has to satisfy the
+`Strategy` protocol: an `indicators(bars)` method returning `want_long` and `atr`,
+plus an `atr_mult` attribute (`tests/test_engine.py::AlwaysLong` is a minimal example).
 
 ### Execution rules (no look-ahead)
 
@@ -110,10 +117,11 @@ See `STRATEGY.md` for the full specification.
 | File | What it checks |
 |---|---|
 | `tests/test_costs_sizing.py` | Commission minimum/per-share, slippage direction, sizing by risk vs cap, rounding, invalid input. |
-| `tests/test_data.py` | Column/index normalisation, sorting, duplicate handling, resample OHLCV aggregation, gap dropping, parquet loading. |
+| `tests/test_data.py` | Column/index normalisation, sorting, duplicate handling, resample OHLCV aggregation, session-anchored intraday bars, calendar daily bars, gap dropping, parquet loading, missing-ticker error. |
 | `tests/test_strategy.py` | SMA/ATR values, warm-up is flat, up/down/flat markets, trend filter, parameter validation. |
-| `tests/test_engine.py` | Fill at next open, signal exit, **no look-ahead** (future data cannot change earlier equity), intrabar stop and gap stop, no re-entry after stop, end-of-data close, commission and slippage effects, accounting identity (final equity = capital + sum of trade pnl), size cap, cash never negative. |
-| `tests/test_metrics.py` | Return, drawdown, Sharpe against a manual calculation, daily vs per-bar aggregation, CAGR, trade statistics, buy-and-hold. |
+| `tests/test_engine.py` | Fill at next open, signal exit, **no look-ahead** (future data cannot change earlier equity), intrabar stop and gap stop, no re-entry after stop, end-of-data close, commission and slippage effects, accounting identity (final equity = capital + sum of trade pnl), size cap, cash never negative, position series matches trades, empty input rejected, custom strategy through the protocol. |
+| `tests/test_metrics.py` | Return, drawdown, Sharpe against a manual calculation, daily vs per-bar aggregation, CAGR, trade statistics, profit factor without losses, exposure, buy-and-hold. |
+| `tests/test_run.py` | Command line end to end on a temporary parquet file (CSV output, cost options), and argument errors. |
 
 Tests use small hand-built price series (`tests/helpers.py::make_bars`) so every
 expectation can be checked by hand.
@@ -124,17 +132,21 @@ Default strategy (SMA 20/50, 1% risk, 2x ATR stop, 10% max position, IBKR
 commissions, no slippage), $10,000 start, 3 tickers, Mar 2022 to Oct 2026. These
 tickers are those in the legacy results file, not a chosen sample.
 
-| Bar size | ADM | AMC | AMGN | Trades per ticker |
-|---|---|---|---|---|
-| 1 min | -82.1% | -68.8% | -67.3% | 3,500 to 4,300 |
-| 5 min | -12.1% | -28.9% | -16.4% | about 1,000 |
-| 30 min | -3.0% | +7.0% | -3.7% | about 160 |
-| 1 day | +1.8% | -9.8% | +2.3% | 13 |
-| Buy and hold | -2.3% | -98.2% | +88.3% | |
+| Bar size | ADM | AMC | AMGN | Trades per ticker | Time in market |
+|---|---|---|---|---|---|
+| 1 min | -82.1% | -68.8% | -67.3% | 3,500 to 4,300 | 26% to 30% |
+| 5 min | -12.1% | -28.9% | -16.4% | about 1,000 | 27% to 34% |
+| 30 min | -3.0% | +7.0% | -3.7% | about 160 | 32% to 33% |
+| 1 hour | -3.1% | -0.9% | +2.2% | 80 to 94 | 29% to 38% |
+| 1 day | +1.8% | -9.8% | +2.3% | 13 | 13% to 47% |
+| Buy and hold | -2.3% | -98.2% | +88.3% | | 100% |
 
 Reading: on short bars the crossover whipsaws constantly and the $1 minimum
 commission (on roughly $1,000 positions) costs about 0.2% per round trip, which
 dominates. On 30 min and daily bars the result is indistinguishable from noise.
+Buy and hold is not a like-for-like benchmark: positions are capped at 10% of
+equity and are open only about a third of the time, so on average roughly 3% of
+capital is in the market. That shrinks both the gains and the losses.
 **There is no demonstrated edge here**; this is a working, trustworthy baseline to
 test better ideas against, not a profitable strategy. Three tickers is far too
 small a sample for any conclusion.

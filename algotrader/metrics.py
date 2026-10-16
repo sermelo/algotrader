@@ -54,8 +54,20 @@ class Metrics:
             return float("nan")
         return float(self.bars["close"].iloc[-1] / self.bars["open"].iloc[0] - 1)
 
+    def exposure(self) -> float:
+        """Fraction of bars that end with a position open (NaN if not recorded)."""
+        pos = self.result.position
+        if pos is None or pos.empty:
+            return float("nan")
+        return float((pos > 0).mean())
+
     def trade_stats(self) -> dict:
-        pnl = np.array([t.pnl for t in self.result.trades])
+        """Trade counts and P&L statistics. Break-even trades count as losses.
+
+        Profit factor is gross profit / gross loss: inf with wins and no losses,
+        NaN with no trades or no wins and no losses.
+        """
+        pnl = np.array([t.pnl for t in self.result.trades], dtype=float)
         wins, losses = pnl[pnl > 0], pnl[pnl <= 0]
         gross_loss = -losses.sum()
         return {
@@ -63,7 +75,8 @@ class Metrics:
             "win_rate": len(wins) / len(pnl) if len(pnl) else float("nan"),
             "avg_win": wins.mean() if len(wins) else 0.0,
             "avg_loss": losses.mean() if len(losses) else 0.0,
-            "profit_factor": wins.sum() / gross_loss if gross_loss > 0 else float("nan"),
+            "profit_factor": (wins.sum() / gross_loss if gross_loss > 0
+                              else float("inf") if len(wins) else float("nan")),
             "total_commission": sum(t.commission for t in self.result.trades),
         }
 
@@ -71,6 +84,6 @@ class Metrics:
         """All statistics as a flat dict."""
         return {"total_return": self.total_return(), "cagr": self.cagr(),
                 "sharpe": self.sharpe(), "max_drawdown": self.max_drawdown(),
-                "buy_and_hold": self.buy_and_hold(),
+                "buy_and_hold": self.buy_and_hold(), "exposure": self.exposure(),
                 "final_equity": float(self.result.equity.iloc[-1]),
                 **self.trade_stats()}

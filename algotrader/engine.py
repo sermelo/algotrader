@@ -6,7 +6,7 @@ import pandas as pd
 
 from .costs import CostModel
 from .sizing import PositionSizer
-from .strategy import SmaCrossStrategy
+from .strategy import SmaCrossStrategy, Strategy
 
 
 @dataclass
@@ -32,6 +32,7 @@ class BacktestResult:
     initial_capital: float
     equity: pd.Series                       # mark-to-market equity at each bar close
     trades: list = field(default_factory=list)
+    position: pd.Series | None = None       # shares held at each bar close
 
     def trades_frame(self) -> pd.DataFrame:
         """Trades as a DataFrame (empty with the right columns if none)."""
@@ -54,14 +55,15 @@ class Backtester:
       * Any open position is closed at the last bar's close ('end').
 
     Args:
-        strategy: provides indicators and the stop multiple.
+        strategy: any `Strategy` (indicators with `want_long` and `atr`, plus
+            `atr_mult`); defaults to SmaCrossStrategy().
         costs: commission/slippage model.
         sizer: position sizing rule.
         initial_capital: starting cash in dollars.
     """
 
-    def __init__(self, strategy: SmaCrossStrategy = None, costs: CostModel = None,
-                 sizer: PositionSizer = None, initial_capital: float = 10_000.0):
+    def __init__(self, strategy: Strategy | None = None, costs: CostModel | None = None,
+                 sizer: PositionSizer | None = None, initial_capital: float = 10_000.0):
         self.strategy = strategy or SmaCrossStrategy()
         self.costs = costs or CostModel()
         self.sizer = sizer or PositionSizer()
@@ -69,6 +71,8 @@ class Backtester:
 
     def run(self, bars: pd.DataFrame) -> BacktestResult:
         """Backtest `bars` (indexed OHLCV, see BarLoader) and return the result."""
+        if bars.empty:
+            raise ValueError("no bars to backtest")
         df = self.strategy.indicators(bars)
         idx = df.index
         o, h, l, c = (df[k].to_numpy(float) for k in ("open", "high", "low", "close"))
@@ -83,6 +87,7 @@ class Backtester:
         pending = None                      # 'buy' / 'sell' decided at prior close
         pending_atr = np.nan
         equity = np.empty(n)
+        held = np.zeros(n, dtype=int)
         trades = []
 
         def close_position(i, price, reason):
@@ -116,6 +121,7 @@ class Backtester:
 
             # 3. Mark to market, then 4. decide the next order from this close.
             equity[i] = cash + shares * c[i]
+            held[i] = shares
             if i + 1 < n:
                 if shares > 0 and not want[i]:
                     pending = "sell"
@@ -126,5 +132,7 @@ class Backtester:
         if shares > 0:
             close_position(n - 1, c[-1], "end")
             equity[-1] = cash
+            held[-1] = 0
 
-        return BacktestResult(self.initial_capital, pd.Series(equity, index=idx), trades)
+        return BacktestResult(self.initial_capital, pd.Series(equity, index=idx), trades,
+                              pd.Series(held, index=idx))

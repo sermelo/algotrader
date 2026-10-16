@@ -2,8 +2,11 @@
 from pathlib import Path
 
 import pandas as pd
+from pandas.tseries.frequencies import to_offset
+from pandas.tseries.offsets import Tick
 
 _AGG = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
+SESSION_OPEN = "9h30min"          # US regular session open (data times are naive ET)
 
 
 class BarLoader:
@@ -28,13 +31,16 @@ class BarLoader:
         return sorted(p.name.replace("_clean.parquet", "")
                       for p in self.data_dir.glob("*_clean.parquet"))
 
-    def load(self, ticker: str, timeframe: str = None) -> pd.DataFrame:
+    def load(self, ticker: str, timeframe: str | None = None) -> pd.DataFrame:
         """Load one ticker, optionally resampled to `timeframe` (e.g. '5min', '1D')."""
-        raw = pd.read_parquet(self.path(ticker))
+        path = self.path(ticker)
+        if not path.exists():
+            raise FileNotFoundError(f"no data for {ticker}: {path} does not exist")
+        raw = pd.read_parquet(path)
         return self.normalize(raw, timeframe)
 
     @staticmethod
-    def normalize(raw: pd.DataFrame, timeframe: str = None) -> pd.DataFrame:
+    def normalize(raw: pd.DataFrame, timeframe: str | None = None) -> pd.DataFrame:
         """Clean a raw frame into indexed lowercase OHLCV, optionally resampled."""
         df = raw.copy()
         df.columns = [c.lower() for c in df.columns]
@@ -49,6 +55,15 @@ class BarLoader:
 
     @staticmethod
     def resample(df: pd.DataFrame, timeframe: str) -> pd.DataFrame:
-        """Aggregate bars to `timeframe`, dropping empty periods (nights, weekends)."""
-        out = df.resample(timeframe).agg(_AGG)
-        return out.dropna(subset=["open"])
+        """Aggregate bars to `timeframe`, dropping empty periods (nights, weekends).
+
+        Intraday bar sizes are anchored to the 09:30 session open, so a '1h' bar
+        covers 09:30-10:30 rather than a half-hour 09:00-10:00 stub. Daily and
+        longer bars use pandas' default calendar alignment.
+        """
+        step = to_offset(timeframe)
+        if isinstance(step, Tick) and pd.Timedelta(step) < pd.Timedelta("1D"):
+            resampler = df.resample(step, origin="start_day", offset=SESSION_OPEN)
+        else:
+            resampler = df.resample(step)
+        return resampler.agg(_AGG).dropna(subset=["open"])

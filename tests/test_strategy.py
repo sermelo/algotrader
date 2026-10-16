@@ -5,9 +5,12 @@ from algotrader import SmaCrossStrategy
 from helpers import make_bars
 
 
-def test_rejects_bad_windows():
+@pytest.mark.parametrize("kwargs", [
+    {"fast": 50, "slow": 20}, {"fast": 0, "slow": 20}, {"atr_period": 0},
+    {"atr_mult": 0}, {"atr_mult": float("nan")}, {"trend_filter": 0}])
+def test_rejects_bad_parameters(kwargs):
     with pytest.raises(ValueError):
-        SmaCrossStrategy(fast=50, slow=20)
+        SmaCrossStrategy(**kwargs)
 
 
 def test_sma_values():

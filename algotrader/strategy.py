@@ -1,8 +1,30 @@
 """Strategy definitions: indicators and signals."""
 from dataclasses import dataclass
+from typing import Protocol
 
-import numpy as np
 import pandas as pd
+
+
+class Strategy(Protocol):
+    """What the Backtester needs from a strategy.
+
+    `indicators(bars)` returns the bars plus at least a boolean `want_long`
+    column (decided from information up to and including each bar's close) and
+    an `atr` column used for the stop distance and sizing. `atr_mult` is the
+    stop distance in ATRs.
+    """
+    atr_mult: float
+
+    def indicators(self, bars: pd.DataFrame) -> pd.DataFrame: ...
+
+
+def average_true_range(bars: pd.DataFrame, period: int) -> pd.Series:
+    """Simple moving average of the true range over `period` bars."""
+    prev_close = bars["close"].shift()
+    true_range = pd.concat([bars["high"] - bars["low"],
+                            (bars["high"] - prev_close).abs(),
+                            (bars["low"] - prev_close).abs()], axis=1).max(axis=1)
+    return true_range.rolling(period).mean()
 
 
 @dataclass(frozen=True)
@@ -24,11 +46,15 @@ class SmaCrossStrategy:
     slow: int = 50
     atr_period: int = 14
     atr_mult: float = 2.0
-    trend_filter: int = None
+    trend_filter: int | None = None
 
     def __post_init__(self):
         if not 0 < self.fast < self.slow:
             raise ValueError("require 0 < fast < slow")
+        if self.atr_period < 1 or not self.atr_mult > 0:
+            raise ValueError("require atr_period >= 1 and atr_mult > 0")
+        if self.trend_filter is not None and self.trend_filter < 1:
+            raise ValueError("trend_filter must be a positive window or None")
 
     def indicators(self, bars: pd.DataFrame) -> pd.DataFrame:
         """Return `bars` plus columns: sma_fast, sma_slow, atr, want_long."""
@@ -36,11 +62,7 @@ class SmaCrossStrategy:
         close = df["close"]
         df["sma_fast"] = close.rolling(self.fast).mean()
         df["sma_slow"] = close.rolling(self.slow).mean()
-        prev_close = close.shift()
-        true_range = pd.concat([df["high"] - df["low"],
-                                (df["high"] - prev_close).abs(),
-                                (df["low"] - prev_close).abs()], axis=1).max(axis=1)
-        df["atr"] = true_range.rolling(self.atr_period).mean()
+        df["atr"] = average_true_range(df, self.atr_period)
         want = df["sma_fast"] > df["sma_slow"]
         if self.trend_filter:
             want &= close > close.rolling(self.trend_filter).mean()

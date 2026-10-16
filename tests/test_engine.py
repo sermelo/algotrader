@@ -122,3 +122,44 @@ def test_trades_frame_columns_and_empty_case():
     assert empty.empty and "pnl" in empty.columns
     full = engine().run(make_bars(UP_THEN_DOWN)).trades_frame()
     assert len(full) == 1 and full.loc[0, "pnl"] != 0
+
+
+def test_position_series_matches_trades():
+    bars = make_bars(UP_THEN_DOWN)
+    res = engine().run(bars)
+    t = res.trades[0]
+    held = res.position[res.position > 0]
+    assert (held == t.shares).all()
+    assert held.index[0] == t.entry_time
+    assert held.index[-1] < t.exit_time               # flat at the close of the exit bar
+    assert res.position.iloc[-1] == 0
+
+
+def test_end_of_data_close_leaves_position_flat():
+    res = engine().run(make_bars([10] * 5 + [11, 12, 13, 14, 15]))
+    assert res.position.iloc[-1] == 0 and res.position.iloc[-2] > 0
+
+
+def test_empty_bars_rejected():
+    with pytest.raises(ValueError):
+        engine().run(make_bars([10]).iloc[:0])
+
+
+class AlwaysLong:
+    """Minimal custom strategy: long from bar 2 on, fixed ATR. Shows the engine
+    accepts anything with `indicators` and `atr_mult` (the Strategy protocol)."""
+    atr_mult = 1.0
+
+    def indicators(self, bars):
+        df = bars.copy()
+        df["atr"] = 1.0
+        df["want_long"] = [i >= 2 for i in range(len(df))]
+        return df
+
+
+def test_engine_accepts_any_strategy_with_the_protocol():
+    bars = make_bars([10, 10, 10, 11, 12])
+    res = Backtester(AlwaysLong(), NO_COST, BIG).run(bars)
+    assert len(res.trades) == 1
+    assert res.trades[0].entry_time == bars.index[3]
+    assert res.trades[0].exit_reason == "end"

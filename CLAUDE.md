@@ -11,8 +11,9 @@ Backtesting different algorithmic trading strategies on US equity 1-minute IEX b
 
 - Code lives in `algotrader/` (object-oriented: `BarLoader`, `CostModel`,
   `PositionSizer`, `SmaCrossStrategy`, `Backtester`, `Metrics`). Add new strategies as
-  new classes with an `indicators(bars)` method returning `want_long` and an `atr_mult`
-  attribute; do not copy-paste engine code.
+  new classes satisfying the `Strategy` protocol (`indicators(bars)` returning
+  `want_long` and `atr`, plus an `atr_mult` attribute; `average_true_range` is
+  available); do not copy-paste engine code.
 - Every behaviour change needs a unit test in `tests/`. Run `.venv/bin/python -m pytest`
   before committing. Keep tests on small hand-built series (`tests/helpers.py`).
 - Document changes: update README (design/tests/results tables) and STRATEGY.md in the
