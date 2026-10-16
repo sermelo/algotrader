@@ -84,12 +84,31 @@ def test_pooled_model_is_fitted_once_on_all_tickers(setup, monkeypatch):
     data, out = setup
     from algotrader.ml import GradientBoostingStrategy
     exp = ex.Experiment("pool", "pooled toy", GradientBoostingStrategy, "1D",
-                        {"max_iter": 20, "atr_period": 2}, {"p_enter": [0.5, 0.6]},
+                        {"max_iter": 20, "atr_period": 2}, {"entry_quantile": [0.5, 0.6]},
                         costs=ex.CostModel(0, 0), fit="pooled")
     monkeypatch.setattr(ex, "EXPERIMENTS", [exp])
     monkeypatch.setattr(ex, "BY_NAME", {"pool": exp})
     ex.main(["pool", "--data-dir", str(data), "--tickers", "AAA", "BBB",
              "--workers", "1", "--out", str(out)])
     m = json.loads((out / "manifest.json").read_text())["pool"]
-    assert m["fit"] == "pooled" and m["params"]["p_enter"] in (0.5, 0.6)
+    assert m["fit"] == "pooled" and m["params"]["entry_quantile"] in (0.5, 0.6)
     assert len(pd.read_csv(out / "pool_grid.csv")) == 2
+
+
+def test_low_activity_grid_points_cannot_be_chosen(setup, monkeypatch, tmp_path):
+    data, out = setup
+    exp = ex.Experiment("toy", "toy SMA", SmaCrossStrategy, "1D", {"atr_period": 2, "fast": 2},
+                        {"slow": [3, 60]}, costs=ex.CostModel(0, 0))
+    monkeypatch.setattr(ex, "BY_NAME", {"toy": exp})
+    monkeypatch.setattr(ex, "EXPERIMENTS", [exp])
+    run(data, out)
+    grid = pd.read_csv(out / "toy_grid.csv")
+    trades = sorted(grid["median_trades"])
+    assert trades[0] < trades[1]                       # slow=60 trades far less than slow=3
+    # require more trades than the less active point makes: only the busier one is eligible
+    monkeypatch.setattr(ex, "MIN_TRADES", trades[1])
+    m = run(data, tmp_path / "strict")
+    busy = json.loads(grid.loc[grid["median_trades"].idxmax(), "params"])
+    assert m["params"] == busy and m["selection_note"] == ""
+    monkeypatch.setattr(ex, "MIN_TRADES", 10 ** 6)     # nobody qualifies: flagged
+    assert "no grid point" in run(data, tmp_path / "none")["selection_note"]

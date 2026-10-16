@@ -1,0 +1,9 @@
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""entry_quantile"": 0.7, ""horizon"": 1, ""threshold"": 0.0}",0.00313845,0.00637873,0.198531,-0.0288036,0.431513,18,True
+"{""entry_quantile"": 0.85, ""horizon"": 1, ""threshold"": 0.0}",-0.0121162,-0.0244324,-1.3517,-0.0176733,-0.599866,9,True
+"{""entry_quantile"": 0.7, ""horizon"": 1, ""threshold"": 0.01}",0.00272524,0.00553773,0.288751,-0.0119601,0.434088,4,False
+"{""entry_quantile"": 0.85, ""horizon"": 1, ""threshold"": 0.01}",0.00518748,0.0105544,0.88661,-0.0042576,0.267277,2,False
+"{""entry_quantile"": 0.7, ""horizon"": 5, ""threshold"": 0.0}",0.0263804,0.0542571,1.79235,-0.0175884,0.166006,15,True
+"{""entry_quantile"": 0.85, ""horizon"": 5, ""threshold"": 0.0}",0.00572033,0.0116417,0.971849,-0.00925047,0.432501,7,True
+"{""entry_quantile"": 0.7, ""horizon"": 5, ""threshold"": 0.01}",0.0374883,0.077538,2.97071,-0.0122244,0.836979,11,True
+"{""entry_quantile"": 0.85, ""horizon"": 5, ""threshold"": 0.01}",0.00130265,0.00264506,0.251883,-0.00587487,0.339744,3,False

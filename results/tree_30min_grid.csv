@@ -1,4 +1,4 @@
-params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
-"{""atr_mult"": 50.0, ""max_depth"": 2}",0.0294544,0.060674,0.807762,-0.0726889,0.00499631
-"{""atr_mult"": 50.0, ""max_depth"": 4}",0.0292915,0.0603335,0.725324,-0.0663497,0.17044
-"{""atr_mult"": 50.0, ""max_depth"": 6}",0.0127163,0.0259723,0.347892,-0.0635896,0.241562
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""atr_mult"": 50.0, ""max_depth"": 2}",0.0294544,0.060674,0.807762,-0.0726889,0.00499631,57,True
+"{""atr_mult"": 50.0, ""max_depth"": 4}",0.0292915,0.0603335,0.725324,-0.0663497,0.17044,73,True
+"{""atr_mult"": 50.0, ""max_depth"": 6}",0.0127163,0.0259723,0.347892,-0.0635896,0.241562,93,True

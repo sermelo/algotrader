@@ -4,7 +4,10 @@ The decision tree (tree.py) learned next-bar direction, an edge far smaller than
 trading costs. Here the label asks a question costs cannot erase: does the close
 `horizon` bars ahead exceed this close by more than `threshold`? One model is
 trained on the pooled training bars of all tickers (features are scale-free), and
-the strategy is long while the predicted probability exceeds `p_enter`.
+the strategy is long while the predicted probability is in the top `1 - entry_quantile`
+of the probabilities it produced on its own training bars. A relative threshold
+adapts to the label's base rate, which an absolute one (say 0.6) does not: with a rare
+label the model may never output 0.6 at all.
 """
 from dataclasses import dataclass, field
 
@@ -49,7 +52,7 @@ def forward_label(bars: pd.DataFrame, horizon: int, threshold: float) -> pd.Seri
 
 @dataclass
 class GradientBoostingStrategy:
-    """Long while P(forward return > threshold) > p_enter, from a pooled model.
+    """Long while P(forward return > threshold) is above its training `entry_quantile`.
 
     Call `fit_many([bars, ...])` (or `fit(bars)`) on training bars that end before
     the backtest period; labels near the end of each training frame are dropped
@@ -58,7 +61,7 @@ class GradientBoostingStrategy:
     """
     horizon: int = 4
     threshold: float = 0.003
-    p_enter: float = 0.55
+    entry_quantile: float = 0.8
     max_depth: int = 3
     max_iter: int = 200
     learning_rate: float = 0.05
@@ -66,10 +69,11 @@ class GradientBoostingStrategy:
     atr_mult: float = 50.0
     random_state: int = 0
     model: object = field(default=None, init=False, repr=False)
+    p_enter: float = field(default=float("nan"), init=False)
 
     def __post_init__(self):
-        if self.horizon < 1 or not 0 < self.p_enter < 1 or self.max_depth < 1:
-            raise ValueError("require horizon >= 1, 0 < p_enter < 1, max_depth >= 1")
+        if self.horizon < 1 or not 0 < self.entry_quantile < 1 or self.max_depth < 1:
+            raise ValueError("require horizon >= 1, 0 < entry_quantile < 1, max_depth >= 1")
 
     def fit_many(self, frames) -> "GradientBoostingStrategy":
         from sklearn.ensemble import HistGradientBoostingClassifier
@@ -87,6 +91,8 @@ class GradientBoostingStrategy:
             max_depth=self.max_depth, max_iter=self.max_iter, learning_rate=self.learning_rate,
             l2_regularization=1.0, random_state=self.random_state)
         self.model.fit(X[FEATURES].to_numpy(), y.to_numpy())
+        p_train = self.model.predict_proba(X[FEATURES].to_numpy())[:, 1]
+        self.p_enter = float(np.quantile(p_train, self.entry_quantile))
         return self
 
     def fit(self, bars: pd.DataFrame) -> "GradientBoostingStrategy":

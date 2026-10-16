@@ -1,0 +1,10 @@
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""min_rel_volume"": 0.0, ""or_minutes"": 5}",0.0195124,0.0107028,0.372419,-0.0388417,0.143134,111,True
+"{""min_rel_volume"": 1.5, ""or_minutes"": 5}",0.0161415,0.00886046,0.536176,-0.0132107,0.02752,36,True
+"{""min_rel_volume"": 2.5, ""or_minutes"": 5}",-0.00118183,-0.000651249,-0.0540857,-0.0119188,-0.229111,13,True
+"{""min_rel_volume"": 0.0, ""or_minutes"": 15}",0.107783,0.0580116,1.00272,-0.0397963,0.25033,224,True
+"{""min_rel_volume"": 1.5, ""or_minutes"": 15}",3.25855e-05,1.79514e-05,0.0100403,-0.0193707,-0.0904578,36,True
+"{""min_rel_volume"": 2.5, ""or_minutes"": 15}",-0.00999672,-0.00551966,-0.427536,-0.0160503,-0.00665897,11,True
+"{""min_rel_volume"": 0.0, ""or_minutes"": 30}",0.11316,0.0608374,0.957957,-0.0479866,0.0876261,230,True
+"{""min_rel_volume"": 1.5, ""or_minutes"": 30}",0.0233382,0.0127905,0.583726,-0.0182715,0.168824,33,True
+"{""min_rel_volume"": 2.5, ""or_minutes"": 30}",-0.00807988,-0.00445935,-0.379019,-0.0144352,-0.265406,10,True

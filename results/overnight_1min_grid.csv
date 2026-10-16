@@ -1,5 +1,5 @@
-params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
-"{""trend_days"": null}",-0.0947405,-0.0533573,-0.431127,-0.194089,-0.115523
-"{""trend_days"": 20}",-0.025317,-0.0140275,-0.207423,-0.0730879,0.0322335
-"{""trend_days"": 50}",-0.0449954,-0.0250443,-0.412396,-0.0896402,-0.27024
-"{""trend_days"": 200}",0.00334617,0.00184204,0.0692463,-0.0473038,-0.354804
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""trend_days"": null}",-0.0947405,-0.0533573,-0.431127,-0.194089,-0.115523,458,True
+"{""trend_days"": 20}",-0.025317,-0.0140275,-0.207423,-0.0730879,0.0322335,230,True
+"{""trend_days"": 50}",-0.0449954,-0.0250443,-0.412396,-0.0896402,-0.27024,216,True
+"{""trend_days"": 200}",0.00334617,0.00184204,0.0692463,-0.0473038,-0.354804,165,True

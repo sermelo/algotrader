@@ -1,9 +1,9 @@
-params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
-"{""horizon"": 4, ""p_enter"": 0.55, ""threshold"": 0.002}",-0.00180295,-0.00365508,-0.634588,-0.00316391,1.18156
-"{""horizon"": 4, ""p_enter"": 0.65, ""threshold"": 0.002}",0,0,,0,
-"{""horizon"": 4, ""p_enter"": 0.55, ""threshold"": 0.005}",-0.000544282,-0.00110413,-0.457493,-0.00178194,-0.459306
-"{""horizon"": 4, ""p_enter"": 0.65, ""threshold"": 0.005}",0,0,,0,
-"{""horizon"": 13, ""p_enter"": 0.55, ""threshold"": 0.002}",-0.00162357,-0.00329174,-0.260929,-0.00711511,-0.174251
-"{""horizon"": 13, ""p_enter"": 0.65, ""threshold"": 0.002}",0.000388278,0.000788038,1.41421,0,1.41986
-"{""horizon"": 13, ""p_enter"": 0.55, ""threshold"": 0.005}",-0.00168417,-0.00341451,-1.30789,-0.00182414,-0.984477
-"{""horizon"": 13, ""p_enter"": 0.65, ""threshold"": 0.005}",0,0,,0,
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""entry_quantile"": 0.8, ""horizon"": 4, ""threshold"": 0.002}",-0.0472437,-0.0935359,-2.13639,-0.0680136,0.0395055,49,True
+"{""entry_quantile"": 0.9, ""horizon"": 4, ""threshold"": 0.002}",-0.0286737,-0.0573254,-1.86974,-0.0449178,0.00815622,15,True
+"{""entry_quantile"": 0.8, ""horizon"": 4, ""threshold"": 0.005}",-0.0109324,-0.0220589,-0.374897,-0.0501067,0.74458,35,True
+"{""entry_quantile"": 0.9, ""horizon"": 4, ""threshold"": 0.005}",-0.0337503,-0.0672959,-1.89634,-0.0483031,0.0725932,6,True
+"{""entry_quantile"": 0.8, ""horizon"": 13, ""threshold"": 0.002}",-0.0062273,-0.0125957,-0.362679,-0.0335542,0.175193,45,True
+"{""entry_quantile"": 0.9, ""horizon"": 13, ""threshold"": 0.002}",0.00542692,0.0110429,0.421375,-0.0142578,0.0359134,21,True
+"{""entry_quantile"": 0.8, ""horizon"": 13, ""threshold"": 0.005}",-0.0189004,-0.0379791,-1.17354,-0.0353866,0.638959,35,True
+"{""entry_quantile"": 0.9, ""horizon"": 13, ""threshold"": 0.005}",0.000630757,0.00128033,0.0627746,-0.0138179,0.302791,13,True

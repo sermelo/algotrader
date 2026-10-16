@@ -1,6 +1,7 @@
 {
   "gbm_30min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -119,17 +120,17 @@
     "description": "Gradient boosting, cost-aware label, pooled over tickers",
     "fit": "pooled",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
+      "entry_quantile": [
+        "0.8",
+        "0.9"
+      ],
       "horizon": [
         "4",
         "13"
-      ],
-      "p_enter": [
-        "0.55",
-        "0.65"
       ],
       "threshold": [
         "0.002",
@@ -157,31 +158,32 @@
       }
     },
     "params": {
+      "entry_quantile": 0.9,
       "horizon": 13,
-      "p_enter": 0.65,
       "threshold": 0.002
     },
     "portfolio": {
       "gross": {
-        "cagr": -0.000356748280485486,
-        "max_drawdown": -0.001085332848500986,
-        "return": -0.0009939876517158774,
-        "sharpe": -0.7719346603956657
+        "cagr": 0.021294129297261044,
+        "max_drawdown": -0.04965190900043248,
+        "return": 0.06048513976391656,
+        "sharpe": 0.8217737184389909
       },
       "test": {
-        "cagr": -0.0004277779460452047,
-        "max_drawdown": -0.001237428110216654,
-        "return": -0.0011918179527671269,
-        "sharpe": -0.8158920701394838
+        "cagr": -0.008576558592607864,
+        "max_drawdown": -0.07044974813820093,
+        "return": -0.02372122058587467,
+        "sharpe": -0.3171535055998614
       },
       "train": {
-        "cagr": 0.011743099894017561,
-        "max_drawdown": -0.0013426195514848471,
-        "return": 0.021417971737610175,
-        "sharpe": 1.117419162235629
+        "cagr": 0.20478085004025526,
+        "max_drawdown": -0.0137033926449317,
+        "return": 0.4023741706240427,
+        "sharpe": 3.7497997603390503
       }
     },
-    "run_at": "2026-10-16T13:50:26+00:00",
+    "run_at": "2026-10-16T14:08:02+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -192,12 +194,212 @@
       "valid_start": "2023-07-01"
     },
     "strategy": "GradientBoostingStrategy",
-    "test_exposure": 2.0476026667977134e-05,
-    "test_trades_per_year": 0.02657716655752019,
+    "test_exposure": 0.05835733562725625,
+    "test_trades_per_year": 47.42695372189478,
     "timeframe": "30min"
   },
+  "gbm_daily": {
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Gradient boosting on daily bars, pooled over tickers",
+    "fit": "pooled",
+    "git": {
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
+      "dirty": true
+    },
+    "grid": {
+      "entry_quantile": [
+        "0.7",
+        "0.85"
+      ],
+      "horizon": [
+        "1",
+        "5"
+      ],
+      "threshold": [
+        "0.0",
+        "0.01"
+      ]
+    },
+    "hold": {
+      "gross": {
+        "cagr": 0.22350003650971328,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "test": {
+        "cagr": 0.22350003650971328,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011125890275493378,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "params": {
+      "entry_quantile": 0.7,
+      "horizon": 5,
+      "threshold": 0.01
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.03578728875523529,
+        "max_drawdown": -0.05624677105552334,
+        "return": 0.10296343579295297,
+        "sharpe": 0.7818192558853501
+      },
+      "test": {
+        "cagr": 0.028057798203616535,
+        "max_drawdown": -0.05862289208476468,
+        "return": 0.0801758129384702,
+        "sharpe": 0.620762794931883
+      },
+      "train": {
+        "cagr": 0.13133110827221572,
+        "max_drawdown": -0.04207228243816208,
+        "return": 0.2510532981757905,
+        "sharpe": 2.3612257790957787
+      }
+    },
+    "run_at": "2026-10-16T14:08:44+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "test_start": "2024-01-01",
+      "train_start": "2022-03-01",
+      "valid_start": "2023-07-01"
+    },
+    "strategy": "GradientBoostingStrategy",
+    "test_exposure": 0.25101755342098686,
+    "test_trades_per_year": 28.557165466055444,
+    "timeframe": "1D"
+  },
   "intraday_momentum_5min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -316,7 +518,7 @@
     "description": "Gao et al. (2018): last half hour after an up first half hour",
     "fit": "",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -374,7 +576,8 @@
         "sharpe": -1.0462319743861046
       }
     },
-    "run_at": "2026-10-16T13:32:40+00:00",
+    "run_at": "2026-10-16T14:01:14+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -390,7 +593,8 @@
     "timeframe": "5min"
   },
   "noise_area_1min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -509,7 +713,7 @@
     "description": "Zarattini et al. (2024) noise-area breakout, long only",
     "fit": "",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -569,7 +773,8 @@
         "sharpe": 0.7943449357622961
       }
     },
-    "run_at": "2026-10-16T13:47:49+00:00",
+    "run_at": "2026-10-16T14:04:59+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -585,7 +790,8 @@
     "timeframe": "1min"
   },
   "orb_5min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -704,7 +910,7 @@
     "description": "Zarattini & Aziz (2023) opening-range breakout, long only",
     "fit": "",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -763,7 +969,204 @@
         "sharpe": 0.7933681949531818
       }
     },
-    "run_at": "2026-10-16T13:48:39+00:00",
+    "run_at": "2026-10-16T14:06:09+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "test_start": "2024-01-01",
+      "train_start": "2022-03-01",
+      "valid_start": "2023-07-01"
+    },
+    "strategy": "OpeningRangeBreakoutStrategy",
+    "test_exposure": 0.2727077000771233,
+    "test_trades_per_year": 123.72999890853525,
+    "timeframe": "5min"
+  },
+  "orb_5min_100k": {
+    "capital": 100000.0,
+    "code_sha256": "49881f9930d951ba",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Opening-range breakout with $100,000 per ticker (cost share)",
+    "fit": "",
+    "git": {
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
+      "dirty": true
+    },
+    "grid": {
+      "min_rel_volume": [
+        "0.0",
+        "1.5",
+        "2.5"
+      ],
+      "or_minutes": [
+        "5",
+        "15",
+        "30"
+      ]
+    },
+    "hold": {
+      "gross": {
+        "cagr": 0.22350003650971328,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "test": {
+        "cagr": 0.22350003650971328,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011125890275493378,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "params": {
+      "min_rel_volume": 0.0,
+      "or_minutes": 15
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.0783722005023777,
+        "max_drawdown": -0.02904812881113572,
+        "return": 0.23404401472801828,
+        "sharpe": 1.5982317398337267
+      },
+      "test": {
+        "cagr": 0.050233541778323954,
+        "max_drawdown": -0.03633588442587732,
+        "return": 0.14637464456014793,
+        "sharpe": 1.0483894194053152
+      },
+      "train": {
+        "cagr": 0.05801155436676875,
+        "max_drawdown": -0.039796278371301175,
+        "return": 0.10778344996373734,
+        "sharpe": 1.002722015725216
+      }
+    },
+    "run_at": "2026-10-16T14:11:11+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -779,7 +1182,8 @@
     "timeframe": "5min"
   },
   "overnight_1min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -898,7 +1302,7 @@
     "description": "Hold from the last minute to the next open",
     "fit": "",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -952,7 +1356,199 @@
         "sharpe": 0.06924634579212813
       }
     },
-    "run_at": "2026-10-16T13:32:17+00:00",
+    "run_at": "2026-10-16T14:00:37+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "test_start": "2024-01-01",
+      "train_start": "2022-03-01",
+      "valid_start": "2023-07-01"
+    },
+    "strategy": "OvernightStrategy",
+    "test_exposure": 0.001969129795494509,
+    "test_trades_per_year": 178.00057301899147,
+    "timeframe": "1min"
+  },
+  "overnight_1min_100k": {
+    "capital": 100000.0,
+    "code_sha256": "49881f9930d951ba",
+    "costs": {
+      "commission_per_share": 0.005,
+      "min_commission": 1.0,
+      "slippage_per_share": 0.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      }
+    },
+    "description": "Overnight hold with $100,000 per ticker (cost share)",
+    "fit": "",
+    "git": {
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
+      "dirty": true
+    },
+    "grid": {
+      "trend_days": [
+        "None",
+        "20",
+        "50",
+        "200"
+      ]
+    },
+    "hold": {
+      "gross": {
+        "cagr": 0.22350003650971328,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "test": {
+        "cagr": 0.22350003650971328,
+        "max_drawdown": -0.18502647872289124,
+        "return": 0.754542463085156,
+        "sharpe": 1.476172178214278
+      },
+      "train": {
+        "cagr": 0.011125890275493378,
+        "max_drawdown": -0.25876601952837475,
+        "return": 0.020287183644531304,
+        "sharpe": 0.15657642378361378
+      }
+    },
+    "params": {
+      "trend_days": 200
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.10886599871636915,
+        "max_drawdown": -0.060869860471009174,
+        "return": 0.3337790387930639,
+        "sharpe": 1.8870627004777407
+      },
+      "test": {
+        "cagr": 0.08676189386996613,
+        "max_drawdown": -0.0637596428271745,
+        "return": 0.2609891554070187,
+        "sharpe": 1.525335878568833
+      },
+      "train": {
+        "cagr": 0.010976401756374932,
+        "max_drawdown": -0.04562135712346904,
+        "return": 0.020013390750712512,
+        "sharpe": 0.3207164167867911
+      }
+    },
+    "run_at": "2026-10-16T14:10:23+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -968,7 +1564,8 @@
     "timeframe": "1min"
   },
   "rsi2_daily": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -1087,7 +1684,7 @@
     "description": "Connors RSI(2) mean reversion on daily bars",
     "fit": "",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -1151,7 +1748,8 @@
         "sharpe": 0.529574463524637
       }
     },
-    "run_at": "2026-10-16T13:48:57+00:00",
+    "run_at": "2026-10-16T14:06:27+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -1167,7 +1765,8 @@
     "timeframe": "1D"
   },
   "sma_daily": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -1286,7 +1885,7 @@
     "description": "SMA crossover on daily bars (trend following)",
     "fit": "",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -1326,32 +1925,33 @@
       }
     },
     "params": {
-      "atr_mult": 3.0,
+      "atr_mult": 50.0,
       "atr_period": 14,
-      "fast": 50,
-      "slow": 200
+      "fast": 10,
+      "slow": 50
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.13116007019858045,
-        "max_drawdown": -0.07824828896414626,
-        "return": 0.40986861570479216,
-        "sharpe": 1.7425880306240245
+        "cagr": 0.08468828980014287,
+        "max_drawdown": -0.06417172033595497,
+        "return": 0.25429463271972863,
+        "sharpe": 1.3310709429982197
       },
       "test": {
-        "cagr": 0.13060755182211614,
-        "max_drawdown": -0.07828960595646073,
-        "return": 0.407950082651112,
-        "sharpe": 1.7358049296202966
+        "cagr": 0.08390101061811772,
+        "max_drawdown": -0.06442025171557908,
+        "return": 0.25175892478679596,
+        "sharpe": 1.3196436122183643
       },
       "train": {
-        "cagr": 0.056321802148562305,
-        "max_drawdown": -0.05071118416269116,
-        "return": 0.10457401960504087,
-        "sharpe": 1.160088442661603
+        "cagr": 0.0056381789918065195,
+        "max_drawdown": -0.08248780649738796,
+        "return": 0.010257906307938436,
+        "sharpe": 0.11738875987128368
       }
     },
-    "run_at": "2026-10-16T13:28:38+00:00",
+    "run_at": "2026-10-16T13:54:19+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -1362,12 +1962,13 @@
       "valid_start": "2023-07-01"
     },
     "strategy": "SmaCrossStrategy",
-    "test_exposure": 0.5440289604953411,
-    "test_trades_per_year": 0.9302008295132067,
+    "test_exposure": 0.6091395114714143,
+    "test_trades_per_year": 3.415165902641345,
     "timeframe": "1D"
   },
   "tree_1min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -1486,7 +2087,7 @@
     "description": "Decision tree (arXiv:2405.13959), paper settings, 1-min bars",
     "fit": "ticker",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {},
@@ -1534,7 +2135,8 @@
         "sharpe": -9.76330143776994
       }
     },
-    "run_at": "2026-10-16T13:30:54+00:00",
+    "run_at": "2026-10-16T13:58:30+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0
@@ -1550,7 +2152,8 @@
     "timeframe": "1min"
   },
   "tree_30min": {
-    "code_sha256": "a0222a854bca8dc4",
+    "capital": 10000.0,
+    "code_sha256": "49881f9930d951ba",
     "costs": {
       "commission_per_share": 0.005,
       "min_commission": 1.0,
@@ -1669,7 +2272,7 @@
     "description": "Decision tree, 30-min bars, depth tuned",
     "fit": "ticker",
     "git": {
-      "commit": "ed3dd7f7d14bac1db31ed3bab3d70b1cb38e3dc5",
+      "commit": "9de1c244a8d6384fc5c7f8d2ffc87afd1d857025",
       "dirty": true
     },
     "grid": {
@@ -1723,7 +2326,8 @@
         "sharpe": 1.4942094519827647
       }
     },
-    "run_at": "2026-10-16T13:31:14+00:00",
+    "run_at": "2026-10-16T13:58:56+00:00",
+    "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
       "risk_per_trade": 1.0

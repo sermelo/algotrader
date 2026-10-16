@@ -88,7 +88,11 @@ close, filled at the next open. No stop by default.
 - **Model:** scikit-learn `HistGradientBoostingClassifier` (`max_depth` 3, 200
   iterations, learning rate 0.05, L2 1.0, `random_state` 0), handling missing values
   natively. One model is fitted on all tickers' training bars together (`fit_many`).
-- `want_long` while the predicted probability > `p_enter`.
+- `want_long` while the predicted probability is above `p_enter`, the
+  `entry_quantile` of the probabilities the model gives its own training bars (so
+  about `1 - entry_quantile` of training bars are long). A relative threshold adapts
+  to the label's base rate; an absolute one left the first version almost never
+  trading.
 
 ## Experiments (`algotrader/experiments.py`)
 
@@ -99,10 +103,13 @@ close, filled at the next open. No stop by default.
   chosen setting is refitted on the full training period.
 - Selection score: Sharpe of the equal-weight portfolio of all tickers (each ticker's
   daily equity normalised to 1, returns averaged daily). Test data is never used for
-  selection (unit-tested).
+  selection (unit-tested). A grid point is eligible only if the median ticker made at
+  least 5 trades in the scoring window; if none is, the best is used and flagged.
 - Each test run starts at 2024-01-01 using earlier bars only as indicator warm-up,
   is run with costs (headline) and without ("gross"), fully invested
-  (`risk` 1, `max_frac` 1), $10,000 per ticker, IBKR commissions.
+  (`risk` 1, `max_frac` 1), IBKR commissions, $10,000 per ticker unless the
+  experiment sets `capital` (the `_100k` variants use $100,000, where the $1 minimum
+  stops binding and commissions are $0.005 / price per side).
 
 ## Bars
 

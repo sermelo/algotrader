@@ -1,7 +1,7 @@
-params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
-"{""min_ret"": 0.0, ""require_r12"": false}",-0.0606105,-0.0338589,-1.44539,-0.0658841,-1.09467
-"{""min_ret"": 0.0, ""require_r12"": true}",-0.0383924,-0.0213364,-1.37945,-0.0478834,-0.725837
-"{""min_ret"": 0.0025, ""require_r12"": false}",-0.0425207,-0.0236533,-1.19479,-0.0463533,-0.644653
-"{""min_ret"": 0.0025, ""require_r12"": true}",-0.0307001,-0.0170312,-1.26567,-0.0394142,-0.639794
-"{""min_ret"": 0.005, ""require_r12"": false}",-0.0321534,-0.0178434,-1.04623,-0.0364751,-0.882785
-"{""min_ret"": 0.005, ""require_r12"": true}",-0.0302104,-0.0167577,-1.44221,-0.0371637,-0.741375
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""min_ret"": 0.0, ""require_r12"": false}",-0.0606105,-0.0338589,-1.44539,-0.0658841,-1.09467,232,True
+"{""min_ret"": 0.0, ""require_r12"": true}",-0.0383924,-0.0213364,-1.37945,-0.0478834,-0.725837,126,True
+"{""min_ret"": 0.0025, ""require_r12"": false}",-0.0425207,-0.0236533,-1.19479,-0.0463533,-0.644653,180,True
+"{""min_ret"": 0.0025, ""require_r12"": true}",-0.0307001,-0.0170312,-1.26567,-0.0394142,-0.639794,101,True
+"{""min_ret"": 0.005, ""require_r12"": false}",-0.0321534,-0.0178434,-1.04623,-0.0364751,-0.882785,138,True
+"{""min_ret"": 0.005, ""require_r12"": true}",-0.0302104,-0.0167577,-1.44221,-0.0371637,-0.741375,77,True

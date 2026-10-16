@@ -1,13 +1,13 @@
-params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
-"{""entry"": 5.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": null}",0.02931,0.0160422,0.503022,-0.0236933,0.270926
-"{""entry"": 5.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": 200}",0.00352523,0.00194053,0.185011,-0.00938344,-0.0595913
-"{""entry"": 5.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": null}",0.0201091,0.0110286,0.247049,-0.0337137,0.176316
-"{""entry"": 5.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": 200}",-0.0018121,-0.000998704,-0.058497,-0.0200292,-0.0654362
-"{""entry"": 10.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": null}",0.0443599,0.0241998,0.529574,-0.0379797,0.274066
-"{""entry"": 10.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": 200}",0.00955905,0.00525488,0.331096,-0.0229295,0.0690851
-"{""entry"": 10.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": null}",0.0124305,0.006829,0.136821,-0.0536968,0.0682461
-"{""entry"": 10.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": 200}",0.00406421,0.00223695,0.111105,-0.0277443,-0.0183534
-"{""entry"": 20.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": null}",0.0254713,0.013953,0.253008,-0.074227,0.301717
-"{""entry"": 20.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": 200}",0.0179367,0.00984198,0.432239,-0.0329621,-0.0399764
-"{""entry"": 20.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": null}",-0.00540969,-0.00298386,-0.00111731,-0.0784512,0.110131
-"{""entry"": 20.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": 200}",0.0111793,0.00614337,0.227074,-0.0404172,0.0355395
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""entry"": 5.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": null}",0.02931,0.0160422,0.503022,-0.0236933,0.270926,12,True
+"{""entry"": 5.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": 200}",0.00352523,0.00194053,0.185011,-0.00938344,-0.0595913,3,False
+"{""entry"": 5.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": null}",0.0201091,0.0110286,0.247049,-0.0337137,0.176316,11,True
+"{""entry"": 5.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": 200}",-0.0018121,-0.000998704,-0.058497,-0.0200292,-0.0654362,3,False
+"{""entry"": 10.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": null}",0.0443599,0.0241998,0.529574,-0.0379797,0.274066,23,True
+"{""entry"": 10.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": 200}",0.00955905,0.00525488,0.331096,-0.0229295,0.0690851,6,True
+"{""entry"": 10.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": null}",0.0124305,0.006829,0.136821,-0.0536968,0.0682461,19,True
+"{""entry"": 10.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": 200}",0.00406421,0.00223695,0.111105,-0.0277443,-0.0183534,6,True
+"{""entry"": 20.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": null}",0.0254713,0.013953,0.253008,-0.074227,0.301717,36,True
+"{""entry"": 20.0, ""exit_sma"": 5, ""rsi_period"": 2, ""trend_sma"": 200}",0.0179367,0.00984198,0.432239,-0.0329621,-0.0399764,12,True
+"{""entry"": 20.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": null}",-0.00540969,-0.00298386,-0.00111731,-0.0784512,0.110131,29,True
+"{""entry"": 20.0, ""exit_sma"": 10, ""rsi_period"": 2, ""trend_sma"": 200}",0.0111793,0.00614337,0.227074,-0.0404172,0.0355395,11,True

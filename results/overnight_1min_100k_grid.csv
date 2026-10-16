@@ -1,0 +1,5 @@
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe,median_trades,eligible
+"{""trend_days"": null}",-0.0475141,-0.0264616,-0.180146,-0.183484,0.025207,458,True
+"{""trend_days"": 20}",-0.00120372,-0.000663315,0.0188242,-0.0636334,0.052316,230,True
+"{""trend_days"": 50}",-0.0226349,-0.0125337,-0.189018,-0.08359,0.0301413,216,True
+"{""trend_days"": 200}",0.0200134,0.0109764,0.320716,-0.0456214,-0.0638699,165,True

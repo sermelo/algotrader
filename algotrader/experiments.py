@@ -10,7 +10,9 @@ period. Strategies that learn (`fit="ticker"`: one model per ticker, or
 `fit="pooled"`: one model on all tickers' bars) are fitted before VALID_START and
 the grid is scored on VALID_START .. TEST_START; the chosen setting is then refitted
 on the whole training period. The test period is also run without costs ("gross")
-to show how much of any edge costs take. The selection score is the Sharpe of the
+to show how much of any edge costs take. A grid point is only eligible if its median
+ticker made at least MIN_TRADES trades in the scoring window, so a setting that
+barely trades cannot win on a lucky handful of trades. The selection score is the Sharpe of the
 equal-weight portfolio of all tickers (each ticker's equity normalised to 1).
 
 Usage:
@@ -52,6 +54,7 @@ TRAIN_START = "2022-03-01"
 VALID_START = "2023-07-01"
 TEST_START = "2024-01-01"
 CAPITAL = 10_000.0
+MIN_TRADES = 5
 IBKR = CostModel()                                           # $0.005/share, $1 minimum
 FULL = PositionSizer(risk_per_trade=1.0, max_position_frac=1.0)   # fully invested
 PACKAGE_DIR = Path(__file__).parent
@@ -69,6 +72,7 @@ class Experiment:
     costs: CostModel = IBKR
     sizer: PositionSizer = FULL
     fit: str = ""                 # "", "ticker" (fit per ticker) or "pooled" (one model)
+    capital: float = CAPITAL      # starting equity per ticker
 
     def combos(self) -> list:
         """Parameter dicts to try: `params` updated with each point of `grid`."""
@@ -110,8 +114,19 @@ EXPERIMENTS = [
                {"entry": [5.0, 10.0, 20.0], "exit_sma": [5, 10], "trend_sma": [None, 200]}),
     Experiment("gbm_30min", "Gradient boosting, cost-aware label, pooled over tickers",
                GradientBoostingStrategy, "30min", {},
-               {"horizon": [4, 13], "threshold": [0.002, 0.005], "p_enter": [0.55, 0.65]},
+               {"horizon": [4, 13], "threshold": [0.002, 0.005], "entry_quantile": [0.8, 0.9]},
                fit="pooled"),
+    Experiment("gbm_daily", "Gradient boosting on daily bars, pooled over tickers",
+               GradientBoostingStrategy, "1D", {},
+               {"horizon": [1, 5], "threshold": [0.0, 0.01], "entry_quantile": [0.7, 0.85]},
+               fit="pooled"),
+    Experiment("overnight_1min_100k", "Overnight hold with $100,000 per ticker (cost share)",
+               OvernightStrategy, "1min", {}, {"trend_days": [None, 20, 50, 200]},
+               capital=100_000.0),
+    Experiment("orb_5min_100k", "Opening-range breakout with $100,000 per ticker (cost share)",
+               OpeningRangeBreakoutStrategy, "5min", {},
+               {"or_minutes": [5, 15, 30], "min_rel_volume": [0.0, 1.5, 2.5]},
+               capital=100_000.0),
 ]
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
@@ -124,7 +139,7 @@ def _backtest(exp, params, bars, phase, model=None):
     train = bars[bars.index < TEST_START]
     strat = model if model is not None else exp.strategy(**params)
     costs = CostModel(0.0, 0.0) if phase == "gross" else exp.costs
-    engine = Backtester(strat, costs, exp.sizer, CAPITAL)
+    engine = Backtester(strat, costs, exp.sizer, exp.capital)
     if exp.fit == "ticker":
         strat.fit(train[train.index < VALID_START] if phase == "grid" else train)
     if phase == "grid" and exp.fit:              # fitted models: score on validation only
@@ -165,7 +180,7 @@ def _run_ticker(args):
     for phase, k, params, model in jobs:
         result, period_bars = _backtest(exp, params, bars, phase, model)
         summary = Metrics(result, period_bars).summary()
-        daily = _daily_curve(result.equity, CAPITAL)
+        daily = _daily_curve(result.equity, exp.capital)
         hold = _daily_curve(period_bars["close"], period_bars["open"].iloc[0])
         out.append((phase, k, ticker, summary, daily, hold))
     return out
@@ -195,7 +210,7 @@ def _map(fn, jobs, workers):
 def run_experiment(exp: Experiment, data_dir, tickers, workers=3) -> dict:
     """Tune on train, then run train and test with the chosen parameters."""
     combos = exp.combos()
-    grid_rows, best = [], 0
+    grid_rows, best, note = [], 0, ""
     pooled = exp.fit == "pooled"
     frames = _train_frames(exp, data_dir, tickers) if pooled else None
     if len(combos) > 1:
@@ -204,17 +219,27 @@ def run_experiment(exp: Experiment, data_dir, tickers, workers=3) -> dict:
         jobs = [(exp.name, t, str(data_dir),
                  [("grid", k, p, models[k]) for k, p in enumerate(combos)]) for t in tickers]
         curves = {k: {} for k in range(len(combos))}
-        med = {k: [] for k in range(len(combos))}
+        sharpes = {k: [] for k in range(len(combos))}
+        trades = {k: [] for k in range(len(combos))}
         for chunk in _map(_run_ticker, jobs, workers):
             for _, k, ticker, summary, daily, _ in chunk:
                 curves[k][ticker] = daily
-                med[k].append(summary["sharpe"])
+                sharpes[k].append(summary["sharpe"])
+                trades[k].append(summary["trades"])
         for k, p in enumerate(combos):
             stats = portfolio_stats(curves[k])
+            med_trades = float(np.median(trades[k]))
             grid_rows.append({"params": json.dumps(p, sort_keys=True), **{
                 f"portfolio_{s}": v for s, v in stats.items()},
-                "median_ticker_sharpe": float(np.nanmedian(med[k])) if med[k] else np.nan})
-        scores = [r["portfolio_sharpe"] for r in grid_rows]
+                "median_ticker_sharpe": float(np.nanmedian(sharpes[k]))
+                if not np.isnan(sharpes[k]).all() else np.nan,
+                "median_trades": med_trades, "eligible": med_trades >= MIN_TRADES})
+        scores = np.array([r["portfolio_sharpe"] for r in grid_rows], dtype=float)
+        eligible = np.array([r["eligible"] for r in grid_rows])
+        if eligible.any():
+            scores[~eligible] = np.nan
+        else:
+            note = f"no grid point reached {MIN_TRADES} median trades; best of all shown"
         best = int(np.nanargmax(np.nan_to_num(scores, nan=-np.inf)))
     params = combos[best]
     model = _fit_pooled(exp, params, frames, TEST_START) if pooled else None
@@ -227,7 +252,8 @@ def run_experiment(exp: Experiment, data_dir, tickers, workers=3) -> dict:
         for phase, _, ticker, summary, daily, hold in chunk:
             rows.append({"ticker": ticker, "period": phase, **summary})
             curves[phase][ticker], holds[phase][ticker] = daily, hold
-    return {"params": params, "rows": pd.DataFrame(rows), "grid": pd.DataFrame(grid_rows),
+    return {"params": params, "note": note, "rows": pd.DataFrame(rows),
+            "grid": pd.DataFrame(grid_rows),
             "portfolio": {ph: portfolio_stats(curves[ph]) for ph in curves},
             "hold": {ph: portfolio_stats(holds[ph]) for ph in holds},
             "test_equity": pd.DataFrame(curves["test"]).sort_index()}
@@ -296,20 +322,23 @@ def write_summary(out_dir):
         "Generated by `python -m algotrader.experiments`; do not edit by hand.",
         f"Split: train {TRAIN_START} to {TEST_START} (parameters chosen here), "
         f"test {TEST_START} to end of data (out of sample). Equal-weight portfolio of all "
-        "tickers, $10,000 per ticker, fully invested when in a position, IBKR commissions "
-        "unless noted. B&H = buy and hold of the same tickers over the same period.", "",
-        "| Experiment | Bars | Chosen parameters | Test return | Test Sharpe | Test max DD "
+        "tickers, fully invested when in a position, IBKR commissions. "
+        "B&H = buy and hold of the same tickers over the same period. A grid point needs a "
+        f"median of {MIN_TRADES} trades per ticker in its scoring window to be chosen.", "",
+        "| Experiment | Bars | Capital/ticker | Chosen parameters | Test return | Test Sharpe | Test max DD "
         "| Before costs: return, Sharpe | B&H return | B&H Sharpe | Train Sharpe "
         "| Trades/yr per ticker | Time in market | Code |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for name in [e.name for e in EXPERIMENTS if e.name in manifest]:
         m = manifest[name]
         te, tr, bh = m["portfolio"]["test"], m["portfolio"]["train"], m["hold"]["test"]
         gr = m["portfolio"]["gross"]
         stale = "" if m["code_sha256"] == current else " (stale)"
         params = ", ".join(f"{k}={v}" for k, v in sorted(m["params"].items())) or "defaults"
+        if m.get("selection_note"):
+            params += f" ({m['selection_note']})"
         lines.append(
-            f"| `{name}` | {m['timeframe']} | {params} | {_pct(te['return'])} | {_num(te['sharpe'])} "
+            f"| `{name}` | {m['timeframe']} | ${m.get('capital', CAPITAL):,.0f} | {params} | {_pct(te['return'])} | {_num(te['sharpe'])} "
             f"| {_pct(te['max_drawdown'])} | {_pct(gr['return'])}, {_num(gr['sharpe'])} "
             f"| {_pct(bh['return'])} | {_num(bh['sharpe'])} "
             f"| {_num(tr['sharpe'])} | {m['test_trades_per_year']:.0f} | {m['test_exposure']:.0%} "
@@ -346,6 +375,7 @@ def main(argv=None):
                  "timeframe": exp.timeframe, "params": res["params"],
                  "grid": {k: [str(v) for v in vs] for k, vs in exp.grid.items()},
                  "costs": vars(exp.costs), "sizer": vars(exp.sizer), "fit": exp.fit,
+                 "capital": exp.capital, "selection_note": res["note"],
                  "split": {"train_start": TRAIN_START, "valid_start": VALID_START,
                            "test_start": TEST_START},
                  "portfolio": res["portfolio"], "hold": res["hold"],

@@ -32,7 +32,8 @@ def test_learns_planted_pattern_out_of_sample():
         days.append(day)
     bars = make_days(days)
     split = bars.index[13 * 40]
-    strat = GradientBoostingStrategy(horizon=1, threshold=0.005, p_enter=0.5, max_iter=50)
+    # 4 of 13 bars per day precede a jump (31%): enter above the 68th percentile
+    strat = GradientBoostingStrategy(horizon=1, threshold=0.005, entry_quantile=0.68, max_iter=50)
     strat.fit_many([bars[bars.index < split]])
     ind = strat.indicators(bars)
     later = ind[ind.index >= split]
@@ -45,8 +46,19 @@ def test_learns_planted_pattern_out_of_sample():
 def test_validation_and_fit_required():
     with pytest.raises(RuntimeError):
         GradientBoostingStrategy().indicators(make_bars([1, 2, 3]))
-    for kwargs in ({"horizon": 0}, {"p_enter": 1.0}, {"max_depth": 0}):
+    for kwargs in ({"horizon": 0}, {"entry_quantile": 1.0}, {"max_depth": 0}):
         with pytest.raises(ValueError):
             GradientBoostingStrategy(**kwargs)
     with pytest.raises(ValueError):
         GradientBoostingStrategy(threshold=0.5).fit(make_bars([100 + 0.01 * i for i in range(50)]))
+
+
+def test_entry_threshold_is_training_quantile():
+    rng = np.random.default_rng(3)
+    bars = make_days([list(100 + np.cumsum(rng.normal(0, 0.3, 13))) for _ in range(40)])
+    strat = GradientBoostingStrategy(horizon=2, threshold=0.0, entry_quantile=0.75,
+                                     max_iter=30).fit(bars)
+    ind = strat.indicators(bars)
+    # on its own training bars, about a quarter of predictions are above the threshold
+    assert 0.15 < ind["want_long"].mean() < 0.3
+    assert 0 < strat.p_enter < 1
