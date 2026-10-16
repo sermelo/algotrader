@@ -8,7 +8,13 @@ priority list; keep it updated as items are done).
 - Everything is committed and pushed: 28 experiments on the core (27 tickers,
   `results/`) and broad (107 tickers, `results/broad/`) universes, all fingerprints
   current, 158 tests passing.
-- Nothing is running on the VPS. `~/algotrader-work` there holds the code as of commit
+- **Running on the VPS:** `scripts/history_queue.sh` (Tiingo daily prices, first ~500
+  symbols of the free monthly quota; log `~/algotrader-work/history.log`, done marker
+  `history_queue.done`). On or after 2026-11-01 run it again for the remaining ~216
+  symbols, then `python -m algotrader.history check`, run `python -m algotrader.longrun`
+  on the VPS, `python -m algotrader.french report --results results/long`, and commit
+  `results/long/` (see ROADMAP "Long-history runner"). Nothing else is running.
+- Earlier note: `~/algotrader-work` there holds the code as of commit
   `63456db` (without `factors.py`); rsync the working tree again before the next run.
 - Headline: no strategy clears the luck bar (317 configurations, Sharpe 1.61) or has
   significant alpha. Most consistent: long-short momentum (alpha t 1.49 core, 1.52

@@ -151,7 +151,10 @@ high, value, profitability, asset growth, seasonality, earnings drift; long-only
 long-short) on the point-in-time S&P 500 from 2008, yearly folds from 2012. Smoke test on
 WIKI only (2012 to Mar 2018, no SPY): low vol 1.20, momentum 1.02, not committed.
 **Full results need all Tiingo prices:** about 716 symbols, 500 a month on the free
-plan, so the complete set is expected after the quota resets (November 2026). Then:
+plan. **Decision (sergio, 2026-10-16): wait for the free quota to reset in November**
+(no paid plan). First batch of ~500 runs on the VPS on 2026-10-16/17; on or after
+2026-11-01 rerun `scripts/history_queue.sh` on the VPS (it resumes, skipping saved
+symbols) for the remaining ~216. Then:
 `python -m algotrader.history check`, `python -m algotrader.longrun` on the VPS,
 `python -m algotrader.french report --results results/long`, commit `results/long/`.
 
