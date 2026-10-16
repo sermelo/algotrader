@@ -120,6 +120,30 @@ Norgate) not checked yet.
 results show the survivorship gap matters; then prefer an ongoing subscription
 (Sharadar Prices full history, $299/year) over a one-month download.
 
+### D1 findings (2026-10-16, while building it)
+
+- Accounts: Kaggle token in `~/.kaggle/access_token`, Tiingo token in
+  `~/.config/tiingo/token` (both chmod 600, never print or commit). Same paths on the VPS.
+- **Tiingo free serves delisted stocks** with split/dividend-adjusted daily history
+  (checked: TWTR 2013-2022). Its supported-ticker list
+  (`apimedia.tiingo.com/docs/tiingo/daily/supported_tickers.zip`, no key needed) has
+  about 7,600 US stocks that ended before 2026. Free limits (third-party, unverified):
+  500 unique symbols a month, 50 requests an hour, 1,000 a day. So about 700 tickers
+  take two months and must be throttled (one request per about 75 s).
+- **Kaggle `marketneutral/quandl-wiki-prices-us-equites`**: 3,199 US tickers incl.
+  delisted, adjusted OHLCV, to 2018-03-27 (1.8 GB CSV, 463 MB zip).
+- **Universe:** point-in-time S&P 500 membership (GitHub `hanshof/sp500_constituents`,
+  MIT, daily lists 1996-01-02 to 2025-08-23). Members found in Tiingo or WIKI: 74% in
+  1996, 86% in 2005, 95% in 2008, 98% in 2010, 100% from 2013. Start the long
+  history in 2008 (818 members since then: 42 complete in WIKI, 710 in Tiingo, 66 not
+  found by ticker, mostly renames such as ABC->COR, ANTM->ELV, BLL->BALL, or failures
+  before 2009 such as LEHMQ, WAMUQ, BSC).
+- **Ticker identity is the main risk:** tickers are reused and renamed (Tiingo `BK` is
+  now a Canadian fund; `EQR` resolves to a renamed company). Each series must be checked:
+  its dates must cover the membership period, and its returns must match WIKI (before
+  2018) or the HF data (from 2022) where they overlap. Unmatched tickers are logged,
+  not guessed.
+
 ## Recommended order
 
 1. ~~D2 and M1~~ done: current "alphas" are factor exposure (see M1).
