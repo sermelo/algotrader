@@ -417,7 +417,14 @@ commit `7fc720e` and earlier):
 - Clean-version data has some bars removed by the provider's outlier filter.
 - Prices are as provided; corporate-action handling is the provider's. Check before
   trusting long histories.
-- Results are pre-tax. Not investment advice.
+- **Not all of it is tradable from an EU retail account** (PRIIPs: no US-domiciled ETFs,
+  see `ROADMAP.md`). The core universe holds 4 index ETFs (SPY, QQQ, IWM, DIA) and broad
+  adds 11 sector, bond and gold ETFs, so every single-ticker experiment includes ETF
+  trades; dual momentum, multi-horizon trend, sector momentum and the SPY/DIA and
+  QQQ/XLK pairs trade only or mainly ETFs. The long-history experiments trade S&P 500
+  stocks only (SPY is just the benchmark).
+- Results are pre-tax (the Spanish two-month rule on repurchased losses is not modelled).
+  Not investment advice.
 
 ## License
 
