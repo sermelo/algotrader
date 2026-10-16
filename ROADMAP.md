@@ -104,10 +104,18 @@ Paid options that close the gap (prices as listed on 2026-10-16; check before bu
 | Tiingo Power | $30/month | More symbols and requests | Delisted coverage not documented |
 | CRSP (WRDS) | n/a | The academic standard | Only through a university affiliation |
 
-Recommendation: free sources for D2, D3, then one Sharadar Prices (full history) month
-for D1 + D4 (download everything during the month, stored under `data/`, never
-committed), or the Bundle month if pre-2010 fundamentals matter. Status: waiting for
-sergio's decision.
+**One month and keep the data is not allowed by Sharadar** (terms, section 10, read
+2026-10-16): on termination you must stop using the data and delete all copies,
+including bulk downloads, within 30 days (an affidavit may be requested). You may keep
+backtest results, models and other derived work that cannot reproduce the data. No
+refunds on cancellation. So one month would only let us run every experiment inside
+that month; reruns after a code change would need a new subscription, which breaks our
+"results committed with the code" workflow. Other vendors' retention terms (EODHD,
+Norgate) not checked yet.
+
+**Decision (sergio, 2026-10-16): free route for now.** Paid data only if the free
+results show the survivorship gap matters; then prefer an ongoing subscription
+(Sharadar Prices full history, $299/year) over a one-month download.
 
 ## Recommended order
 
