@@ -186,6 +186,16 @@ claims, not reproduced by this code; our own results are in `results/summary.md`
 - **Here:** `MultiHorizonTrend` (`trend.py`) on the ETFs available (no commodities or
   currencies beyond gold), long-short and long/cash.
 
+## Factor momentum (Ehsani & Linnainmaa, 2022)
+
+- "Factor momentum and the momentum factor", *Journal of Finance* 77(3), 2022: factors
+  earn 51 bp a month after a positive year and 6 bp after a negative one; time-series
+  factor momentum subsumes much of stock momentum (disputed for global markets).
+- **Here (check only, 2026-10-17):** on the six Kenneth French factors, monthly, long a
+  factor after a positive 12 months and short after a negative one, against holding the
+  six equally: alpha +0.1% a year (t 0.10) over 1964-2018, +2.2% (t 1.03) over
+  2019-2026. Not implemented as a strategy.
+
 ## Deep learning (researched 2026-10-16, not implemented)
 
 Ranked by the published evidence (peer review, out of sample after costs, independent
