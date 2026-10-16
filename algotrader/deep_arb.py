@@ -159,36 +159,54 @@ class DeepArbModel:
                     out.loc[d, returns.columns[cols]] = stock_weights(a, W, beta)
         return out
 
+    def _batches(self, days, E, R, loadings, pos):
+        """Padded tensors per batch of `batch_days` days: inputs (B, N, L), mask (B, N),
+        W and beta (B, N, k), next-day returns (B, N), global column ids (B, N)."""
+        torch = _torch()
+        days_data = []
+        for d in days:
+            x, ok, W, beta, nxt, cols = self._day_tensors(E, R, loadings, None, pos, d)
+            if np.isfinite(nxt).any():
+                days_data.append((x, ok, W, beta, np.nan_to_num(nxt), cols))
+        dummy = len(self._col)                                  # padding column id
+        out = []
+        for b in range(0, len(days_data), self.batch_days):
+            chunk = days_data[b:b + self.batch_days]
+            B, N = len(chunk), max(len(c[5]) for c in chunk)
+            X = np.zeros((B, N, self.lookback), np.float32)
+            M = np.zeros((B, N), np.float32)
+            Wt = np.zeros((B, N, self.k), np.float32)
+            Bt = np.zeros((B, N, self.k), np.float32)
+            Rt = np.zeros((B, N), np.float32)
+            C = np.full((B, N), dummy, np.int64)
+            for i, (x, ok, W, beta, nxt, cols) in enumerate(chunk):
+                n = len(cols)
+                X[i, :n], M[i, :n], Wt[i, :n], Bt[i, :n], Rt[i, :n], C[i, :n] = x, ok, W, beta, nxt, cols
+            out.append(tuple(torch.from_numpy(a) for a in (X, M, Wt, Bt, Rt, C)))
+        return out
+
     def _fit(self, days, E, R, loadings, pos):
+        """Adam on the negative Sharpe of each batch's daily net returns (vectorised
+        over the days of a batch; same objective as one day at a time)."""
         torch = _torch()
         model = build_model(seed=self.seed)
         opt = torch.optim.Adam(model.parameters(), lr=self.lr)
-        data = []
-        for d in days:
-            x, ok, W, beta, nxt, cols = self._day_tensors(E, R, loadings, None, pos, d)
-            if not np.isfinite(nxt).any():
-                continue
-            data.append((torch.tensor(x, dtype=torch.float32), torch.tensor(ok, dtype=torch.float32),
-                         torch.tensor(W, dtype=torch.float32), torch.tensor(beta, dtype=torch.float32),
-                         torch.tensor(np.nan_to_num(nxt), dtype=torch.float32), cols))
+        batches = self._batches(days, E, R, loadings, pos)
         c, s = self.cost_bps / 1e4, self.short_bps_year / 1e4 / 252
+        ncol = len(self._col) + 1
         for epoch in range(self.epochs):
             model.train()
             total = []
-            for b in range(0, len(data), self.batch_days):
-                rets, prev = [], None
-                for x, ok, W, beta, nxt, cols in data[b:b + self.batch_days]:
-                    a = model(x) * ok
-                    w = a - W @ (beta.T @ a)
-                    w = w / (w.abs().sum() + 1e-12)
-                    full = torch.zeros(len(self._col))
-                    full = full.index_put((torch.tensor(cols),), w)
-                    cost = s * torch.clamp(full, max=0).abs().sum()
-                    if prev is not None:
-                        cost = cost + c * (full - prev).abs().sum()
-                    rets.append((w * nxt).sum() - cost)
-                    prev = full
-                r = torch.stack(rets)
+            for X, M, W, Bt, Rn, C in batches:
+                B, N, L = X.shape
+                a = model(X.reshape(B * N, L)).reshape(B, N) * M
+                w = a - torch.einsum("bnk,bk->bn", W, torch.einsum("bnk,bn->bk", Bt, a))
+                w = w * (C < ncol - 1)                          # padding rows
+                w = w / (w.abs().sum(dim=1, keepdim=True) + 1e-12)
+                full = torch.zeros(B, ncol).scatter(1, C, w)[:, :-1]
+                cost = s * torch.clamp(full, max=0).abs().sum(dim=1)
+                turn = torch.cat([torch.zeros(1), (full[1:] - full[:-1]).abs().sum(dim=1)])
+                r = (w * Rn).sum(dim=1) - cost - c * turn
                 loss = -r.mean() / (r.std() + 1e-8)
                 opt.zero_grad()
                 loss.backward()
