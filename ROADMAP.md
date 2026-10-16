@@ -196,6 +196,15 @@ symbols) for the remaining ~216. Then:
 `python -m algotrader.history check`, `python -m algotrader.longrun` on the VPS,
 `python -m algotrader.french report --results results/long`, commit `results/long/`.
 
+### Changes to batch into one full rerun
+
+These touch shared code (`costs.py`, `engine.py`, `intraday.py`), so each would make every
+or many existing results stale and need the ~10-hour VPS rerun. Do them together:
+- an IBKR Pro Tiered `CostModel` variant (see "Constraints for trading it live");
+- shorting in the single-ticker engine (S12 long-short intraday momentum);
+- ORB 10R profit target and "stocks in play" ranking (S13);
+- overnight day-of-week and earnings-gap filters (S13; earnings dates from D3).
+
 ## Recommended order
 
 1. ~~D2 and M1~~ done: current "alphas" are factor exposure (see M1).
