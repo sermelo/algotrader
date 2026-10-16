@@ -66,6 +66,8 @@ Unverified figures, see https://www.interactivebrokers.com/en/pricing/commission
   a few $ to ~$15 a month.
 - **Paper trading** fills at best bid/ask with no queue or depth, so it overstates live
   results.
+- **Integration (TWS API via IB Gateway + ib_async, IBC, paper first, market data, API
+  limits, safety controls):** see [`docs/ibkr-integration.md`](docs/ibkr-integration.md).
 
 ## Priority list
 

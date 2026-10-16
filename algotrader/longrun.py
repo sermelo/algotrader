@@ -96,7 +96,8 @@ class LongExperiment:
     fixed: dict
     grid: dict
     allow_short: bool = False
-    prepare: object = field(default=None, repr=False, compare=False)   # (frames) -> extra kwargs
+    prepare: object = field(default=None, repr=False, compare=False)   # (frames, members) -> kwargs
+    first_fold: int = FIRST_FOLD
 
     def combos(self) -> list:
         keys = sorted(self.grid)
@@ -122,7 +123,7 @@ EDGAR = Path("data/edgar")
 _PANELS = {}
 
 
-def fundamental_panels(frames: dict, edgar=EDGAR) -> dict:
+def fundamental_panels(frames: dict, members=None, edgar=EDGAR) -> dict:
     """Signal panels for FundamentalSort from the SEC facts and unadjusted closes
     (computed once per set of frames)."""
     from .fundamentals import signals
@@ -135,7 +136,7 @@ def fundamental_panels(frames: dict, edgar=EDGAR) -> dict:
     return _PANELS[id(frames)]
 
 
-def earnings_panels(frames: dict, edgar=EDGAR) -> dict:
+def earnings_panels(frames: dict, members=None, edgar=EDGAR) -> dict:
     """EAR panels (hold 21 and 63 days) for EarningsDrift from the SEC earnings releases;
     the market is SPY if loaded, else the equal-weight average of the stocks."""
     from .pead import announcement_returns
@@ -155,8 +156,31 @@ def earnings_panels(frames: dict, edgar=EDGAR) -> dict:
     return _PANELS[key]
 
 
+DEEP_EPOCHS = 100
+
+
+def deep_arb_panels(frames: dict, members=None, k: int = 5, epochs=None) -> dict:
+    """Weights of the deep statistical-arbitrage model (PCA residuals of that day's
+    members, walk-forward refits); slow: run on the VPS."""
+    from .deep_arb import DeepArbModel, pca_residuals
+    key = ("deep", id(frames), k)
+    if key in _PANELS:
+        return _PANELS[key]
+    closes = pd.DataFrame({t: f["close"] for t, f in frames.items() if t != BENCHMARK})
+    rets = closes.pct_change(fill_method=None)
+    daily = None
+    if members is not None:
+        m = members.reindex(columns=closes.columns, fill_value=False).astype(float)
+        daily = m.reindex(index=closes.index.union(m.index)).ffill().reindex(closes.index).fillna(0.0) > 0.5
+    eps, load = pca_residuals(rets, daily, k=k)
+    model = DeepArbModel(k=k, epochs=epochs or DEEP_EPOCHS)
+    _PANELS[key] = {"panels": {f"deep_arb_k{k}": model.weights_panel(rets, eps, load)}}
+    return _PANELS[key]
+
+
 def _experiments():
     from .buffered import BufferedMomentum
+    from .deep_arb import DeepArb
     from .pead import EarningsDrift
     from .seasonal import SameMonthSeasonality
     from .fundamentals import FundamentalSort
@@ -202,6 +226,11 @@ def _experiments():
                                SameMonthSeasonality, {"years": 10},
                                {"min_years": [3, 5], "top_n": [20, 50], "short_n": [20, 50]},
                                allow_short=True))
+    # Roadmap S8: deep learning statistical arbitrage (Guijarro-Ordonez, Pelger & Zanotti);
+    # first model after 252 + 1,000 days of data, so its folds start in 2013.
+    exps.append(LongExperiment("deep_arb_long", "CNN+transformer on 5-factor PCA residuals",
+                               DeepArb, {"k": 5}, {}, allow_short=True,
+                               prepare=deep_arb_panels, first_fold=2013))
     # Roadmap S7: post-earnings drift on the announcement return (Brandt et al. 2008).
     exps.append(LongExperiment("pead_long", "Long the highest recent earnings-announcement returns",
                                EarningsDrift, {"every": "M"},
@@ -254,7 +283,7 @@ def fold_starts(index: pd.DatetimeIndex, first=FIRST_FOLD) -> list:
 
 def run_long(exp: LongExperiment, frames: dict, members: pd.DataFrame) -> dict:
     combos = exp.combos()
-    extra = exp.prepare(frames) if exp.prepare else None
+    extra = exp.prepare(frames, members) if exp.prepare else None
     runs = {}
 
     def run(k, var):
@@ -268,7 +297,7 @@ def run_long(exp: LongExperiment, frames: dict, members: pd.DataFrame) -> dict:
     index = next(iter(frames.values())).index
     for f in frames.values():
         index = index.union(f.index)
-    starts = fold_starts(index)
+    starts = fold_starts(index, exp.first_fold)
     grid, chosen = [], {}
     for F in starts:
         best, best_s = 0, -np.inf
@@ -306,10 +335,11 @@ def run_long(exp: LongExperiment, frames: dict, members: pd.DataFrame) -> dict:
 def fingerprint(exp: LongExperiment) -> str:
     import sys
     h = hashlib.sha256(Path(__file__).read_bytes())
-    for mod in ("portfolio", "costs", "stats", "history", "fundamentals",
+    for mod in ("portfolio", "costs", "stats", "history", "fundamentals", "pead", "deep_arb",
                 exp.strategy.__module__.rsplit(".", 1)[-1]):
         h.update(Path(sys.modules[f"algotrader.{mod}"].__file__).read_bytes())
-    h.update(repr((exp.name, exp.strategy.__name__, exp.fixed, exp.grid, exp.allow_short)).encode())
+    h.update(repr((exp.name, exp.strategy.__name__, exp.fixed, exp.grid, exp.allow_short,
+                   exp.first_fold)).encode())
     return h.hexdigest()
 
 
