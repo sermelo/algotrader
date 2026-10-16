@@ -7,6 +7,8 @@ minute bars. Written to replace an earlier, unverified set of scripts (see
 - `algotrader/` is the package, in a handful of small classes (see [Design](#design)).
 - `tests/` has the unit tests (`pytest`, 60 tests, about 1 second).
 - `STRATEGY.md` is the exact strategy and execution rules.
+- `R&D/` has summaries and full Markdown text of research papers on intraday trading
+  (`R&D/index.md`). Their results are the authors' claims, not reproduced here.
 
 ## Quick start
 
