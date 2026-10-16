@@ -26,6 +26,7 @@ def _facts():
         fact(1, "Revenues", "2012-12-31", 900, "2013-02-01", start="2012-01-01"),
         fact(1, "Revenues", "2012-12-31", 250, "2013-02-01", start="2012-10-01"),   # a quarter
         fact(1, "CostOfRevenue", "2012-12-31", 300, "2013-02-01", start="2012-01-01"),
+        fact(1, "OperatingIncomeLoss", "2012-12-31", 100, "2013-02-01", start="2012-01-01"),
         # company 2: equity negative -> no book-to-market
         fact(2, "StockholdersEquity", "2012-12-31", -50, "2013-02-01"),
         fact(2, "EntityCommonStockSharesOutstanding", "2013-01-15", 10, "2013-02-01"),
@@ -46,6 +47,8 @@ def test_signals_are_point_in_time():
     assert np.isnan(btm.loc["2013-03-01", "BBB"])                 # negative book equity
     assert s["asset_growth"].loc["2013-03-01", "AAA"] == pytest.approx(0.2)
     assert s["gross_profitability"].loc["2013-03-01", "AAA"] == pytest.approx((900 - 300) / 1200)
+    assert s["operating_profitability"].loc["2013-03-01", "AAA"] == pytest.approx(100 / 500)
+    assert s["operating_profitability"].loc["2013-05-02", "AAA"] == pytest.approx(100 / 600)  # amended equity
 
 
 def test_amendment_of_latest_period_updates_from_its_filing_date():

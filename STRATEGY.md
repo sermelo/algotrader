@@ -232,7 +232,8 @@ close, filled at the next open. No stop by default.
   equity (10-K/10-Q) / (latest shares outstanding x unadjusted close), negative equity
   excluded; gross profitability = latest annual gross profit (reported, else revenue -
   cost of revenue; 330-400-day periods) / latest annual total assets; asset growth =
-  latest annual assets / previous annual assets - 1. A value counts from the day after
+  latest annual assets / previous annual assets - 1; operating profitability (RMW-style)
+  = latest annual operating income / latest annual stockholders' equity (positive only). A value counts from the day after
   its filing date; for each date the value with the latest period end known so far is
   used (an amendment of that period replaces it from its own filing date; older periods
   reported later as comparatives do not).

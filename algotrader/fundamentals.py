@@ -12,6 +12,9 @@ Signals (daily panels, dates x tickers):
   Companies reporting neither (e.g. most banks) have no value.
 - **asset_growth** (Cooper, Gulen & Schill 2008): total assets at the latest annual
   report / at the one before - 1 (low growth is the long side).
+- **operating_profitability** (Fama & French 2015, as in their RMW factor): latest annual
+  operating income / latest annual stockholders' equity (positive equity only); covers
+  banks and insurers too.
 
 Strategy: `FundamentalSort` holds the `top_n` tickers with the best signal (and shorts
 the `short_n` worst), rebalanced at period ends, like the other cross-sectional ones.
@@ -110,9 +113,14 @@ def signals(facts: pd.DataFrame, cik_map: pd.DataFrame, raw_close: pd.DataFrame)
         rev.reindex(columns=cols) - cost.reindex(columns=cols))
     gp = gp_value / assets.reindex(columns=cols)
     growth = assets / assets_prev - 1
+    op = _latest_panel(_known(facts, ("OperatingIncomeLoss",), annual=True, duration_days=year),
+                       cik_of, index)
+    eq_annual = _latest_panel(_known(facts, EQUITY, annual=True), cik_of, index)
+    eq_annual = eq_annual.reindex(columns=op.columns)
+    opbe = (op / eq_annual).where(eq_annual > 0)
     clean = lambda df: df.reindex(columns=raw_close.columns).replace([np.inf, -np.inf], np.nan)
     return {"book_to_market": clean(btm), "gross_profitability": clean(gp),
-            "asset_growth": clean(growth)}
+            "asset_growth": clean(growth), "operating_profitability": clean(opbe)}
 
 
 @dataclass(frozen=True)

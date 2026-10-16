@@ -184,7 +184,10 @@ WIKI only (2012 to Mar 2018, no SPY): low vol 1.20, momentum 1.02, not committed
 factors, monthly correlation):** long-short momentum 0.83 with Mom (+2.8%/yr vs +3.3%),
 value 0.66 with HML, asset growth 0.50 with CMA, profitability 0.33 with RMW (RMW is
 operating profitability on all stocks; ours is gross profitability on S&P 500 members,
-banks missing). Momentum confirms the engine and data; profitability to be looked at.
+banks missing). Momentum confirms the engine and data. Profitability checked: with
+operating income / book equity (RMW's definition) coverage rises from 280 to 422 stocks
+and the correlation to 0.49; the rest is universe and weighting (French: all stocks,
+value-weighted size-sorted portfolios). Added as `op_profitability*_long`.
 **Full results need all Tiingo prices:** about 716 symbols, 500 a month on the free
 plan. **Decision (sergio, 2026-10-16): wait for the free quota to reset in November**
 (no paid plan). First batch of ~500 runs on the VPS on 2026-10-16/17; on or after

@@ -215,7 +215,9 @@ def _experiments():
     for name, sig, largest, desc in (
             ("value", "book_to_market", True, "high book-to-market"),
             ("profitability", "gross_profitability", True, "high gross profits / assets"),
-            ("asset_growth", "asset_growth", False, "low total-asset growth")):
+            ("asset_growth", "asset_growth", False, "low total-asset growth"),
+            ("op_profitability", "operating_profitability", True,
+             "high operating income / book equity (RMW-style)")):
         fixed = {"signal": sig, "largest": largest, "every": "M"}
         exps.append(LongExperiment(f"{name}_long", f"Long {desc}", FundamentalSort, fixed,
                                    {"top_n": [20, 50, 100]}, prepare=fundamental_panels))
