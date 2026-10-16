@@ -30,6 +30,7 @@ services; never open ports. Ask the `Hermes` Claude session if anything changed.
 ```bash
 K=/home/sergio/Workspace/hermes_oci/ssh.key; H=hermes@100.88.160.76
 rsync -a --delete --exclude .venv --exclude data --exclude results --exclude .git \
+  --exclude "*.log" --exclude "*.done" \
   -e "ssh -i $K" ./ $H:algotrader-work/
 ssh -i $K $H 'cd ~/algotrader-work && uv sync && nohup uv run python -m algotrader.experiments <names> --workers 2 > run.log 2>&1 &'
 rsync -a -e "ssh -i $K" $H:algotrader-work/results/ results/
