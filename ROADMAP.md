@@ -180,6 +180,11 @@ results show the survivorship gap matters; then prefer an ongoing subscription
 high, value, profitability, asset growth, seasonality, earnings drift; long-only and
 long-short) on the point-in-time S&P 500 from 2008, yearly folds from 2012. Smoke test on
 WIKI only (2012 to Mar 2018, no SPY): low vol 1.20, momentum 1.02, not committed.
+**Validation (2026-10-17, WIKI only, 2012 to Mar 2018, gross returns vs Kenneth French
+factors, monthly correlation):** long-short momentum 0.83 with Mom (+2.8%/yr vs +3.3%),
+value 0.66 with HML, asset growth 0.50 with CMA, profitability 0.33 with RMW (RMW is
+operating profitability on all stocks; ours is gross profitability on S&P 500 members,
+banks missing). Momentum confirms the engine and data; profitability to be looked at.
 **Full results need all Tiingo prices:** about 716 symbols, 500 a month on the free
 plan. **Decision (sergio, 2026-10-16): wait for the free quota to reset in November**
 (no paid plan). First batch of ~500 runs on the VPS on 2026-10-16/17; on or after
