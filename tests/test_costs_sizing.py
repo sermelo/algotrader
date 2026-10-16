@@ -18,6 +18,11 @@ class TestCostModel:
         assert math.isclose(m.buy_price(100), 100.02)
         assert math.isclose(m.sell_price(100), 99.98)
 
+    def test_spread_in_basis_points_on_each_side(self):
+        m = CostModel(spread_bps=2.0, slippage_per_share=0.01)
+        assert math.isclose(m.buy_price(100), 100.03)     # +2 bp of 100 = 0.02, + 0.01
+        assert math.isclose(m.sell_price(50), 49.98)      # -2 bp of 50 = 0.01, - 0.01
+
 
 class TestPositionSizer:
     def test_risk_bound(self):

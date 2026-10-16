@@ -97,19 +97,33 @@ close, filled at the next open. No stop by default.
 ## Experiments (`algotrader/experiments.py`)
 
 - Universe: `algotrader/universe.py` (4 index ETFs, 20 large caps, 3 original tickers).
-- Split: train 2022-03 to 2023-12, test 2024-01 to the end of the data.
-- Rule-based strategies: every grid point is backtested on the training period.
-  Fitted strategies: fitted before 2023-07, grid scored on 2023-07 to 2023-12, then the
-  chosen setting is refitted on the full training period.
-- Selection score: Sharpe of the equal-weight portfolio of all tickers (each ticker's
-  daily equity normalised to 1, returns averaged daily). Test data is never used for
-  selection (unit-tested). A grid point is eligible only if the median ticker made at
-  least 5 trades in the scoring window; if none is, the best is used and flagged.
-- Each test run starts at 2024-01-01 using earlier bars only as indicator warm-up,
-  is run with costs (headline) and without ("gross"), fully invested
-  (`risk` 1, `max_frac` 1), IBKR commissions, $10,000 per ticker unless the
-  experiment sets `capital` (the `_100k` variants use $100,000, where the $1 minimum
-  stops binding and commissions are $0.005 / price per side).
+- **Walk-forward (main result):** folds start 2023-07, 2024-01, 2024-07, 2025-01,
+  2025-07 and 2026-01. At each fold start F the parameters are chosen with data before
+  F only and tested from F to the next fold start (the last to the end of the data).
+  The six test periods are concatenated into one out-of-sample record.
+- **Single split (continuity):** chosen before 2024-01-01, tested 2024-01-01 to the end
+  (the same choice as the 2024-01 fold, longer test window).
+- Rule-based strategies: one full-history backtest per grid point; a window's numbers
+  are that run's equity and trades inside the window (equity rebased to the value just
+  before the window, trades counted by entry date). Valid because their indicators are
+  causal: the run's state at F depends only on bars before F.
+- Fitted strategies: fitted before F - 6 months, grid scored on F - 6 months .. F,
+  chosen setting refitted on all data before F, then run on the fold.
+- Selection score: Sharpe of the equal-weight portfolio of all tickers (daily equity
+  normalised to 1, returns averaged daily). A grid point is eligible only if the median
+  ticker made at least 5 trades in its scoring window; otherwise the best is used and
+  flagged. Data after F never influences the choice at F (unit-tested).
+- Costs: **base** = IBKR commission + 2 bp half-spread per side (the headline);
+  **gross** = none; **stress** = IBKR + 5 bp. Fully invested (`risk` 1, `max_frac` 1),
+  $10,000 per ticker unless the experiment sets `capital` (the `_100k` variants).
+- Reported for the walk-forward: Sharpe with a 90% circular block-bootstrap interval
+  (20-day blocks, 1,000 resamples, seed 0), return, max drawdown, alpha (annualised
+  intercept) with t-statistic and beta from regressing daily returns on the
+  equal-weight buy and hold of the same tickers, gross and stress Sharpe, and how many
+  folds had a positive Sharpe. The summary also gives the Sharpe the best of N
+  zero-edge configurations would reach by luck over the same length (Bailey & Lopez de
+  Prado 2014: SE * ((1 - gamma) z(1 - 1/N) + gamma z(1 - 1/(N e))), SE = 1/sqrt(years)),
+  with N the total number of configurations tried.
 
 ## Bars
 
@@ -145,6 +159,8 @@ If the order plus commission exceeds cash, size is reduced until it fits.
 
 - Commission: $0.005 per share, $1.00 minimum per order (Interactive Brokers fixed).
 - Slippage: fixed dollars per share per side, default 0 (`--slippage`).
+- Spread: `spread_bps`, a half-spread in basis points of the price paid on each side
+  (default 0 in the CLI; 2 bp in the experiments).
 
 ## Metrics
 

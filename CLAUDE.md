@@ -37,6 +37,11 @@ Backtesting different algorithmic trading strategies on US equity 1-minute IEX b
 - Dependencies are managed with uv: `pyproject.toml` + `uv.lock` + `.python-version`.
   `uv sync` builds `.venv/`; add packages with `uv add` / `uv add --dev` and commit the
   updated `uv.lock`. Do not `pip install` into `.venv/` by hand. `data/` is git-ignored.
+- Heavy experiment runs (1-minute bars, many tickers) go on the Hermes VPS (12 GB RAM;
+  ask the `Hermes` session for connection details, never copy its key or `~/.hermes`).
+  Work only in `~/algotrader-work` there: rsync the working tree (without `.venv`, `data`,
+  `results`), `uv sync`, run detached with `nohup`, rsync `results/` back, commit here.
+  This machine has little free memory: use `--workers 1` locally.
 - Data download needs an HF Data Library API key stored OUTSIDE the repo at
   `~/.config/hfdatalibrary/token`. Never print, commit or write the key into any file.
 - Run scripts with data under `data/scratch/tickers/<TICKER>_clean.parquet`.

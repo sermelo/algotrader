@@ -1,36 +1,51 @@
-"""Reproducible experiments: tune on the training period, evaluate out of sample.
+"""Reproducible experiments: walk-forward tuning and out-of-sample evaluation.
 
-Every experiment runs over the whole ticker universe with the same split:
+Every experiment runs over the whole ticker universe.
 
-    train  TRAIN_START .. TEST_START   parameters are chosen here only
-    test   TEST_START .. end of data   reported out of sample
+Walk-forward (the main result): for each fold start F in FOLD_STARTS, parameters are
+chosen using only data before F and then tested on F .. next fold start (the last
+fold runs to the end of the data). The folds' test periods are concatenated into one
+out-of-sample record.
 
-Rule-based strategies are tuned by backtesting each grid point on the training
-period. Strategies that learn (`fit="ticker"`: one model per ticker, or
-`fit="pooled"`: one model on all tickers' bars) are fitted before VALID_START and
-the grid is scored on VALID_START .. TEST_START; the chosen setting is then refitted
-on the whole training period. The test period is also run without costs ("gross")
-to show how much of any edge costs take. A grid point is only eligible if its median
-ticker made at least MIN_TRADES trades in the scoring window, so a setting that
-barely trades cannot win on a lucky handful of trades. The selection score is the Sharpe of the
-equal-weight portfolio of all tickers (each ticker's equity normalised to 1).
+Single split (kept for continuity with earlier results): chosen with data before
+TEST_START, tested on TEST_START .. end of data. Its choice is the same as the fold
+starting at TEST_START.
+
+How parameters are chosen at F:
+  * rule-based strategies: every grid point is backtested from the start of the data;
+    the score is its result before F. Because their indicators are causal, one
+    full-history run per grid point serves every fold and test window (a window's
+    numbers are that run's equity inside the window).
+  * strategies that learn (`fit="ticker"`: one model per ticker; `fit="pooled"`: one
+    model on all tickers' bars): fitted on data before F - VALID_MONTHS, scored on
+    F - VALID_MONTHS .. F; the chosen setting is refitted on all data before F.
+  * score = Sharpe of the equal-weight portfolio of all tickers. A grid point is
+    eligible only if its median ticker made at least MIN_TRADES trades in the
+    scoring window.
+
+Test windows are run with the experiment's costs ("base": IBKR commission plus a
+half-spread of SPREAD_BPS per side), without costs ("gross") and with a wider
+half-spread ("stress", STRESS_SPREAD_BPS).
 
 Usage:
     python -m algotrader.experiments --list
     python -m algotrader.experiments                  # run all
-    python -m algotrader.experiments orb_5min rsi2_daily --workers 3
+    python -m algotrader.experiments orb_5min rsi2_daily --workers 2
 
-Writes to results/: <name>.csv (per ticker, train and test, chosen parameters),
-<name>_grid.csv (tuning scores), <name>_equity.csv (daily test equity per ticker),
-manifest.json (code and data fingerprints per experiment) and summary.md.
+Writes to results/: <name>.csv (single split per ticker: train, test, gross, stress),
+<name>_folds.csv (walk-forward per fold and ticker), <name>_grid.csv (tuning scores
+per fold), <name>_equity.csv (single-split daily test equity per ticker),
+<name>_wf_returns.csv (walk-forward daily portfolio returns), manifest.json (code and
+data fingerprints per experiment) and summary.md.
 """
 import argparse
 import hashlib
 import itertools
 import json
 import subprocess
+from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -39,24 +54,30 @@ import pandas as pd
 
 from .costs import CostModel
 from .data import BarLoader
-from .engine import Backtester
+from .engine import Backtester, BacktestResult
 from .intraday import (IntradayMomentumStrategy, NoiseAreaStrategy,
                        OpeningRangeBreakoutStrategy, OvernightStrategy)
 from .meanrev import RsiReversionStrategy
+from .metrics import Metrics
 from .ml import GradientBoostingStrategy
-from .metrics import TRADING_DAYS, Metrics
 from .sizing import PositionSizer
+from .stats import (TRADING_DAYS, alpha_beta, expected_max_sharpe, portfolio_returns,
+                    returns_stats, sharpe_interval)
 from .strategy import SmaCrossStrategy
 from .tree import DecisionTreeStrategy
 from .universe import UNIVERSE
 
-TRAIN_START = "2022-03-01"
-VALID_START = "2023-07-01"
 TEST_START = "2024-01-01"
+FOLD_STARTS = ["2023-07-01", "2024-01-01", "2024-07-01", "2025-01-01", "2025-07-01",
+               "2026-01-01"]
+VALID_MONTHS = 6
 CAPITAL = 10_000.0
 MIN_TRADES = 5
-IBKR = CostModel()                                           # $0.005/share, $1 minimum
+SPREAD_BPS = 2.0
+STRESS_SPREAD_BPS = 5.0
+BASE_COSTS = CostModel(spread_bps=SPREAD_BPS)                # IBKR + 2 bp half-spread
 FULL = PositionSizer(risk_per_trade=1.0, max_position_frac=1.0)   # fully invested
+VARIANTS = ("base", "gross", "stress")
 PACKAGE_DIR = Path(__file__).parent
 
 
@@ -69,7 +90,7 @@ class Experiment:
     timeframe: str
     params: dict = field(default_factory=dict)
     grid: dict = field(default_factory=dict)
-    costs: CostModel = IBKR
+    costs: CostModel = BASE_COSTS
     sizer: PositionSizer = FULL
     fit: str = ""                 # "", "ticker" (fit per ticker) or "pooled" (one model)
     capital: float = CAPITAL      # starting equity per ticker
@@ -86,6 +107,13 @@ class Experiment:
                 continue
             out.append(p)
         return out or [dict(self.params)]
+
+    def costs_for(self, variant: str) -> CostModel:
+        if variant == "gross":
+            return CostModel(0.0, 0.0)
+        if variant == "stress":
+            return replace(self.costs, spread_bps=STRESS_SPREAD_BPS)
+        return self.costs
 
 
 EXPERIMENTS = [
@@ -131,37 +159,45 @@ EXPERIMENTS = [
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
 
-# --------------------------------------------------------------------- running
+# ------------------------------------------------------------------- windows
 
-def _backtest(exp, params, bars, phase, model=None):
-    """Run one phase on one ticker's bars: 'grid' (tuning), 'train', 'test' or
-    'gross' (test without costs). `model` is a pre-fitted pooled strategy."""
-    train = bars[bars.index < TEST_START]
-    strat = model if model is not None else exp.strategy(**params)
-    costs = CostModel(0.0, 0.0) if phase == "gross" else exp.costs
-    engine = Backtester(strat, costs, exp.sizer, exp.capital)
-    if exp.fit == "ticker":
-        strat.fit(train[train.index < VALID_START] if phase == "grid" else train)
-    if phase == "grid" and exp.fit:              # fitted models: score on validation only
-        return engine.run(train, start=VALID_START), train[train.index >= VALID_START]
-    if phase in ("grid", "train"):
-        return engine.run(train), train
-    return engine.run(bars, start=TEST_START), bars[bars.index >= TEST_START]
+def valid_start(fold_start) -> pd.Timestamp:
+    """Start of the validation window for fitted models in the fold starting at F."""
+    return pd.Timestamp(fold_start) - pd.DateOffset(months=VALID_MONTHS)
 
 
-def _train_frames(exp, data_dir, tickers) -> list:
-    """Every ticker's training bars (before TEST_START), for pooled fitting."""
-    loader = BarLoader(data_dir)
-    frames = []
-    for t in tickers:
-        bars = loader.load(t, exp.timeframe)
-        frames.append(bars[bars.index < TEST_START])
-    return frames
+def fold_windows() -> list:
+    """[(start, end)] test windows of the walk-forward; the last end is None (data end)."""
+    starts = [pd.Timestamp(s) for s in FOLD_STARTS]
+    return [(s, starts[i + 1] if i + 1 < len(starts) else None) for i, s in enumerate(starts)]
 
 
-def _fit_pooled(exp, params, frames, end):
-    """Fit one strategy on all frames, using only bars before `end`."""
-    return exp.strategy(**params).fit_many([f[f.index < end] for f in frames])
+def selection_starts() -> list:
+    """Every date at which parameters are chosen (fold starts and the single split)."""
+    return sorted({pd.Timestamp(s) for s in FOLD_STARTS} | {pd.Timestamp(TEST_START)})
+
+
+def _before(bars, end):
+    return bars if end is None else bars[bars.index < end]
+
+
+def slice_result(result: BacktestResult, start=None, end=None) -> BacktestResult | None:
+    """The part of a backtest inside [start, end): equity, positions and the trades
+    entered there, with the equity just before `start` as the starting capital."""
+    idx = result.equity.index
+    mask = np.ones(len(idx), dtype=bool)
+    if start is not None:
+        mask &= idx >= start
+    if end is not None:
+        mask &= idx < end
+    if not mask.any():
+        return None
+    before = result.equity[idx < start] if start is not None else result.equity.iloc[:0]
+    initial = float(before.iloc[-1]) if len(before) else result.initial_capital
+    trades = [t for t in result.trades
+              if (start is None or t.entry_time >= start) and (end is None or t.entry_time < end)]
+    pos = result.position[mask] if result.position is not None else None
+    return BacktestResult(initial, result.equity[mask], trades, pos)
 
 
 def _daily_curve(values: pd.Series, start_value: float) -> pd.Series:
@@ -171,33 +207,96 @@ def _daily_curve(values: pd.Series, start_value: float) -> pd.Series:
     return pd.concat([first, daily])
 
 
-def _run_ticker(args):
-    """Worker: load one ticker once and run every (phase, params) job on it."""
-    exp_name, ticker, data_dir, jobs = args
+def _window_record(result, bars, start, end):
+    """(summary, daily strategy curve, daily buy-and-hold curve) for one window."""
+    part = slice_result(result, start, end)
+    if part is None:
+        return None
+    period = bars[(bars.index >= start) if start is not None else slice(None)]
+    period = _before(period, end)
+    summary = Metrics(part, period).summary()
+    return (summary, _daily_curve(part.equity, part.initial_capital),
+            _daily_curve(period["close"], period["open"].iloc[0]))
+
+
+# ------------------------------------------------------------------- workers
+
+def _engine(exp, strat, variant):
+    return Backtester(strat, exp.costs_for(variant), exp.sizer, exp.capital)
+
+
+def _select_ticker(args):
+    """Pass 1 worker: score every grid point at every selection date on one ticker."""
+    exp_name, ticker, data_dir, starts, combos, models = args
     exp = BY_NAME[exp_name]
     bars = BarLoader(data_dir).load(ticker, exp.timeframe)
     out = []
-    for phase, k, params, model in jobs:
-        result, period_bars = _backtest(exp, params, bars, phase, model)
-        summary = Metrics(result, period_bars).summary()
-        daily = _daily_curve(result.equity, exp.capital)
-        hold = _daily_curve(period_bars["close"], period_bars["open"].iloc[0])
-        out.append((phase, k, ticker, summary, daily, hold))
+    if not exp.fit:
+        for k, p in enumerate(combos):
+            full = _engine(exp, exp.strategy(**p), "base").run(bars)
+            for F in starts:
+                rec = _window_record(full, bars, None, F)
+                if rec:
+                    out.append((F, k, ticker, rec[0], rec[1]))
+        return out
+    for F in starts:
+        v = valid_start(F)
+        scored = _before(bars, F)
+        if not (scored.index >= v).any() or not (scored.index < v).any():
+            continue
+        for k, p in enumerate(combos):
+            if exp.fit == "pooled":
+                strat = models[(F, k)]
+            else:
+                strat = exp.strategy(**p)
+                try:
+                    strat.fit(bars[bars.index < v])
+                except ValueError:
+                    continue
+            rec = _window_record(_engine(exp, strat, "base").run(scored, start=v), bars, v, F)
+            if rec:
+                out.append((F, k, ticker, rec[0], rec[1]))
     return out
 
 
-def portfolio_stats(curves: dict) -> dict:
-    """Equal-weight portfolio of normalised daily curves (rebalanced daily)."""
-    df = pd.DataFrame(curves).sort_index().ffill()
-    r = df.pct_change().mean(axis=1).dropna()
-    eq = (1 + r).cumprod()
-    years = (df.index[-1] - df.index[0]).days / 365.25 if len(df) > 1 else 0
-    sharpe = float(r.mean() / r.std() * np.sqrt(TRADING_DAYS)) if r.std() > 0 else float("nan")
-    total = float(eq.iloc[-1] - 1) if len(eq) else float("nan")
-    return {"return": total,
-            "cagr": (1 + total) ** (1 / years) - 1 if years > 0 and total > -1 else float("nan"),
-            "sharpe": sharpe,
-            "max_drawdown": float((eq / eq.cummax() - 1).min()) if len(eq) else float("nan")}
+def _final_ticker(args):
+    """Pass 2 worker: run the chosen settings on one ticker's test windows.
+
+    windows: [(name, start, end, params, fit_end)]; fit_end is where a fitted model's
+    training stops. Each window is run with every cost variant ("train" only base).
+    """
+    exp_name, ticker, data_dir, windows, models = args
+    exp = BY_NAME[exp_name]
+    bars = BarLoader(data_dir).load(ticker, exp.timeframe)
+    cache, out = {}, []
+    for name, start, end, params, fit_end in windows:
+        variants = ("base",) if name == "train" else VARIANTS
+        if not exp.fit:
+            for var in variants:
+                key = (json.dumps(params, sort_keys=True), var)
+                if key not in cache:
+                    cache[key] = _engine(exp, exp.strategy(**params), var).run(bars)
+                rec = _window_record(cache[key], bars, start, end)
+                if rec:
+                    out.append((name, var, ticker) + rec)
+            continue
+        if exp.fit == "pooled":
+            strat = models[fit_end]
+        else:
+            strat = exp.strategy(**params)
+            try:
+                strat.fit(bars[bars.index < fit_end])
+            except ValueError:
+                continue
+        upto = _before(bars, end)
+        if start is not None and not (upto.index >= start).any():
+            continue
+        for var in variants:
+            run = _engine(exp, strat, var).run(upto, start=start)
+            rec = _window_record(run, bars, start, end)
+            if rec:
+                out.append((name, var, ticker) + rec)
+    return out
 
 
 def _map(fn, jobs, workers):
@@ -207,56 +306,127 @@ def _map(fn, jobs, workers):
         return list(pool.map(fn, jobs))
 
 
-def run_experiment(exp: Experiment, data_dir, tickers, workers=3) -> dict:
-    """Tune on train, then run train and test with the chosen parameters."""
+# ------------------------------------------------------------------- driver
+
+def _train_frames(exp, data_dir, tickers, end) -> list:
+    """Every ticker's bars before `end`, for pooled fitting."""
+    loader = BarLoader(data_dir)
+    return [_before(loader.load(t, exp.timeframe), end) for t in tickers]
+
+
+def _fit_pooled(exp, params, frames, end):
+    """Fit one strategy on all frames, using only bars before `end`."""
+    return exp.strategy(**params).fit_many([f[f.index < end] for f in frames])
+
+
+def _choose(grid_rows):
+    """Index of the best eligible grid point (by portfolio Sharpe) and a note."""
+    scores = np.array([r["portfolio_sharpe"] for r in grid_rows], dtype=float)
+    eligible = np.array([r["eligible"] for r in grid_rows], dtype=bool)
+    note = ""
+    if eligible.any():
+        scores[~eligible] = np.nan
+    else:
+        note = f"no grid point reached {MIN_TRADES} median trades; best of all used"
+    return int(np.nanargmax(np.nan_to_num(scores, nan=-np.inf))), note
+
+
+def run_experiment(exp: Experiment, data_dir, tickers, workers=2) -> dict:
+    """Choose parameters at every selection date, then run the test windows."""
     combos = exp.combos()
-    grid_rows, best, note = [], 0, ""
+    starts = selection_starts()
     pooled = exp.fit == "pooled"
-    frames = _train_frames(exp, data_dir, tickers) if pooled else None
+    frames = _train_frames(exp, data_dir, tickers, max(starts)) if pooled else None
+
+    # pass 1: selection
+    chosen, notes, grid_rows = {F: 0 for F in starts}, {F: "" for F in starts}, []
     if len(combos) > 1:
-        models = [_fit_pooled(exp, p, frames, VALID_START) if pooled else None
-                  for p in combos]
-        jobs = [(exp.name, t, str(data_dir),
-                 [("grid", k, p, models[k]) for k, p in enumerate(combos)]) for t in tickers]
-        curves = {k: {} for k in range(len(combos))}
-        sharpes = {k: [] for k in range(len(combos))}
-        trades = {k: [] for k in range(len(combos))}
-        for chunk in _map(_run_ticker, jobs, workers):
-            for _, k, ticker, summary, daily, _ in chunk:
-                curves[k][ticker] = daily
-                sharpes[k].append(summary["sharpe"])
-                trades[k].append(summary["trades"])
-        for k, p in enumerate(combos):
-            stats = portfolio_stats(curves[k])
-            med_trades = float(np.median(trades[k]))
-            grid_rows.append({"params": json.dumps(p, sort_keys=True), **{
-                f"portfolio_{s}": v for s, v in stats.items()},
-                "median_ticker_sharpe": float(np.nanmedian(sharpes[k]))
-                if not np.isnan(sharpes[k]).all() else np.nan,
-                "median_trades": med_trades, "eligible": med_trades >= MIN_TRADES})
-        scores = np.array([r["portfolio_sharpe"] for r in grid_rows], dtype=float)
-        eligible = np.array([r["eligible"] for r in grid_rows])
-        if eligible.any():
-            scores[~eligible] = np.nan
-        else:
-            note = f"no grid point reached {MIN_TRADES} median trades; best of all shown"
-        best = int(np.nanargmax(np.nan_to_num(scores, nan=-np.inf)))
-    params = combos[best]
-    model = _fit_pooled(exp, params, frames, TEST_START) if pooled else None
+        models = ({(F, k): _fit_pooled(exp, p, frames, valid_start(F))
+                   for F in starts for k, p in enumerate(combos)} if pooled else None)
+        jobs = [(exp.name, t, str(data_dir), starts, combos, models) for t in tickers]
+        curves = {(F, k): {} for F in starts for k in range(len(combos))}
+        trades = {key: [] for key in curves}
+        for chunk in _map(_select_ticker, jobs, workers):
+            for F, k, ticker, summary, daily in chunk:
+                curves[(F, k)][ticker] = daily
+                trades[(F, k)].append(summary["trades"])
+        for F in starts:
+            rows = []
+            for k, p in enumerate(combos):
+                stats = (returns_stats(portfolio_returns(curves[(F, k)]))
+                         if curves[(F, k)] else returns_stats(pd.Series(dtype=float)))
+                med = float(np.median(trades[(F, k)])) if trades[(F, k)] else 0.0
+                rows.append({"fold": F.date().isoformat(), "params": json.dumps(p, sort_keys=True),
+                             **{f"portfolio_{s}": v for s, v in stats.items()},
+                             "median_trades": med, "eligible": med >= MIN_TRADES})
+            chosen[F], notes[F] = _choose(rows)
+            grid_rows += rows
+
+    # pass 2: test windows with the chosen settings
+    single = pd.Timestamp(TEST_START)
+    windows = [(f"fold:{s.date()}", s, e, combos[chosen[s]], s) for s, e in fold_windows()]
+    windows += [("test", single, None, combos[chosen[single]], single),
+                ("train", None, single, combos[chosen[single]], single)]
+    models = ({F: _fit_pooled(exp, combos[chosen[F]], frames, F) for F in starts}
+              if pooled else None)
     del frames
-    phases = ("train", "test", "gross")
-    jobs = [(exp.name, t, str(data_dir), [(ph, 0, params, model) for ph in phases])
-            for t in tickers]
-    rows, curves, holds = [], {ph: {} for ph in phases}, {ph: {} for ph in phases}
-    for chunk in _map(_run_ticker, jobs, workers):
-        for phase, _, ticker, summary, daily, hold in chunk:
-            rows.append({"ticker": ticker, "period": phase, **summary})
-            curves[phase][ticker], holds[phase][ticker] = daily, hold
-    return {"params": params, "note": note, "rows": pd.DataFrame(rows),
-            "grid": pd.DataFrame(grid_rows),
-            "portfolio": {ph: portfolio_stats(curves[ph]) for ph in curves},
-            "hold": {ph: portfolio_stats(holds[ph]) for ph in holds},
-            "test_equity": pd.DataFrame(curves["test"]).sort_index()}
+    jobs = [(exp.name, t, str(data_dir), windows, models) for t in tickers]
+    recs = [r for chunk in _map(_final_ticker, jobs, workers) for r in chunk]
+    return _assemble(exp, combos, chosen, notes, grid_rows, recs)
+
+
+def _assemble(exp, combos, chosen, notes, grid_rows, recs) -> dict:
+    """Portfolio statistics for the single split and the walk-forward."""
+    by = {}
+    for name, var, ticker, summary, daily, hold in recs:
+        by.setdefault((name, var), {})[ticker] = (summary, daily, hold)
+
+    def port(name, var):
+        got = by.get((name, var), {})
+        return portfolio_returns({t: v[1] for t, v in got.items()}) if got else pd.Series(dtype=float)
+
+    def hold(name):
+        got = by.get((name, "base"), {})
+        return portfolio_returns({t: v[2] for t, v in got.items()}) if got else pd.Series(dtype=float)
+
+    rows = []
+    for (name, var), got in by.items():
+        period = {"base": name, "gross": "gross", "stress": "stress"}[var] if name == "test" else None
+        if name == "train":
+            period = "train"
+        for ticker, (summary, _, _) in got.items():
+            rows.append({"ticker": ticker, "period": period or f"{name}/{var}", **summary})
+    rows = pd.DataFrame(rows)
+    single_rows = rows[rows["period"].isin(["train", "test", "gross", "stress"])]
+    fold_rows = rows[~rows["period"].isin(["train", "test", "gross", "stress"])]
+
+    folds = [f"fold:{s.date()}" for s, _ in fold_windows()]
+    wf = {var: pd.concat([port(f, var) for f in folds]).sort_index() for var in VARIANTS}
+    wf_hold = pd.concat([hold(f) for f in folds]).sort_index()
+    fold_sharpes = {f.split(":")[1]: returns_stats(port(f, "base"))["sharpe"] for f in folds}
+    test_curves = by.get(("test", "base"), {})
+    return {
+        "params": combos[chosen[pd.Timestamp(TEST_START)]],
+        "note": notes[pd.Timestamp(TEST_START)],
+        "fold_params": {s.date().isoformat(): combos[chosen[s]] for s, _ in fold_windows()},
+        "fold_notes": {s.date().isoformat(): notes[s] for s, _ in fold_windows() if notes[s]},
+        "rows": single_rows, "fold_rows": fold_rows, "grid": pd.DataFrame(grid_rows),
+        "portfolio": {"train": returns_stats(port("train", "base")),
+                      "test": returns_stats(port("test", "base")),
+                      "gross": returns_stats(port("test", "gross")),
+                      "stress": returns_stats(port("test", "stress"))},
+        "hold": {"train": returns_stats(hold("train")), "test": returns_stats(hold("test"))},
+        "walk_forward": {
+            **{var: returns_stats(wf[var]) for var in VARIANTS},
+            "hold": returns_stats(wf_hold),
+            "sharpe_90": sharpe_interval(wf["base"]),
+            "vs_hold": alpha_beta(wf["base"], wf_hold),
+            "fold_sharpe": fold_sharpes,
+            "days": int(len(wf["base"])),
+        },
+        "wf_returns": pd.DataFrame({**{var: wf[var] for var in VARIANTS}, "hold": wf_hold}),
+        "test_equity": pd.DataFrame({t: v[1] for t, v in test_curves.items()}).sort_index(),
+    }
 
 
 # --------------------------------------------------------------- fingerprints
@@ -295,9 +465,11 @@ def write_results(exp, res, out_dir, manifest_entry):
     rows = res["rows"].copy()
     rows.insert(2, "params", json.dumps(res["params"], sort_keys=True))
     rows.to_csv(out / f"{exp.name}.csv", index=False, float_format="%.6g")
+    res["fold_rows"].to_csv(out / f"{exp.name}_folds.csv", index=False, float_format="%.6g")
     if not res["grid"].empty:
         res["grid"].to_csv(out / f"{exp.name}_grid.csv", index=False, float_format="%.6g")
     res["test_equity"].to_csv(out / f"{exp.name}_equity.csv", float_format="%.6g")
+    res["wf_returns"].to_csv(out / f"{exp.name}_wf_returns.csv", float_format="%.6g")
     path = out / "manifest.json"
     manifest = json.loads(path.read_text()) if path.exists() else {}
     manifest[exp.name] = manifest_entry
@@ -305,46 +477,95 @@ def write_results(exp, res, out_dir, manifest_entry):
 
 
 def _pct(x):
-    return "" if pd.isna(x) else f"{x:+.1%}"
+    return "" if x is None or pd.isna(x) else f"{x:+.1%}"
 
 
 def _num(x):
-    return "" if pd.isna(x) else f"{x:.2f}"
+    return "" if x is None or pd.isna(x) else f"{x:.2f}"
+
+
+def _fold_choices(m) -> str:
+    """Grid parameters chosen across folds, most common first, e.g. 'a=1 (4/6)'."""
+    keys = [k for k in m.get("grid", {})]
+    if not keys:
+        return "fixed"
+    counts = Counter(json.dumps({k: m["fold_params"][f].get(k) for k in keys}, sort_keys=True)
+                     for f in m["fold_params"])
+    n = len(m["fold_params"])
+    parts = []
+    for combo, c in counts.most_common():
+        txt = ", ".join(f"{k}={v}" for k, v in json.loads(combo).items())
+        parts.append(f"{txt} ({c}/{n})")
+    return "; ".join(parts)
 
 
 def write_summary(out_dir):
-    """Regenerate summary.md from the manifest (one row per experiment)."""
+    """Regenerate summary.md from the manifest."""
     out = Path(out_dir)
     manifest = json.loads((out / "manifest.json").read_text())
     current = code_fingerprint()
+    names = [e.name for e in EXPERIMENTS if e.name in manifest]
+    trials = sum(len(BY_NAME[n].combos()) for n in names)
+    any_wf = next((manifest[n]["walk_forward"] for n in names if "walk_forward" in manifest[n]), None)
+    years = any_wf["days"] / TRADING_DAYS if any_wf else 0
+    hold = any_wf["hold"] if any_wf else {}
     lines = [
         "# Experiment results", "",
-        "Generated by `python -m algotrader.experiments`; do not edit by hand.",
-        f"Split: train {TRAIN_START} to {TEST_START} (parameters chosen here), "
-        f"test {TEST_START} to end of data (out of sample). Equal-weight portfolio of all "
-        "tickers, fully invested when in a position, IBKR commissions. "
-        "B&H = buy and hold of the same tickers over the same period. A grid point needs a "
-        f"median of {MIN_TRADES} trades per ticker in its scoring window to be chosen.", "",
-        "| Experiment | Bars | Capital/ticker | Chosen parameters | Test return | Test Sharpe | Test max DD "
-        "| Before costs: return, Sharpe | B&H return | B&H Sharpe | Train Sharpe "
-        "| Trades/yr per ticker | Time in market | Code |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
-    for name in [e.name for e in EXPERIMENTS if e.name in manifest]:
+        "Generated by `python -m algotrader.experiments`; do not edit by hand. "
+        "Equal-weight portfolio of all tickers, fully invested when in a position. "
+        f"Costs: IBKR commission + {SPREAD_BPS:g} bp half-spread per side (base); "
+        f"none (gross); IBKR + {STRESS_SPREAD_BPS:g} bp (stress). A grid point needs a median "
+        f"of {MIN_TRADES} trades per ticker in its scoring window to be chosen.", "",
+        "## Walk-forward (main result)", "",
+        f"Folds start {', '.join(FOLD_STARTS)}; each is tuned on data before its start and "
+        "tested until the next; the test periods are concatenated "
+        f"({years:.1f} years). Buy and hold of the same tickers: {_pct(hold.get('return'))}, "
+        f"Sharpe {_num(hold.get('sharpe'))}. Alpha/beta: daily returns regressed on buy and "
+        f"hold. {trials} configurations were tried in total; the best of that many "
+        f"zero-edge strategies would show a Sharpe of about "
+        f"{expected_max_sharpe(trials, years):.2f} by luck alone over this length.", "",
+        "| Experiment | Bars | Capital/ticker | Chosen per fold | Sharpe [90% CI] | Return "
+        "| Max DD | Alpha/yr (t) | Beta | Gross Sharpe | Stress Sharpe | Folds Sharpe > 0 | Code |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for name in names:
         m = manifest[name]
-        te, tr, bh = m["portfolio"]["test"], m["portfolio"]["train"], m["hold"]["test"]
-        gr = m["portfolio"]["gross"]
+        w = m.get("walk_forward")
+        if not w:
+            continue
         stale = "" if m["code_sha256"] == current else " (stale)"
+        lo, hi = w["sharpe_90"]
+        fs = [v for v in w["fold_sharpe"].values() if v is not None and not pd.isna(v)]
+        ab = w["vs_hold"]
+        lines.append(
+            f"| `{name}` | {m['timeframe']} | ${m['capital']:,.0f} | {_fold_choices(m)} "
+            f"| {_num(w['base']['sharpe'])} [{_num(lo)}, {_num(hi)}] | {_pct(w['base']['return'])} "
+            f"| {_pct(w['base']['max_drawdown'])} | {_pct(ab['alpha'])} ({_num(ab['alpha_t'])}) "
+            f"| {_num(ab['beta'])} | {_num(w['gross']['sharpe'])} | {_num(w['stress']['sharpe'])} "
+            f"| {sum(v > 0 for v in fs)}/{len(fs)} | `{m['code_sha256'][:8]}`{stale} |")
+    test_hold = next((manifest[n]["hold"]["test"] for n in names), {})
+    lines += [
+        "", "## Single split (continuity with earlier results)", "",
+        f"Chosen on data before {TEST_START}, tested {TEST_START} to end of data. Buy and "
+        f"hold: {_pct(test_hold.get('return'))}, Sharpe {_num(test_hold.get('sharpe'))}. "
+        "Train Sharpe is in-sample.", "",
+        "| Experiment | Chosen parameters | Test return | Test Sharpe | Max DD | Gross Sharpe "
+        "| Stress Sharpe | Train Sharpe | Trades/yr per ticker | Time in market |",
+        "|---|---|---|---|---|---|---|---|---|---|"]
+    for name in names:
+        m = manifest[name]
+        te, tr = m["portfolio"]["test"], m["portfolio"]["train"]
         params = ", ".join(f"{k}={v}" for k, v in sorted(m["params"].items())) or "defaults"
         if m.get("selection_note"):
             params += f" ({m['selection_note']})"
         lines.append(
-            f"| `{name}` | {m['timeframe']} | ${m.get('capital', CAPITAL):,.0f} | {params} | {_pct(te['return'])} | {_num(te['sharpe'])} "
-            f"| {_pct(te['max_drawdown'])} | {_pct(gr['return'])}, {_num(gr['sharpe'])} "
-            f"| {_pct(bh['return'])} | {_num(bh['sharpe'])} "
-            f"| {_num(tr['sharpe'])} | {m['test_trades_per_year']:.0f} | {m['test_exposure']:.0%} "
-            f"| `{m['code_sha256'][:8]}`{stale} |")
-    lines += ["", "Per-ticker numbers: `<experiment>.csv`; tuning grid: `<experiment>_grid.csv`; "
-              "daily test equity: `<experiment>_equity.csv`; fingerprints: `manifest.json`.", ""]
+            f"| `{name}` | {params} | {_pct(te['return'])} | {_num(te['sharpe'])} "
+            f"| {_pct(te['max_drawdown'])} | {_num(m['portfolio'].get('gross', {}).get('sharpe'))} "
+            f"| {_num(m['portfolio'].get('stress', {}).get('sharpe'))} | {_num(tr['sharpe'])} "
+            f"| {m['test_trades_per_year']:.0f} | {m['test_exposure']:.0%} |")
+    lines += ["", "Files: `<experiment>.csv` (single split per ticker), `_folds.csv` "
+              "(walk-forward per fold and ticker), `_grid.csv` (tuning scores per fold), "
+              "`_equity.csv` (single-split daily equity), `_wf_returns.csv` (walk-forward "
+              "daily portfolio returns), `manifest.json` (code and data fingerprints).", ""]
     (out / "summary.md").write_text("\n".join(lines))
 
 
@@ -355,7 +576,7 @@ def main(argv=None):
     p.add_argument("--list", action="store_true")
     p.add_argument("--data-dir", default="data/scratch/tickers")
     p.add_argument("--tickers", nargs="*", help="default: algotrader.universe.UNIVERSE")
-    p.add_argument("--workers", type=int, default=3)
+    p.add_argument("--workers", type=int, default=2)
     p.add_argument("--out", default="results")
     args = p.parse_args(argv)
     if args.list:
@@ -370,25 +591,29 @@ def main(argv=None):
     for exp in [BY_NAME[n] for n in args.names] if args.names else EXPERIMENTS:
         res = run_experiment(exp, args.data_dir, tickers, args.workers)
         test = res["rows"][res["rows"]["period"] == "test"]
-        years = (pd.Timestamp(res["test_equity"].index[-1]) - pd.Timestamp(TEST_START)).days / 365.25
+        eq = res["test_equity"]
+        years = ((eq.index[-1] - pd.Timestamp(TEST_START)).days / 365.25) if len(eq) else 0
         entry = {"description": exp.description, "strategy": exp.strategy.__name__,
                  "timeframe": exp.timeframe, "params": res["params"],
+                 "fold_params": res["fold_params"], "fold_notes": res["fold_notes"],
                  "grid": {k: [str(v) for v in vs] for k, vs in exp.grid.items()},
                  "costs": vars(exp.costs), "sizer": vars(exp.sizer), "fit": exp.fit,
                  "capital": exp.capital, "selection_note": res["note"],
-                 "split": {"train_start": TRAIN_START, "valid_start": VALID_START,
-                           "test_start": TEST_START},
+                 "split": {"test_start": TEST_START, "fold_starts": FOLD_STARTS,
+                           "valid_months": VALID_MONTHS},
                  "portfolio": res["portfolio"], "hold": res["hold"],
+                 "walk_forward": res["walk_forward"],
                  "test_trades_per_year": float(test["trades"].mean() / years) if years > 0 else 0.0,
-                 "test_exposure": float(test["exposure"].mean()),
+                 "test_exposure": float(test["exposure"].mean()) if len(test) else 0.0,
                  "code_sha256": code_fingerprint(), "git": git_state(),
                  "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                  "data": data}
         write_results(exp, res, args.out, entry)
         write_summary(args.out)
-        te, bh = res["portfolio"]["test"], res["hold"]["test"]
-        print(f"{exp.name}: params {res['params']} | test {te['return']:+.1%} "
-              f"Sharpe {te['sharpe']:.2f} (B&H {bh['return']:+.1%}, {bh['sharpe']:.2f})", flush=True)
+        w = res["walk_forward"]
+        print(f"{exp.name}: walk-forward Sharpe {w['base']['sharpe']:.2f} "
+              f"(gross {w['gross']['sharpe']:.2f}, B&H {w['hold']['sharpe']:.2f}) | "
+              f"single-split params {res['params']}", flush=True)
 
 
 if __name__ == "__main__":

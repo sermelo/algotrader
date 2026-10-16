@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class CostModel:
-    """Per-share commission with a per-order minimum, plus fixed slippage.
+    """Per-share commission with a per-order minimum, plus slippage and spread.
 
     Defaults mimic Interactive Brokers fixed pricing: $0.005/share, $1 minimum.
 
@@ -13,10 +13,13 @@ class CostModel:
         min_commission: minimum dollars charged per order.
         slippage_per_share: dollars added to buy prices and subtracted from
             sell prices, to model crossing the spread.
+        spread_bps: half-spread in basis points of the price, paid on each side
+            (buys fill this much above the quote, sells this much below).
     """
     commission_per_share: float = 0.005
     min_commission: float = 1.0
     slippage_per_share: float = 0.0
+    spread_bps: float = 0.0
 
     def commission(self, shares: float) -> float:
         """Commission in dollars for one order of `shares` (0 if no shares)."""
@@ -26,8 +29,8 @@ class CostModel:
 
     def buy_price(self, price: float) -> float:
         """Fill price for a buy at quoted `price`, after slippage."""
-        return price + self.slippage_per_share
+        return price * (1 + self.spread_bps / 1e4) + self.slippage_per_share
 
     def sell_price(self, price: float) -> float:
         """Fill price for a sell at quoted `price`, after slippage."""
-        return price - self.slippage_per_share
+        return price * (1 - self.spread_bps / 1e4) - self.slippage_per_share
