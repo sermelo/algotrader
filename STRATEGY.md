@@ -15,6 +15,31 @@ Long-only SMA crossover on bar closes of any bar size (set by `--timeframe`):
   `trend_filter >= 1` (or none); otherwise construction fails.
 - ATR is the simple mean of the true range over `atr_period` bars (not Wilder's).
 
+## Decision-tree signal (`--strategy tree`)
+
+After arXiv:2405.13959 (see `R&D/`). One model per ticker:
+
+- **Training:** fit on bars strictly before `--train-end`; backtest only bars from
+  `--train-end` on. The model never sees test bars.
+- **Label:** 1 if the next bar's close is above this bar's close, else 0 (ties are 0).
+- **Features** (all from data up to the bar's close): 1-bar return, 15-bar return,
+  RSI(14) and ADX(14) with Wilder smoothing, SMA(14)/close, rolling 14-bar correlation
+  of close with SMA(14), 14-bar volatility of 1-bar returns, 14-bar volatility of
+  15-bar returns, and 14-bar VWAP (typical price (H+L+C)/3) / close. The paper gives no
+  window for the correlation or VWAP; 14 is our choice. RSI is 50 when there was no
+  price change at all.
+- **Model:** scikit-learn `DecisionTreeClassifier`, Gini, `max_depth` 4 (`--max-depth`),
+  `random_state` 0.
+- `want_long` is the predicted class. Bars with any undefined feature (warm-up, zero
+  volume, constant prices) are flat.
+- Orders, stops, sizing and costs are exactly as below. Fresh-signal entry means the
+  position opens when the prediction turns from 0 to 1 and closes at the next open
+  after it turns back to 0.
+- Differences from the paper: the paper used no costs and no stop, close-to-close
+  returns and linear interpolation of missing bars (which uses later prices). We fill
+  at the next open, drop empty bars and charge costs. The paper's train/test years
+  were 2022–23 / 2023–24 on NIFTY50; ours are Mar 2022–Dec 2023 / Jan 2024 on.
+
 ## Bars
 
 Intraday bar sizes are built from 1-minute bars anchored to the 09:30 session open
@@ -58,4 +83,5 @@ commission, buy-and-hold return (first open to last close).
 ## Not implemented (ideas)
 
 Shorting, flat-at-close (intraday only) mode, ADX regime filter, volume-based partial fills, random latency,
-multi-instrument portfolio, walk-forward parameter selection. 
+multi-instrument portfolio, walk-forward parameter selection (and walk-forward
+retraining of the decision tree). 

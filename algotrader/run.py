@@ -1,8 +1,12 @@
 """Command line entry point.
 
-Example:
+Examples:
     python -m algotrader.run --data-dir data/scratch/tickers \\
         --tickers ADM AMC AMGN --timeframe 5min --out data/results/summary.csv
+
+    # decision tree per ticker: fit before --train-end, backtest from it on
+    python -m algotrader.run --data-dir data/scratch/tickers --strategy tree \\
+        --train-end 2024-01-01 --timeframe 1min
 """
 import argparse
 from pathlib import Path
@@ -15,6 +19,7 @@ from .engine import Backtester
 from .metrics import Metrics
 from .sizing import PositionSizer
 from .strategy import SmaCrossStrategy
+from .tree import DecisionTreeStrategy
 
 
 def main(argv=None) -> pd.DataFrame:
@@ -23,6 +28,10 @@ def main(argv=None) -> pd.DataFrame:
     p.add_argument("--data-dir", required=True, help="folder with <TICKER>_clean.parquet")
     p.add_argument("--tickers", nargs="*", help="default: every file in data-dir")
     p.add_argument("--timeframe", default="5min", help="bar size, pandas rule (default 5min)")
+    p.add_argument("--strategy", choices=["sma", "tree"], default="sma",
+                   help="sma: SMA crossover (default); tree: decision tree (needs --train-end)")
+    p.add_argument("--train-end", help="tree: fit on bars before this date, backtest the rest")
+    p.add_argument("--max-depth", type=int, default=4, help="tree: depth (default 4)")
     p.add_argument("--fast", type=int, default=20)
     p.add_argument("--slow", type=int, default=50)
     p.add_argument("--trend-filter", type=int, default=None, help="only long above this SMA")
@@ -41,18 +50,34 @@ def main(argv=None) -> pd.DataFrame:
     tickers = args.tickers or loader.tickers()
     if not tickers:
         p.error(f"no *_clean.parquet files in {args.data_dir}")
-    try:
-        strategy = SmaCrossStrategy(args.fast, args.slow, args.atr_period, args.atr_mult,
+    if args.strategy == "tree" and not args.train_end:
+        p.error("--strategy tree needs --train-end")
+    train_end = pd.Timestamp(args.train_end) if args.strategy == "tree" else None
+
+    def make_strategy():
+        if args.strategy == "sma":
+            return SmaCrossStrategy(args.fast, args.slow, args.atr_period, args.atr_mult,
                                     args.trend_filter)
+        return DecisionTreeStrategy(args.max_depth, args.atr_period, args.atr_mult)
+
+    try:
+        make_strategy()                     # validate parameters before loading data
     except ValueError as e:
         p.error(str(e))
-    engine = Backtester(strategy,
-                        CostModel(args.commission, args.min_commission, args.slippage),
-                        PositionSizer(args.risk, args.max_position), args.capital)
+    costs = CostModel(args.commission, args.min_commission, args.slippage)
+    sizer = PositionSizer(args.risk, args.max_position)
+
     rows = []
     for ticker in tickers:
         bars = loader.load(ticker, args.timeframe)
-        row = {"ticker": ticker, **Metrics(engine.run(bars), bars).summary()}
+        strategy = make_strategy()
+        if train_end is not None:           # per-ticker tree, fitted on the earlier period only
+            train, bars = bars[bars.index < train_end], bars[bars.index >= train_end]
+            if train.empty or bars.empty:
+                p.error(f"{ticker}: no bars on one side of --train-end {args.train_end}")
+            strategy.fit(train)
+        result = Backtester(strategy, costs, sizer, args.capital).run(bars)
+        row = {"ticker": ticker, **Metrics(result, bars).summary()}
         rows.append(row)
         print(f"{ticker}: {row['total_return']:+.2%} ({row['trades']} trades, "
               f"in market {row['exposure']:.0%}, B&H {row['buy_and_hold']:+.2%})")

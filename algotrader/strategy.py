@@ -18,13 +18,17 @@ class Strategy(Protocol):
     def indicators(self, bars: pd.DataFrame) -> pd.DataFrame: ...
 
 
+def true_range(bars: pd.DataFrame) -> pd.Series:
+    """max(high - low, |high - prev close|, |low - prev close|); first bar is high - low."""
+    prev_close = bars["close"].shift()
+    return pd.concat([bars["high"] - bars["low"],
+                      (bars["high"] - prev_close).abs(),
+                      (bars["low"] - prev_close).abs()], axis=1).max(axis=1)
+
+
 def average_true_range(bars: pd.DataFrame, period: int) -> pd.Series:
     """Simple moving average of the true range over `period` bars."""
-    prev_close = bars["close"].shift()
-    true_range = pd.concat([bars["high"] - bars["low"],
-                            (bars["high"] - prev_close).abs(),
-                            (bars["low"] - prev_close).abs()], axis=1).max(axis=1)
-    return true_range.rolling(period).mean()
+    return true_range(bars).rolling(period).mean()
 
 
 @dataclass(frozen=True)

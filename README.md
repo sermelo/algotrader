@@ -1,33 +1,43 @@
 # algotrader
 
-A small, tested backtester for long-only SMA-crossover strategies on US equity
-minute bars. Written to replace an earlier, unverified set of scripts (see
+A small, tested backtester for long-only strategies (SMA crossover, decision tree)
+on US equity minute bars. Written to replace an earlier, unverified set of scripts (see
 [Removed legacy code](#removed-legacy-code)).
 
 - `algotrader/` is the package, in a handful of small classes (see [Design](#design)).
-- `tests/` has the unit tests (`pytest`, 60 tests, about 1 second).
+- `tests/` has the unit tests (`pytest`, 71 tests, about 3 seconds).
 - `STRATEGY.md` is the exact strategy and execution rules.
 - `R&D/` has summaries and full Markdown text of research papers on intraday trading
   (`R&D/index.md`). Their results are the authors' claims, not reproduced here.
 
 ## Quick start
 
+Dependencies are managed with [uv](https://docs.astral.sh/uv/): `pyproject.toml`
+declares them, `uv.lock` pins exact versions and `.python-version` pins Python 3.10.
+
 ```bash
-uv venv .venv && uv pip install --python .venv/bin/python -e ".[dev]"   # or: pip install -e ".[dev]"
-.venv/bin/python -m pytest                                              # run the unit tests
+uv sync              # create .venv with the locked runtime + dev dependencies
+uv run pytest        # run the unit tests
 ```
+
+`uv add <pkg>` (or `uv add --dev <pkg>`) adds a dependency and updates the lock file;
+commit both. Without uv: `pip install -e . pytest`.
 
 Get data (next section), then:
 
 ```bash
-.venv/bin/python -m algotrader.run --data-dir data/scratch/tickers \
+uv run python -m algotrader.run --data-dir data/scratch/tickers \
     --tickers ADM AMC AMGN --timeframe 5min --out data/results/summary_5min.csv
+
+# decision tree: one model per ticker, fitted before --train-end, tested from it on
+uv run python -m algotrader.run --data-dir data/scratch/tickers --strategy tree \
+    --train-end 2024-01-01 --timeframe 1min --out data/results/tree_1min.csv
 ```
 
 Omit `--tickers` to run every `*_clean.parquet` in the folder. `--help` lists all
-options (`--fast`, `--slow`, `--trend-filter`, `--atr-period`, `--atr-mult`,
-`--risk`, `--max-position`, `--commission`, `--min-commission`, `--slippage`,
-`--capital`).
+options (`--strategy`, `--train-end`, `--max-depth`, `--fast`, `--slow`,
+`--trend-filter`, `--atr-period`, `--atr-mult`, `--risk`, `--max-position`,
+`--commission`, `--min-commission`, `--slippage`, `--capital`).
 
 Or from Python:
 
@@ -38,6 +48,12 @@ bars = BarLoader("data/scratch/tickers").load("AMGN", timeframe="30min")
 result = Backtester().run(bars)            # default: SMA 20/50, 1% risk, IBKR commissions
 print(Metrics(result, bars).summary())
 print(result.trades_frame().head())
+
+from algotrader import DecisionTreeStrategy
+bars = BarLoader("data/scratch/tickers").load("AMGN", timeframe="1min")
+train, test = bars[:"2023-12-31"], bars["2024-01-01":]
+tree = DecisionTreeStrategy().fit(train)   # learn only from the earlier period
+print(Metrics(Backtester(tree).run(test), test).summary())
 ```
 
 ## Data
@@ -85,7 +101,9 @@ BarLoader ──bars──▶ Backtester ──▶ BacktestResult ──▶ Metr
 | `PositionSizer` | `sizing.py` | `min(equity*risk/stop_distance, equity*max_frac/price)` rounded down to whole shares. Returns 0 for invalid input. |
 | `Strategy` | `strategy.py` | Protocol the engine relies on: `indicators(bars)` returning `want_long` and `atr` columns, plus an `atr_mult` attribute. |
 | `SmaCrossStrategy` | `strategy.py` | Computes `sma_fast`, `sma_slow`, `atr`, and the boolean `want_long` (optionally also requiring close > long SMA). Pure function of the bars. Validates its parameters. |
-| `average_true_range` | `strategy.py` | ATR helper (simple mean of true range), reusable by other strategies. |
+| `average_true_range`, `true_range` | `strategy.py` | ATR helper (simple mean of true range) and the true range itself, reusable by other strategies. |
+| `DecisionTreeStrategy` | `tree.py` | Per-stock decision tree after arXiv:2405.13959: `fit(train_bars)` learns whether the next bar closes higher from nine features, `indicators(bars)` predicts `want_long`. Flat while any feature is undefined. |
+| `tree_features` | `tree.py` | The nine causal features (returns, RSI, ADX, SMA and VWAP ratios, SMA/close correlation, volatilities). |
 | `Backtester` | `engine.py` | Bar-by-bar loop: fills, stops, equity marking. Returns a `BacktestResult` holding the equity `Series`, the shares held at each bar (`position`) and a list of `Trade`s. |
 | `Trade` | `engine.py` | One round trip (fill prices after slippage, total commission, exit reason, net `pnl`). |
 | `Metrics` | `metrics.py` | Total return, CAGR, daily Sharpe, max drawdown, buy-and-hold, exposure (time in market), win rate, profit factor, commissions. |
@@ -123,7 +141,8 @@ See `STRATEGY.md` for the full specification.
 | `tests/test_strategy.py` | SMA/ATR values, warm-up is flat, up/down/flat markets, trend filter, parameter validation. |
 | `tests/test_engine.py` | Fill at next open, signal exit, **no look-ahead** (future data cannot change earlier equity), intrabar stop and gap stop, no re-entry after stop, end-of-data close, commission and slippage effects, accounting identity (final equity = capital + sum of trade pnl), size cap, cash never negative, position series matches trades, empty input rejected, custom strategy through the protocol. |
 | `tests/test_metrics.py` | Return, drawdown, Sharpe against a manual calculation, daily vs per-bar aggregation, CAGR, trade statistics, profit factor without losses, exposure, buy-and-hold. |
-| `tests/test_run.py` | Command line end to end on a temporary parquet file (CSV output, cost options), and argument errors. |
+| `tests/test_tree.py` | RSI and ADX on hand-checkable series, feature values, **features and predictions cannot see future bars**, label definition, learning a planted pattern and predicting it out of sample, flat warm-up, fit required, parameter validation, end to end through the engine. |
+| `tests/test_run.py` | Command line end to end on a temporary parquet file (CSV output, cost options, tree mode with `--train-end`), and argument errors. |
 
 Tests use small hand-built price series (`tests/helpers.py::make_bars`) so every
 expectation can be checked by hand.
@@ -153,6 +172,43 @@ capital is in the market. That shrinks both the gains and the losses.
 test better ideas against, not a profitable strategy. Three tickers is far too
 small a sample for any conclusion.
 
+### Decision tree (arXiv:2405.13959)
+
+Reproduction of the decision-tree paper (`R&D/`) with our engine: one tree per ticker
+(depth 4, Gini), trained on Mar 2022 to Dec 2023, tested Jan 2024 to Oct 2026 (out of
+sample). Same 3 tickers, $10,000 start. "Paper-like" means fully invested
+(`--max-position 1 --risk 1`) with the stop effectively off (`--atr-mult 50`); the
+paper used no costs and no stop. Buy and hold over the test period: ADM +14.7%,
+AMC -50.4%, AMGN +51.8%.
+
+1-minute bars (the paper's setting):
+
+| Setup | ADM | AMC | AMGN | Trades (ADM / AMC / AMGN) |
+|---|---|---|---|---|
+| Paper-like, no costs | +27.6% | +10.5% | +92.4% | 7,052 / 337 / 43,076 |
+| Paper-like, IBKR commissions | -99.3% | -67.9% | -97.4% | |
+| Paper-like, IBKR + $0.01/share slippage | -99.5% | -97.5% | -97.5% | |
+| Defaults (1% risk, 2 ATR stop, 10% cap), IBKR | -93.5% | -10.4% | -74.3% | |
+
+Other bar sizes, paper-like:
+
+| Bar size | No costs (ADM / AMC / AMGN) | IBKR (ADM / AMC / AMGN) | Time in market |
+|---|---|---|---|
+| 5 min | +47.6% / +68.9% / +4.9% | -58.0% / -100.0% / -10.3% | 4% to 9% |
+| 30 min | -2.2% / -0.2% / +53.3% | -13.5% / -27.0% / +38.5% | 1% to 93% |
+| 1 hour | -10.0% / +18.8% / +47.7% | -16.6% / -55.0% / +37.4% | 8% to 82% |
+
+Reading: on 1-minute bars the tree does find something before costs (win rate about
+52%, profit factor about 1.06), but it is worth only **0.15 to 0.35 basis points per
+trade** (ADM, AMGN). The $1 minimum commission on a $10,000 position is 2 bp per round
+trip, and a one-cent spread on a $60 stock is about 1.7 bp per side, so the edge is
+roughly ten times too small to pay for trading. That holds at any account size, since
+per-share commissions and spreads scale with the position. The gross edge may well be
+bid-ask bounce in trade prints rather than anything tradeable (not tested). On 30 min
+and 1 hour bars the tree is mostly long and tracks the market, never beating buy and
+hold after costs. AMC's trees rarely go long (the training period was a steady
+decline). **The paper's result does not survive realistic costs here.**
+
 ## Removed legacy code
 
 The repo originally held an agent-written pipeline (`backtest/`, `test_voladj*.py`,
@@ -168,6 +224,7 @@ commit `7fc720e` and earlier):
 ## Limitations
 
 - Single instrument at a time, long only, whole shares, no leverage or borrowing costs.
+- The decision tree uses one fixed train/test split, not walk-forward retraining.
 - IEX volume is a small share of the consolidated tape; fills are assumed at the
   quoted bar prices with no market impact or partial fills.
 - Clean-version data has some bars removed by the provider's outlier filter.

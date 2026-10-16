@@ -11,7 +11,8 @@ Numbers below are the papers' own claims, not reproduced by this code.
 1. **[2405.13959] Decision Trees for Intuitive Intraday Trading Strategies**  
    Per-stock decision trees on 9 technical features (RSI, ADX, SMA/VWAP ratios, volatility) with
    1-minute NIFTY50 bars. On the test period, 46% of stocks beat buy-and-hold on return and 60% on
-   Sharpe. No commissions or slippage. The most directly testable idea here.
+   Sharpe. No commissions or slippage. **Tested here** (`DecisionTreeStrategy`): a gross edge of
+   0.15 to 0.35 bp per trade on 1-minute bars, wiped out by commissions (-68% to -99%).
 
 2. **[2311.18477v3] Intraday FX Volatility-Curve Forecasting with Functional GARCH Approaches**  
    Functional GARCH forecasts of intraday volatility curves and VaR for USD/EUR, USD/GBP, USD/JPY,
