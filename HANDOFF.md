@@ -14,6 +14,11 @@ priority list; keep it updated as items are done).
   symbols, then `python -m algotrader.history check`, run `python -m algotrader.longrun`
   on the VPS, `python -m algotrader.french report --results results/long`, and commit
   `results/long/` (see ROADMAP "Long-history runner"). Nothing else is running.
+- **Also running on the VPS (dry run, not for committing):** `longrun deep_arb_long` on the
+  WIKI-only history (`data/history_wiki`, 2008 to Mar 2018), output
+  `data/long_wiki_provisional/`, log `data/deep_dryrun.log`; started 2026-10-17 ~00:30
+  Madrid, ~4-5 hours. It checks the deep-arbitrage pipeline end to end; the real run
+  waits for all Tiingo prices (November).
 - Earlier note: `~/algotrader-work` there holds the code as of commit
   `63456db` (without `factors.py`); rsync the working tree again before the next run.
 - Headline: no strategy clears the luck bar (317 configurations, Sharpe 1.61) or has
