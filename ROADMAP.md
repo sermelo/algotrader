@@ -77,8 +77,8 @@ Background evidence used throughout:
   the momentum factor and its alpha falls from t 1.5 to t 0.5 / 0.4, so it is the known
   momentum premium. Dual momentum on broad keeps +14.8% (t 1.47): gold and bonds, which
   the equity factors do not span. Nothing has a factor alpha t above 1.5.
-- M2. Count every configuration ever tried (across commits) for the luck bar, not only
-  the current registry.
+- M2. **Done** (`trials.py`, `results/trials.md`): 746 configurations over core and broad,
+  luck bar 1.75 over 3.3 years; the long-history count is added when `results/long/` exists.
 - M3. Turnover per strategy: **done in `longrun.py`** (one-sided, per year); not yet in the main runner (would change every fingerprint).
 
 ## Data sources and costs (researched 2026-10-16)
