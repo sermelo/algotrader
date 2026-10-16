@@ -45,7 +45,7 @@ Background evidence used throughout:
 
 | # | Task | Why (evidence / need) | Source options | Status |
 |---|---|---|---|---|
-| D1 | **Long daily price history** (20+ years) for the broad universe, ideally including delisted names | Power (above); seasonality, 12-month momentum, low-vol and trend need many years; the papers tested decades | Tiingo EOD (free plan: internal use, 1,000 requests/day; vendor claims history to 1962, a reviewer says 20-30 years); Stooq (free, fragile downloads); Alpaca (free plan; history from 2016 per a third-party page, unverified). Survivorship-free needs paid data (CRSP via WRDS, Norgate): **decision for sergio** | todo |
+| D1 | **Long daily price history** (20+ years) for the broad universe, ideally including delisted names | Power (above); seasonality, 12-month momentum, low-vol and trend need many years; the papers tested decades | Tiingo EOD (free plan: internal use, 1,000 requests/day; vendor claims history to 1962, a reviewer says 20-30 years); Stooq (free, fragile downloads); Alpaca (free plan; history from 2016 per a third-party page, unverified). Survivorship-free needs paid data: see "Data sources and costs" below. **Decision for sergio** | todo |
 | D2 | **Fama-French + momentum daily factors** (Kenneth French data library, free, from 1926) | Regress our returns on market, size, value, profitability, investment, momentum to see whether "alpha" is just factor exposure; long-history check of factor strategies; inputs for factor momentum (S5) | mba.tuck.dartmouth.edu Data Library (CSV) | todo |
 | D3 | **Point-in-time fundamentals and filing dates** from SEC EDGAR XBRL | Unlocks value, profitability, investment (S3), the best-replicating categories after momentum; filing dates give earnings dates for PEAD (S7) and the overnight earnings filter | `data.sec.gov` companyfacts API / nightly bulk zip, free, User-Agent required, about 10 requests/s. Must key each fact to its filing date (not the period end) and keep amendments in order | todo |
 | D4 | **Bigger, point-in-time universe** (e.g. historical S&P 500 / Russell 1000 members) | Cross-sectional strategies need breadth (papers use hundreds to thousands of stocks; deep stat arb used about 550 large caps) | Index membership lists (free ones are incomplete; paid ones exist); combine with D1 | todo |
@@ -77,6 +77,37 @@ Background evidence used throughout:
 - M2. Count every configuration ever tried (across commits) for the luck bar, not only
   the current registry.
 - M3. Turnover and cost per strategy in the summary (NMV's 50% monthly turnover line).
+
+## Data sources and costs (researched 2026-10-16)
+
+Free (vendor or uploader claims, not yet verified by us):
+
+| Need | Free source | Covers | Gap |
+|---|---|---|---|
+| D2 factor returns | Kenneth French data library | Daily FF factors + momentum, reversal, from 1926 | none |
+| D3 fundamentals, filing dates | SEC EDGAR XBRL (`data.sec.gov`) | All filers, incl. delisted, with filing dates | XBRL only from about 2009-2011; we must build point-in-time handling |
+| D4 S&P 500 membership | GitHub `hanshof/sp500_constituents` | Members by date from 1996 | completeness unverified |
+| D1 prices, current tickers | Stooq bulk CSV; Tiingo free (500 symbols/month, 1,000 requests/day, internal use); yfinance | Decades of daily bars | **survivors only** (delisted coverage unconfirmed) |
+| D1 prices, delisted | Kaggle mirrors of Quandl WIKI (about 3,000 US stocks incl. delisted, frozen March 2018); Kaggle "Huge Stock Market Dataset" (to Nov 2017, delisted unclear); Kaggle "Arandkei" delisted archive (contents unverified) | Up to 2017-2018 | names delisted 2018-2022 missing (our HF data starts March 2022); mixing sources with different adjustments |
+
+Free is enough for D2, D3 (from about 2010) and a rough D4. For D1 a free patchwork
+still leaves survivorship bias for 2018-2022 and stitching errors.
+
+Paid options that close the gap (prices as listed on 2026-10-16; check before buying):
+
+| Provider | Price | What it claims | Notes |
+|---|---|---|---|
+| **Sharadar Prices, full history** (personal use) | **$39/month or $299/year** | 25,000+ active and delisted US stocks and funds, daily from 1998; corporate actions; S&P 500 membership table | Cheapest complete fix for D1 + D4. Personal Use License (read terms before buying). 10-year history: $19/month |
+| Sharadar Bundle, full history (personal use) | $69/month or $499/year | Prices + point-in-time fundamentals (from about 1990s), events, insiders | Also replaces most of D3 and gives pre-2009 fundamentals |
+| EODHD All-World EOD | $19.99/month | Says 60,191 delisted US tickers, EOD history | Reused tickers can map to the wrong company; no index membership in this plan |
+| Norgate Platinum (US stocks) | $346.50 / 6 months, $630 / year (no monthly) | Delisted from 1990, historical index constituents | Desktop updater software, made for trading platforms |
+| Tiingo Power | $30/month | More symbols and requests | Delisted coverage not documented |
+| CRSP (WRDS) | n/a | The academic standard | Only through a university affiliation |
+
+Recommendation: free sources for D2, D3, then one Sharadar Prices (full history) month
+for D1 + D4 (download everything during the month, stored under `data/`, never
+committed), or the Bundle month if pre-2010 fundamentals matter. Status: waiting for
+sergio's decision.
 
 ## Recommended order
 
