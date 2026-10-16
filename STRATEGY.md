@@ -40,6 +40,70 @@ After arXiv:2405.13959 (see `R&D/`). One model per ticker:
   at the next open, drop empty bars and charge costs. The paper's train/test years
   were 2022–23 / 2023–24 on NIFTY50; ours are Mar 2022–Dec 2023 / Jan 2024 on.
 
+## Session strategies (`algotrader/intraday.py`)
+
+Times are bar **end** times, so the rules work for any bar size that divides the
+session (with 5-minute bars, "the bar ending 15:30" starts at 15:25). "Previous close"
+is the last close of the previous session. Intraday strategies set `exit_at_close`
+on each session's last bar, so they are flat overnight.
+
+- **Overnight** (`OvernightStrategy`): `want_long` only on each session's
+  second-to-last bar, so the engine buys at the last bar's open and sells at the
+  next session's first open. On 1-minute bars that is 15:59 to 09:30. Optional trend
+  filter: close above the mean of the previous `trend_days` session closes.
+- **Intraday momentum** (`IntradayMomentumStrategy`, Gao et al. 2018): r1 = close at
+  10:00 / previous close - 1. If r1 > `min_ret` (and, with `require_r12`, the half
+  hour ending at the entry time was up), `want_long` from the bar ending at `entry`
+  (15:30) to the close: buy at the next open, sell at the session close.
+- **Noise area** (`NoiseAreaStrategy`, Zarattini et al. 2024): sigma(t) = mean over
+  the previous `lookback` sessions of |close(t) / session open - 1| at the same
+  time of day t (today excluded). Band = max(session open, previous close) *
+  (1 + `band_mult` * sigma). Decisions only on bars ending at a multiple of
+  `decision_minutes` from 10:00: enter if close > band; while long, stay only if
+  close > max(band, session VWAP). Flat at the close.
+- **Opening-range breakout** (`OpeningRangeBreakoutStrategy`, Zarattini & Aziz 2023):
+  opening range = bars ending by 09:30 + `or_minutes`. If the range's last close is
+  above its first open (and its volume is at least `min_rel_volume` times the mean of
+  the previous `rv_lookback` sessions, when that filter is on), buy at the next open
+  with `stop_price` = range low; exit at the close. Days without a complete range
+  are skipped. No profit target.
+
+Session VWAP is on the typical price (H+L+C)/3 from the session's first bar.
+Defaults use `atr_mult` 50, i.e. effectively no ATR stop.
+
+## Daily mean reversion (`RsiReversionStrategy`)
+
+Wilder RSI(`rsi_period`) on closes. Enter when RSI < `entry` (and close >
+SMA(`trend_sma`) if set); once in, stay until close > SMA(`exit_sma`). Decided on the
+close, filled at the next open. No stop by default.
+
+## Gradient boosting (`GradientBoostingStrategy`, `algotrader/ml.py`)
+
+- **Label:** 1 if close(t + `horizon`) / close(t) - 1 > `threshold`, else 0. Rows
+  whose future is outside the training frame are dropped, so labels never reach into
+  the test period.
+- **Features:** the nine tree features plus minute of day, weekday, return since the
+  session open, opening gap, distance from session VWAP, volume over its mean of the
+  last 5 sessions' bars, and 1, 5 and 20-session returns (bar counts from the bar size).
+- **Model:** scikit-learn `HistGradientBoostingClassifier` (`max_depth` 3, 200
+  iterations, learning rate 0.05, L2 1.0, `random_state` 0), handling missing values
+  natively. One model is fitted on all tickers' training bars together (`fit_many`).
+- `want_long` while the predicted probability > `p_enter`.
+
+## Experiments (`algotrader/experiments.py`)
+
+- Universe: `algotrader/universe.py` (4 index ETFs, 20 large caps, 3 original tickers).
+- Split: train 2022-03 to 2023-12, test 2024-01 to the end of the data.
+- Rule-based strategies: every grid point is backtested on the training period.
+  Fitted strategies: fitted before 2023-07, grid scored on 2023-07 to 2023-12, then the
+  chosen setting is refitted on the full training period.
+- Selection score: Sharpe of the equal-weight portfolio of all tickers (each ticker's
+  daily equity normalised to 1, returns averaged daily). Test data is never used for
+  selection (unit-tested).
+- Each test run starts at 2024-01-01 using earlier bars only as indicator warm-up,
+  is run with costs (headline) and without ("gross"), fully invested
+  (`risk` 1, `max_frac` 1), $10,000 per ticker, IBKR commissions.
+
 ## Bars
 
 Intraday bar sizes are built from 1-minute bars anchored to the 09:30 session open
@@ -58,6 +122,9 @@ the overnight gap, and positions can be held overnight.
 | Stop price | Entry fill minus `atr_mult * ATR(atr_period)`; ATR is from the signal bar. Defaults 2.0 and 14 bars. |
 | Stop trigger | The bar's low is at or below the stop. Fill at the stop, or at the open if it gaps below. |
 | After a stop | No new entry until the next fresh crossover. |
+| Explicit stop | If the strategy has a `stop_price` column (not NaN on the signal bar), it replaces the ATR stop and sizing uses fill - stop. No entry if the fill is already at or below it. |
+| Exit at close | On bars where the strategy's `exit_at_close` is True, an open position is closed at that bar's close (minus slippage), and no new order is placed from that bar. |
+| Backtest start | `Backtester.run(bars, start=...)` computes indicators on all bars but trades and records equity only from `start`. |
 | End of data | Open position closed at the last close. |
 
 ## Position size
@@ -78,10 +145,11 @@ Total return, CAGR, max drawdown (bar-level equity), Sharpe (daily equity return
 sqrt(252), risk-free 0), exposure (fraction of bars ending with a position open),
 trades, win rate, average win/loss (break-even trades count as losses), profit
 factor (gross profit / gross loss; inf if there are wins and no losses), total
-commission, buy-and-hold return (first open to last close).
+commission, buy-and-hold return (first open to last close) and buy-and-hold Sharpe
+(daily closes, starting from the first open).
 
 ## Not implemented (ideas)
 
-Shorting, flat-at-close (intraday only) mode, ADX regime filter, volume-based partial fills, random latency,
+Shorting, ADX regime filter, volume-based partial fills, random latency,
 multi-instrument portfolio, walk-forward parameter selection (and walk-forward
-retraining of the decision tree). 
+retraining of the decision tree).

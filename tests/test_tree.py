@@ -3,7 +3,8 @@ import pandas as pd
 import pytest
 
 from algotrader import Backtester, CostModel, DecisionTreeStrategy, tree_features
-from algotrader.tree import FEATURES, adx, next_bar_up, rsi
+from algotrader.indicators import adx, rsi
+from algotrader.tree import FEATURES, next_bar_up
 from helpers import make_bars
 
 

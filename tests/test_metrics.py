@@ -89,3 +89,13 @@ def test_summary_has_all_keys():
     keys = Metrics(result([100, 110])).summary().keys()
     assert {"total_return", "cagr", "sharpe", "max_drawdown", "buy_and_hold", "exposure",
             "final_equity", "trades", "win_rate", "profit_factor"} <= set(keys)
+
+
+def test_buy_and_hold_sharpe_equals_sharpe_of_holding():
+    closes = [10, 11, 10.5, 12, 11.8]
+    bars = make_bars(closes, opens=[10, 10.8, 10.9, 10.6, 12], freq="1D")
+    # equity of holding: start at the first open, then each daily close
+    hold = result([10] + closes, capital=10, start="2024-01-01")
+    expected = Metrics(hold).sharpe()
+    assert Metrics(result([100] * 5), bars).buy_and_hold_sharpe() == pytest.approx(expected)
+    assert math.isnan(Metrics(result([100, 100])).buy_and_hold_sharpe())

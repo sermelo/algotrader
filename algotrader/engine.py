@@ -18,7 +18,7 @@ class Trade:
     entry_price: float
     exit_price: float
     commission: float
-    exit_reason: str          # 'signal', 'stop' or 'end'
+    exit_reason: str          # 'signal', 'stop', 'close' (exit_at_close) or 'end'
 
     @property
     def pnl(self) -> float:
@@ -54,6 +54,14 @@ class Backtester:
         the stop (gap) the fill is the open, otherwise the stop price.
       * Any open position is closed at the last bar's close ('end').
 
+    Optional strategy columns:
+      * `stop_price`: absolute stop level decided on the signal bar. When present
+        and not NaN it replaces the ATR stop, and sizing uses (entry fill - stop).
+        If the fill is already at or below it, no position is opened.
+      * `exit_at_close`: on bars where it is True, an open position is closed at
+        that bar's close ('close') and no new order is placed from that bar. Used
+        by intraday strategies to be flat overnight.
+
     Args:
         strategy: any `Strategy` (indicators with `want_long` and `atr`, plus
             `atr_mult`); defaults to SmaCrossStrategy().
@@ -69,23 +77,33 @@ class Backtester:
         self.sizer = sizer or PositionSizer()
         self.initial_capital = initial_capital
 
-    def run(self, bars: pd.DataFrame) -> BacktestResult:
-        """Backtest `bars` (indexed OHLCV, see BarLoader) and return the result."""
+    def run(self, bars: pd.DataFrame, start=None) -> BacktestResult:
+        """Backtest `bars` (indexed OHLCV, see BarLoader) and return the result.
+
+        If `start` is given, indicators are computed on all `bars` (so earlier bars
+        serve as warm-up) but trading and the equity curve begin at `start`.
+        """
         if bars.empty:
             raise ValueError("no bars to backtest")
         df = self.strategy.indicators(bars)
+        if start is not None:
+            df = df[df.index >= pd.Timestamp(start)]
+            if df.empty:
+                raise ValueError(f"no bars on or after start {start}")
         idx = df.index
         o, h, l, c = (df[k].to_numpy(float) for k in ("open", "high", "low", "close"))
         atr = df["atr"].to_numpy(float)
         want = df["want_long"].to_numpy(bool)
         n = len(df)
+        stop_px = df["stop_price"].to_numpy(float) if "stop_price" in df else np.full(n, np.nan)
+        eod = df["exit_at_close"].to_numpy(bool) if "exit_at_close" in df else np.zeros(n, bool)
 
         cash = self.initial_capital
         shares = 0
         stop = entry_fill = entry_comm = 0.0
         entry_time = None
         pending = None                      # 'buy' / 'sell' decided at prior close
-        pending_atr = np.nan
+        pending_atr = pending_stop = np.nan
         equity = np.empty(n)
         held = np.zeros(n, dtype=int)
         trades = []
@@ -103,14 +121,16 @@ class Backtester:
             # 1. Fill the order decided at the previous close, at this open.
             if pending == "buy" and shares == 0:
                 fill = self.costs.buy_price(o[i])
-                qty = self.sizer.shares(cash, fill, self.strategy.atr_mult * pending_atr)
+                new_stop = (pending_stop if not np.isnan(pending_stop)
+                            else fill - self.strategy.atr_mult * pending_atr)
+                qty = self.sizer.shares(cash, fill, fill - new_stop)
                 while qty > 0 and qty * fill + self.costs.commission(qty) > cash:
                     qty -= 1
                 if qty > 0:
                     entry_comm = self.costs.commission(qty)
                     cash -= qty * fill + entry_comm
                     shares, entry_fill, entry_time = qty, fill, idx[i]
-                    stop = fill - self.strategy.atr_mult * pending_atr
+                    stop = new_stop
             elif pending == "sell" and shares > 0:
                 close_position(i, o[i], "signal")
             pending = None
@@ -119,15 +139,19 @@ class Backtester:
             if shares > 0 and l[i] <= stop:
                 close_position(i, min(o[i], stop), "stop")
 
-            # 3. Mark to market, then 4. decide the next order from this close.
+            # 3. Intraday strategies: flat at this bar's close.
+            if eod[i] and shares > 0:
+                close_position(i, c[i], "close")
+
+            # 4. Mark to market, then 5. decide the next order from this close.
             equity[i] = cash + shares * c[i]
             held[i] = shares
-            if i + 1 < n:
+            if i + 1 < n and not eod[i]:
                 if shares > 0 and not want[i]:
                     pending = "sell"
                 elif shares == 0 and want[i] and (i == 0 or not want[i - 1]) \
-                        and not np.isnan(atr[i]):
-                    pending, pending_atr = "buy", atr[i]
+                        and not (np.isnan(atr[i]) and np.isnan(stop_px[i])):
+                    pending, pending_atr, pending_stop = "buy", atr[i], stop_px[i]
 
         if shares > 0:
             close_position(n - 1, c[-1], "end")

@@ -36,12 +36,24 @@ class Metrics:
         growth = 1 + self.total_return()
         return growth ** (1 / years) - 1 if years > 0 and growth > 0 else float("nan")
 
-    def sharpe(self) -> float:
-        """Annualised Sharpe from daily returns; NaN if undefined."""
-        r = self.daily_equity.pct_change().dropna()
+    @staticmethod
+    def _sharpe(daily_values: pd.Series) -> float:
+        r = daily_values.pct_change().dropna()
         if len(r) < 2 or r.std() == 0:
             return float("nan")
         return float(r.mean() / r.std() * np.sqrt(TRADING_DAYS))
+
+    def sharpe(self) -> float:
+        """Annualised Sharpe from daily returns; NaN if undefined."""
+        return self._sharpe(self.daily_equity)
+
+    def buy_and_hold_sharpe(self) -> float:
+        """Sharpe of holding the bars: first open, then each day's last close (NaN w/o bars)."""
+        if self.bars is None or self.bars.empty:
+            return float("nan")
+        daily = self.bars["close"].resample("1D").last().dropna()
+        start = pd.Series([self.bars["open"].iloc[0]], index=[daily.index[0] - pd.Timedelta("1D")])
+        return self._sharpe(pd.concat([start, daily]))
 
     def max_drawdown(self) -> float:
         """Largest peak-to-trough fall of bar-level equity (a negative number or 0)."""
@@ -84,6 +96,7 @@ class Metrics:
         """All statistics as a flat dict."""
         return {"total_return": self.total_return(), "cagr": self.cagr(),
                 "sharpe": self.sharpe(), "max_drawdown": self.max_drawdown(),
-                "buy_and_hold": self.buy_and_hold(), "exposure": self.exposure(),
+                "buy_and_hold": self.buy_and_hold(),
+                "buy_and_hold_sharpe": self.buy_and_hold_sharpe(), "exposure": self.exposure(),
                 "final_equity": float(self.result.equity.iloc[-1]),
                 **self.trade_stats()}

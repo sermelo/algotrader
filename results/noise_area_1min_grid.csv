@@ -1,0 +1,9 @@
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
+"{""band_mult"": 0.5, ""decision_minutes"": 30, ""lookback"": 14}",-0.0142284,-0.00786369,-0.134912,-0.0438826,-0.519821
+"{""band_mult"": 0.5, ""decision_minutes"": 60, ""lookback"": 14}",0.0319772,0.0174918,0.385811,-0.0395276,-0.183131
+"{""band_mult"": 1.0, ""decision_minutes"": 30, ""lookback"": 14}",0.0378113,0.0206567,0.600752,-0.0227818,-0.0600622
+"{""band_mult"": 1.0, ""decision_minutes"": 60, ""lookback"": 14}",0.0496337,0.0270458,0.794345,-0.0254799,0.118897
+"{""band_mult"": 1.5, ""decision_minutes"": 30, ""lookback"": 14}",0.00939206,0.00516327,0.235652,-0.0252076,-0.278884
+"{""band_mult"": 1.5, ""decision_minutes"": 60, ""lookback"": 14}",0.018768,0.0102962,0.477342,-0.0279901,0.0870418
+"{""band_mult"": 2.0, ""decision_minutes"": 30, ""lookback"": 14}",0.0116827,0.00641928,0.40378,-0.0137288,0.0820049
+"{""band_mult"": 2.0, ""decision_minutes"": 60, ""lookback"": 14}",0.00962962,0.00529359,0.34772,-0.0133857,-0.208907

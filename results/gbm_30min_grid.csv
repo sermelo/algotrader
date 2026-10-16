@@ -1,0 +1,9 @@
+params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawdown,median_ticker_sharpe
+"{""horizon"": 4, ""p_enter"": 0.55, ""threshold"": 0.002}",-0.00180295,-0.00365508,-0.634588,-0.00316391,1.18156
+"{""horizon"": 4, ""p_enter"": 0.65, ""threshold"": 0.002}",0,0,,0,
+"{""horizon"": 4, ""p_enter"": 0.55, ""threshold"": 0.005}",-0.000544282,-0.00110413,-0.457493,-0.00178194,-0.459306
+"{""horizon"": 4, ""p_enter"": 0.65, ""threshold"": 0.005}",0,0,,0,
+"{""horizon"": 13, ""p_enter"": 0.55, ""threshold"": 0.002}",-0.00162357,-0.00329174,-0.260929,-0.00711511,-0.174251
+"{""horizon"": 13, ""p_enter"": 0.65, ""threshold"": 0.002}",0.000388278,0.000788038,1.41421,0,1.41986
+"{""horizon"": 13, ""p_enter"": 0.55, ""threshold"": 0.005}",-0.00168417,-0.00341451,-1.30789,-0.00182414,-0.984477
+"{""horizon"": 13, ""p_enter"": 0.65, ""threshold"": 0.005}",0,0,,0,

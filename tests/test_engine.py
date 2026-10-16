@@ -163,3 +163,62 @@ def test_engine_accepts_any_strategy_with_the_protocol():
     assert len(res.trades) == 1
     assert res.trades[0].entry_time == bars.index[3]
     assert res.trades[0].exit_reason == "end"
+
+
+class Scripted:
+    """Strategy whose columns are given directly, for testing optional engine columns."""
+    atr_mult = 1.0
+
+    def __init__(self, want, stop_price=None, exit_at_close=None):
+        self.want, self.stop_price, self.exit_at_close = want, stop_price, exit_at_close
+
+    def indicators(self, bars):
+        df = bars.copy()
+        df["atr"] = 1.0
+        df["want_long"] = self.want
+        if self.stop_price is not None:
+            df["stop_price"] = self.stop_price
+        if self.exit_at_close is not None:
+            df["exit_at_close"] = self.exit_at_close
+        return df
+
+
+def test_start_uses_earlier_bars_only_as_warmup():
+    bars = make_bars([10, 10, 10, 11, 12, 13, 14])
+    res = Backtester(AlwaysLong(), NO_COST, BIG).run(bars, start=bars.index[4])
+    assert res.equity.index[0] == bars.index[4] and len(res.equity) == 3
+    assert res.trades[0].entry_time == bars.index[5]          # signal at the start bar's close
+    with pytest.raises(ValueError):
+        Backtester(AlwaysLong(), NO_COST, BIG).run(bars, start="2030-01-01")
+
+
+def test_explicit_stop_price_replaces_atr_stop_and_sets_size():
+    bars = make_bars([10, 10, 10, 10, 10], pad=0.5)            # lows at 9.5
+    want = [False, True, True, True, True]
+    tight = Backtester(Scripted(want, stop_price=9.8), NO_COST,
+                       PositionSizer(risk_per_trade=0.01, max_position_frac=1.0)).run(bars)
+    trade = tight.trades[0]
+    assert trade.exit_reason == "stop" and trade.exit_price == pytest.approx(9.8)
+    assert trade.shares == 500                                   # 1% of 10,000 / (10 - 9.8)
+    loose = Backtester(Scripted(want, stop_price=5.0), NO_COST, BIG).run(bars)
+    assert loose.trades[0].exit_reason == "end"
+
+
+def test_no_entry_when_fill_is_below_stop_price():
+    bars = make_bars([10, 10, 10, 10])
+    res = Backtester(Scripted([False, True, True, True], stop_price=11.0), NO_COST, BIG).run(bars)
+    assert res.trades == []
+
+
+def test_exit_at_close_flattens_and_blocks_new_orders():
+    bars = make_bars([10, 11, 12, 13, 14, 15])
+    want = [False, True, True, False, True, True]
+    eod = [False, False, True, False, False, False]
+    res = Backtester(Scripted(want, exit_at_close=eod), NO_COST, BIG).run(bars)
+    first = res.trades[0]
+    assert first.exit_reason == "close" and first.exit_time == bars.index[2]
+    assert first.exit_price == 12                                # that bar's close
+    assert res.position.iloc[2] == 0
+    # want stays True on the exit bar but no order is placed from it; the next entry
+    # needs a fresh signal (bar 4) and fills at bar 5's open
+    assert res.trades[1].entry_time == bars.index[5]
