@@ -1,14 +1,33 @@
 # algotrader
 
-Backtesting of an SMA 20/50 crossover strategy (long-only, US equities, 1-minute IEX data) with volatility-adjusted sizing and commission/slippage models. Goal: test different algorithmic trading strategies.
+Backtesting different algorithmic trading strategies on US equity 1-minute IEX bars
+(HF Data Library). Read `README.md` (usage, design, results) and `STRATEGY.md`
+(exact rules) before changing code.
 
 @README.md
 @STRATEGY.md
 
-## Notes for Claude
+## Working rules
 
-- The code was written by a non-programmer agent (Hermes) and has not been reviewed. Treat it as a prototype, not trusted code.
-- `backtest/` holds many near-duplicate script variants (`_fixed`, `_new`, `_test`, `_quick`, `_txn_debug`, ...) rather than one parameterised module. Prefer consolidating over adding another copy.
-- Scripts and docs reference Hermes-specific paths (`/home/hermes/...`, `$HERMES_CACHE/scratch/tickers/*_clean.parquet`). The input data is not in this repo, so nothing runs here until a data path is set up.
-- Published results (`results/`) used the commission-only vol-adjusted version; the slippage/latency model was not part of them.
-- Verify claims in STRATEGY.md (performance numbers, regime filter, partial fills) against the code before relying on them.
+- Code lives in `algotrader/` (object-oriented: `BarLoader`, `CostModel`,
+  `PositionSizer`, `SmaCrossStrategy`, `Backtester`, `Metrics`). Add new strategies as
+  new classes with an `indicators(bars)` method returning `want_long` and an `atr_mult`
+  attribute; do not copy-paste engine code.
+- Every behaviour change needs a unit test in `tests/`. Run `.venv/bin/python -m pytest`
+  before committing. Keep tests on small hand-built series (`tests/helpers.py`).
+- Document changes: update README (design/tests/results tables) and STRATEGY.md in the
+  same commit. Do not state performance numbers that have not been produced by this code.
+- Never introduce look-ahead: signals use bar close, fills use next open.
+
+## Environment
+
+- Python venv in `.venv/` (`uv venv`, `uv pip install -e ".[dev]"`). `data/` is git-ignored.
+- Data download needs an HF Data Library API key stored OUTSIDE the repo at
+  `~/.config/hfdatalibrary/token`. Never print, commit or write the key into any file.
+- Run scripts with data under `data/scratch/tickers/<TICKER>_clean.parquet`.
+
+## Legacy code
+
+`backtest/`, `test_voladj*.py`, `results/` are an unverified agent-written pipeline whose
+published results do not reproduce (see README). Do not extend or rely on them; they may be
+deleted once the new package covers what is useful.

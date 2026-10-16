@@ -1,67 +1,50 @@
-# Strategy Specification: SMA 20/50 Crossover with Enhanced Risk Controls
+# Strategy specification
 
-## Overview
-This document specifies the final rule‑set for the SMA 20/50 crossover strategy developed during the backtest enhancement project. The strategy aims to capture medium‑term trends in US equities while controlling risk through adaptive position sizing, regime filters, and realistic transaction costs.
+This describes what `algotrader/` actually implements (verified by the unit tests).
+The earlier version of this file contained performance claims that could not be
+reproduced; they have been removed.
 
-## Core Rule
-- **Universe**: Liquid US equities (current implementation: 50 tickers from IEX minute data, Mar 2022‑present).
-- **Signal**: 
-  - Compute 20‑period simple moving average (SMA20) and 50‑period simple moving average (SMA50) on closing prices.
-  - Enter long when SMA20 crosses above SMA50.
-  - Exit long when SMA20 crosses below SMA50.
-- **Execution**: Signals are acted on the next bar's open price (1‑bar latency) to avoid look‑ahead bias.
+## Signal
 
-## Risk Controls
-1. **Adaptive Position Sizing**
-   - Risk per trade: 1% of equity (configurable).
-   - Position size limited by volatility: dollar risk per share = ATR(14) × 2.0 (or fixed 1.5% stop if ATR unavailable).
-   - Max position fraction: 10% of equity per trade.
-   - Result: Volatility‑scaled shares = min( equity × risk% / (ATR × mult), equity × max% / price ).
+Long-only SMA crossover on bar closes of any bar size (set by `--timeframe`):
 
-2. **Regime/Trend Filter (Optional)**
-   - Only take longs when price > SMA100 **or** ADX(14) > 20.
-   - Designed to reduce losses in sideways/choppy markets.
+- `want_long` is True while `SMA(fast) > SMA(slow)` (defaults 20 and 50 bars).
+- Optional trend filter: also require `close > SMA(trend_filter)`.
+- During the warm-up (until the slowest indicator exists) `want_long` is False.
 
-3. **Stop‑Loss**
-   - Primary: ATR‑based stop (ATR × 2.0) below entry price.
-   - Fallback: Fixed 1.5% stop‑loss if ATR calculation fails.
+## Orders and execution
 
-## Transaction Cost Model
-- **Commission**: $0.005 per share, with a minimum of $1.00 per trade.
-- **Slippage**: Proportional to spread: slippage = 0.1 × (High‑Low)/Close × price.
-  - Added to entry price, subtracted from exit price.
-- **Latency**: Fixed 1‑bar delay (next bar open) plus optional jitter (0‑2 bars random) – implemented in enhanced versions.
-- **Partial Fill**: Trade size limited to 10% of bar volume to avoid market impact.
+| Event | Rule |
+|---|---|
+| Entry signal | `want_long` turns True (fresh crossover) while flat. |
+| Entry fill | Next bar's open, plus slippage per share. |
+| Exit signal | `want_long` turns False while in a position. |
+| Exit fill | Next bar's open, minus slippage per share. |
+| Stop price | Entry fill minus `atr_mult * ATR(atr_period)`; ATR is from the signal bar. Defaults 2.0 and 14 bars. |
+| Stop trigger | The bar's low is at or below the stop. Fill at the stop, or at the open if it gaps below. |
+| After a stop | No new entry until the next fresh crossover. |
+| End of data | Open position closed at the last close. |
 
-## Performance Expectations (Based on Enhanced Backtest)
-- **Annual Return**: ~0.5‑2.0% (varies by ticker and regime filter).
-- **Sharpe Ratio**: Typically 0.2‑0.5 for individual tickers; portfolio‑level Sharpe ~0.3‑0.6 after diversification.
-- **Max Drawdown**: Usually <5% for diversified portfolio; single‑ticker drawdowns can exceed 20% in volatile stocks.
-- **Turnover**: Approximately 6‑8 trades per ticker per year (depends on signal frequency and filters).
-- **Note**: Results are pre‑tax and exclude slippage beyond spread model; real‑world performance may be lower.
+## Position size
 
-## Implementation Files
-- Core backtest: `/home/hermes/.hermes/scripts/backtest/sma_backtest.py` (original)
-- Enhanced version with transaction costs: `/home/hermes/.hermes/scripts/backtest/sma_backtest_txn.py`
-- Analytics scripts: portfolio construction (`portfolio_analytics.csv`), visual reports (`visual_reports.py`)
-- Pipeline automation: `/home/hermes/run_pipeline.sh`
+`shares = floor(min(equity * risk / stop_distance, equity * max_frac / price))`
 
-## Usage
-1. Ensure data is present in `$HERMES_CACHE/scratch/tickers/` as `_clean.parquet` files.
-2. Run the pipeline: `bash /home/hermes/run_pipeline.sh` (executes analytics, visuals, and git tagging).
-3. Outputs:
-   - Equity curves and statistics in `$HERMES_CACHE/scratch/results/`
-   - Plots in `$HERMES_CACHE/scratch/output/`
-   - Git tags for reproducibility.
+with `risk = 1%`, `max_frac = 10%` by default, `stop_distance = atr_mult * ATR`.
+If the order plus commission exceeds cash, size is reduced until it fits.
 
-## Limitations
-- Based on 1‑minute data; higher‑frequency effects (e.g., intra‑bar slippage) are approximated.
-- Regime filter parameters (SMA100, ADX threshold) are not optimized; further research recommended.
-- Strategy is long‑only; short‑selling or inverse positions not considered.
-- Performance assumes ability to trade at the modeled prices; liquidity constraints may affect larger capital.
+## Costs
 
-## Future Work
-- Walk‑forward optimization of all parameters (SMA lengths, risk%, stop‑loss, regime thresholds).
-- Incorporate machine‑learning filters to improve signal quality.
-- Test on extended universes including delisted tickers.
-- Examine execution algorithms (VWAP, TWAP) to reduce market impact.
+- Commission: $0.005 per share, $1.00 minimum per order (Interactive Brokers fixed).
+- Slippage: fixed dollars per share per side, default 0 (`--slippage`).
+
+## Metrics
+
+Total return, CAGR, max drawdown (bar-level equity), Sharpe (daily equity returns,
+sqrt(252), risk-free 0), trades, win rate, average win/loss, profit factor, total
+commission, buy-and-hold return (first open to last close).
+
+## Not implemented (ideas)
+
+Shorting, ADX regime filter, volume-based partial fills, random latency,
+multi-instrument portfolio, walk-forward parameter selection. The legacy scripts
+in `backtest/` sketch some of these, unverified.

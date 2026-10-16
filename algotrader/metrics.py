@@ -1,0 +1,76 @@
+"""Performance statistics."""
+import numpy as np
+import pandas as pd
+
+from .engine import BacktestResult
+
+TRADING_DAYS = 252
+
+
+class Metrics:
+    """Summary statistics for a BacktestResult.
+
+    Sharpe is computed on DAILY equity returns (last equity of each calendar day)
+    and annualised with sqrt(252); risk-free rate is taken as 0.
+
+    Args:
+        result: the backtest to summarise.
+        bars: optional bars, used only for the buy-and-hold benchmark.
+    """
+
+    def __init__(self, result: BacktestResult, bars: pd.DataFrame = None):
+        self.result = result
+        self.bars = bars
+
+    @property
+    def daily_equity(self) -> pd.Series:
+        return self.result.equity.resample("1D").last().dropna()
+
+    def total_return(self) -> float:
+        return self.result.equity.iloc[-1] / self.result.initial_capital - 1
+
+    def cagr(self) -> float:
+        """Compound annual growth rate; NaN if under a day of data or equity <= 0."""
+        eq = self.result.equity
+        years = (eq.index[-1] - eq.index[0]).total_seconds() / (365.25 * 86400)
+        growth = 1 + self.total_return()
+        return growth ** (1 / years) - 1 if years > 0 and growth > 0 else float("nan")
+
+    def sharpe(self) -> float:
+        """Annualised Sharpe from daily returns; NaN if undefined."""
+        r = self.daily_equity.pct_change().dropna()
+        if len(r) < 2 or r.std() == 0:
+            return float("nan")
+        return float(r.mean() / r.std() * np.sqrt(TRADING_DAYS))
+
+    def max_drawdown(self) -> float:
+        """Largest peak-to-trough fall of bar-level equity (a negative number or 0)."""
+        eq = self.result.equity
+        return float((eq / eq.cummax() - 1).min())
+
+    def buy_and_hold(self) -> float:
+        """Return of holding from the first open to the last close (NaN w/o bars)."""
+        if self.bars is None or self.bars.empty:
+            return float("nan")
+        return float(self.bars["close"].iloc[-1] / self.bars["open"].iloc[0] - 1)
+
+    def trade_stats(self) -> dict:
+        pnl = np.array([t.pnl for t in self.result.trades])
+        wins, losses = pnl[pnl > 0], pnl[pnl <= 0]
+        gross_loss = -losses.sum()
+        return {
+            "trades": len(pnl),
+            "win_rate": len(wins) / len(pnl) if len(pnl) else float("nan"),
+            "avg_win": wins.mean() if len(wins) else 0.0,
+            "avg_loss": losses.mean() if len(losses) else 0.0,
+            "profit_factor": wins.sum() / gross_loss if gross_loss > 0 else float("nan"),
+            "total_commission": sum(t.commission for t in self.result.trades),
+        }
+
+    def summary(self) -> dict:
+        """All statistics as a flat dict."""
+        return {"total_return": self.total_return(), "cagr": self.cagr(),
+                "sharpe": self.sharpe(), "max_drawdown": self.max_drawdown(),
+                "buy_and_hold": self.buy_and_hold(),
+                "final_equity": float(self.result.equity.iloc[-1]),
+                **self.trade_stats()}

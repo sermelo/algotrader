@@ -1,112 +1,166 @@
-# AlgoTrader Repository
+# algotrader
 
-This repository contains the code, backtest results, and documentation for the SMA 20/50 crossover trading strategy with enhanced risk controls and transaction cost modeling.
+A small, tested backtester for long-only SMA-crossover strategies on US equity
+minute bars. Written to replace an earlier, unverified set of scripts (see
+[Legacy code](#legacy-code-and-the-published-results)).
 
-## Directory Structure
+- `algotrader/` is the package, in a handful of small classes (see [Design](#design)).
+- `tests/` has the unit tests (`pytest`, 44 tests, about 1 second).
+- `STRATEGY.md` is the exact strategy and execution rules.
+- `backtest/`, `test_voladj*.py`, `results/` is the **legacy, unverified** code and output.
 
-```
-.
-├── backtest/                 # Python backtest scripts
-│   ├── sma_backtest.py                   # Original SMA backtest
-│   ├── sma_backtest_5min.py              # 5‑minute variant
-│   ├── sma_backtest_enhanced.py          # Enhanced with extra features
-│   ├── sma_backtest_fixed.py             # Fixed‑version
-│   ├── sma_backtest_ml.py                # ML‑enhanced version
-│   ├── sma_backtest_ml_simple.py         # Simple ML version
-│   ├── sma_backtest_new.py               # New iteration
-│   ├── sma_backtest_quick.py             # Quick test version
-│   ├── sma_backtest_slippage_latency.py  # Includes slippage/latency
-│   ├── sma_backtest_subset.py            # Subset testing
-│   ├── sma_backtest_test.py              # Test harness
-│   ├── sma_backtest_txn.py               # Transaction cost model
-│   ├── sma_backtest_txn_debug.py         # Debug version of txn
-│   ├── sma_backtest_voladj.py            # Volatility‑adjusted position sizing
-│   ├── sma_backtest_voladj_50_200.py     # Vol‑adj with 50/200 SMA
-│   ├── sma_backtest_voladj_atr4.py       # Vol‑adj using ATR(4)
-│   ├── sma_walkforward_bar.py            # Walk‑forward bar‑by‑bar
-│   ├── sma_walkforward_bar_fast.py       # Faster walk‑forward
-│   ├── sma_walkforward_demo.py           # Demo of walk‑forward
-│   ├── visual_reports.py                 # Generate equity/plots
-│   └── walkforward.py                    # Walk‑over utilities
-├── results/                  # CSV outputs from the full backtest
-│   ├── summary_with_commission_all.csv   # Per‑ticker stats (return, Sharpe, max‑DD, trades)
-│   └── daily_return_buckets_all.csv      # Histogram of daily returns (1% buckets)
-├── test_voladj.py            # Driver: runs first 5 tickers, prints summary
-├── test_voladj_50_200.py     # Driver for vol‑adj 50/200 SMA
-├── test_voladj_atr4.py       # Driver for vol‑adj using ATR(4)
-├── STRATEGY.md               # Full strategy specification
-└── README.md                 # This file
+## Quick start
+
+```bash
+uv venv .venv && uv pip install --python .venv/bin/python -e ".[dev]"   # or: pip install -e ".[dev]"
+.venv/bin/python -m pytest                                              # run the unit tests
 ```
 
-## Getting Started
+Get data (next section), then:
 
-1. **Clone the repo**
+```bash
+.venv/bin/python -m algotrader.run --data-dir data/scratch/tickers \
+    --tickers ADM AMC AMGN --timeframe 5min --out data/results/summary_5min.csv
+```
+
+Omit `--tickers` to run every `*_clean.parquet` in the folder. `--help` lists all
+options (`--fast`, `--slow`, `--trend-filter`, `--risk`, `--max-position`,
+`--slippage`, `--capital`).
+
+Or from Python:
+
+```python
+from algotrader import BarLoader, Backtester, Metrics
+
+bars = BarLoader("data/scratch/tickers").load("AMGN", timeframe="30min")
+result = Backtester().run(bars)            # default: SMA 20/50, 1% risk, IBKR commissions
+print(Metrics(result, bars).summary())
+print(result.trades_frame().head())
+```
+
+## Data
+
+The data is 1-minute OHLCV bars built from IEX trade reports (Mar 2022 to
+present), from the **HF Data Library** (https://hfdatalibrary.com, maintained by
+Ahmed Elkassabgi, CC-BY-4.0, for academic research, not for trading). The Hugging
+Face repo `elkassabgi/hfdatalibrary` holds documentation only.
+
+1. Register for a free API key at https://hfdatalibrary.com (name, institution,
+   email, role, country). Keys expire every 30 days.
+2. **Never commit the key.** Keep it outside the repo, for example in
+   `~/.config/hfdatalibrary/token` (`chmod 600`).
+3. Download a ticker (full history, "clean" version, about 5 to 7 MB):
    ```bash
-   git clone https://github.com/sermelo/algotrader.git
-   cd algotrader
+   mkdir -p data/scratch/tickers
+   curl -H "X-API-Key: $(cat ~/.config/hfdatalibrary/token)" \
+        -o data/scratch/tickers/AAPL_clean.parquet \
+        "https://api.hfdatalibrary.com/v1/bars/AAPL?version=clean"
    ```
+4. Available tickers (about 1,250, public): `https://api.hfdatalibrary.com/v1/symbols`.
+   Limits: 100 downloads per minute.
 
-2. **Environment** (if not already set up via Hermes)
-   - Python 3.11+
-   - Required packages: `pandas`, `numpy` (others may be imported by specific scripts)
-   - The scripts expect minute‑OHLCV data in Parquet format under `$HERMES_CACHE/scratch/tickers/` (or adjust the path in the scripts).
-   - Commissions modeled: IBKR per‑share $0.005, minimum $1.00 per trade (as used in the backtest).
-   - Platform: Linux, Hermes agent environment (scripts tested on Hermes).
+Files have columns `datetime, Open, High, Low, Close, Volume, source`. `BarLoader`
+converts them to a `datetime` index with lowercase `open, high, low, close,
+volume`. `data/` and `.venv/` are git-ignored.
 
-3. **Data Acquisition** (if data not already present)
-   - The data is 1‑minute OHLCV bars built from IEX trade reports (Mar 2022‑present), from the **HF Data Library** (https://hfdatalibrary.com, maintained by Ahmed Elkassabgi). Free for academic research, CC‑BY‑4.0. Not for trading.
-   - The Hugging Face repo `elkassabgi/hfdatalibrary` is documentation only; the earlier `load_dataset('IEEx/minute-bar')` instruction did not work (that dataset does not exist).
-   - Register for a free API key at https://hfdatalibrary.com (name, institution, email, role, country). Keys expire every 30 days. **Never commit the key.** Keep it outside the repo, e.g. in `~/.config/hfdatalibrary/token` (chmod 600).
-   - Download one ticker (full history, Parquet, "clean" version):
-     ```bash
-     mkdir -p data/scratch/tickers
-     curl -H "X-API-Key: $(cat ~/.config/hfdatalibrary/token)" \
-       -o data/scratch/tickers/AAPL_clean.parquet \
-       "https://api.hfdatalibrary.com/v1/bars/AAPL?version=clean"
-     ```
-   - The list of available tickers (about 1,250) is public: `https://api.hfdatalibrary.com/v1/symbols`. Rate limit is 100 downloads per minute.
-   - Files have columns `datetime, Open, High, Low, Close, Volume, source` (capitalised, `datetime` as a column, not the index). This is the format the scripts expect.
-   - `data/` and `.venv/` are git‑ignored. Run scripts with `HERMES_CACHE=$PWD/data` so inputs and outputs stay inside `data/scratch/`.
+## Design
 
-4. **Run a quick test**
-   ```bash
-   python test_voladj.py
-   ```
-   This processes the first five tickers and prints Sharpe, total return, and trade counts.
+```
+BarLoader ──bars──▶ Backtester ──▶ BacktestResult ──▶ Metrics
+                      │  ▲  ▲  ▲        (equity, trades)    (summary stats)
+                      │  │  │  └─ SmaCrossStrategy  (indicators, want_long)
+                      │  │  └──── PositionSizer     (shares from risk/stop/cap)
+                      │  └─────── CostModel         (commission, slippage)
+```
 
-5. **Run the full backtest** (as used to generate the CSVs in `results/`)
-   - The original pipeline executed the suite of scripts and produced the CSVs.
-   - To regenerate, run the appropriate backtest script (e.g., `backtest/sma_backtest_voladj.py`) over the full ticker list and aggregate the outputs.
-   - Example (pseudo):
-     ```bash
-     python backtest/sma_backtest_voladj.py --tickers-file path/to/ticker_list.txt
-     ```
-   - After generating per‑ticker CSVs, you can combine them into `summary_with_commission_all.csv` and compute the daily‑return histogram.
-
-6. **Refer to the strategy doc**
-   See `STRATEGY.md` for detailed rules, risk controls, transaction cost model, performance expectations, usage instructions, limitations, and future work.
-
-## Reproducing the Published Results
-
-> **Status: NOT reproduced.** The published CSVs in `results/` do not match what the code in this repo produces, and should be treated as unverified.
-
-Replication attempt (2026‑10‑16): downloaded the clean 1‑minute data for the 3 tickers in `results/summary_with_commission_all.csv` (ADM, AMC, AMGN) and ran `backtest/sma_backtest_voladj.py` unchanged (`HERMES_CACHE=$PWD/data`, about 2 minutes).
-
-| Ticker | Published return / trades | Reproduced return / trades |
+| Class | File | Responsibility |
 |---|---|---|
-| ADM | +0.14% / 2 | −100.0% / 10,074 |
-| AMC | −8.70% / 454 | −98.7% / 9,962 |
-| AMGN | +0.72% / 2 | −99.99% / 10,332 |
+| `BarLoader` | `data.py` | Read parquet, normalise columns/index, de-duplicate, resample to any pandas bar size (empty periods dropped). |
+| `CostModel` | `costs.py` | Commission per share with a per-order minimum, plus fixed per-share slippage on each side. Frozen dataclass. |
+| `PositionSizer` | `sizing.py` | `min(equity*risk/stop_distance, equity*max_frac/price)` rounded down to whole shares. Returns 0 for invalid input. |
+| `SmaCrossStrategy` | `strategy.py` | Computes `sma_fast`, `sma_slow`, `atr`, and the boolean `want_long` (optionally also requiring close > long SMA). Pure function of the bars. |
+| `Backtester` | `engine.py` | Bar-by-bar loop: fills, stops, equity marking. Returns a `BacktestResult` holding the equity `Series` and a list of `Trade`s. |
+| `Trade` | `engine.py` | One round trip (fill prices after slippage, total commission, exit reason, net `pnl`). |
+| `Metrics` | `metrics.py` | Total return, CAGR, daily Sharpe, max drawdown, buy-and-hold, win rate, profit factor, commissions. |
+| `run.py` | `run.py` | Command line wrapper (`python -m algotrader.run`). |
 
-Findings:
-- The script loses essentially all capital on every ticker (win rate about 5‑9%, about 10,000 trades each), because the entry signal (`SMA20 > SMA50` and a regime filter) flips constantly on 1‑minute bars and costs eat the equity.
-- `results/summary_with_commission_all.csv` has **3 tickers, not 50**. Two of them show only 2 trades, which is not plausible for this script.
-- The README previously said the published results used "no slippage"; the script actually applies a fixed $0.001/share slippage plus $0.005/share commission (min $1).
-- The published results therefore came from a different script, parameters or data than anything in this repo. The generating pipeline (`/home/hermes/run_pipeline.sh`) and the 50‑ticker list are not in the repo.
-- The performance numbers in `STRATEGY.md` are likewise unverified.
+Each class has one job and takes its collaborators in its constructor, so any of
+them can be swapped or tested alone (for example a new strategy only needs an
+`indicators(bars)` method returning `want_long`, plus `atr_mult`).
 
-Next step: a clean, tested reimplementation, then re‑running on the data to get results we can trust.
+### Execution rules (no look-ahead)
+
+1. Signals are computed on a bar's **close** and filled at the **next bar's open**.
+2. Entry only on a fresh crossover (`want_long` going False to True). After a stop-out
+   the strategy waits for the next crossover instead of re-entering at once.
+3. Stop = `atr_mult * ATR` below the entry fill (ATR from the signal bar), checked
+   against each bar's **low**. Fill is the stop price, or the open if the bar gaps
+   below it.
+4. A position still open on the last bar is closed at that bar's close.
+5. Equity is marked to the close of every bar. Sharpe uses **daily** equity returns
+   (annualised with sqrt(252), risk-free rate 0).
+
+See `STRATEGY.md` for the full specification.
+
+## Tests
+
+```bash
+.venv/bin/python -m pytest -v
+```
+
+| File | What it checks |
+|---|---|
+| `tests/test_costs_sizing.py` | Commission minimum/per-share, slippage direction, sizing by risk vs cap, rounding, invalid input. |
+| `tests/test_data.py` | Column/index normalisation, sorting, duplicate handling, resample OHLCV aggregation, gap dropping, parquet loading. |
+| `tests/test_strategy.py` | SMA/ATR values, warm-up is flat, up/down/flat markets, trend filter, parameter validation. |
+| `tests/test_engine.py` | Fill at next open, signal exit, **no look-ahead** (future data cannot change earlier equity), intrabar stop and gap stop, no re-entry after stop, end-of-data close, commission and slippage effects, accounting identity (final equity = capital + sum of trade pnl), size cap, cash never negative. |
+| `tests/test_metrics.py` | Return, drawdown, Sharpe against a manual calculation, daily vs per-bar aggregation, CAGR, trade statistics, buy-and-hold. |
+
+Tests use small hand-built price series (`tests/helpers.py::make_bars`) so every
+expectation can be checked by hand.
+
+## Results so far
+
+Default strategy (SMA 20/50, 1% risk, 2x ATR stop, 10% max position, IBKR
+commissions, no slippage), $10,000 start, 3 tickers, Mar 2022 to Oct 2026. These
+tickers are those in the legacy results file, not a chosen sample.
+
+| Bar size | ADM | AMC | AMGN | Trades per ticker |
+|---|---|---|---|---|
+| 1 min | -82.1% | -68.8% | -67.3% | 3,500 to 4,300 |
+| 5 min | -12.1% | -28.9% | -16.4% | about 1,000 |
+| 30 min | -3.0% | +7.0% | -3.7% | about 160 |
+| 1 day | +1.8% | -9.8% | +2.3% | 13 |
+| Buy and hold | -2.3% | -98.2% | +88.3% | |
+
+Reading: on short bars the crossover whipsaws constantly and the $1 minimum
+commission (on roughly $1,000 positions) costs about 0.2% per round trip, which
+dominates. On 30 min and daily bars the result is indistinguishable from noise.
+**There is no demonstrated edge here**; this is a working, trustworthy baseline to
+test better ideas against, not a profitable strategy. Three tickers is far too
+small a sample for any conclusion.
+
+## Legacy code and the published results
+
+`backtest/`, `test_voladj*.py` and `results/` came from an earlier agent-written
+pipeline. They are kept for reference only and should not be trusted:
+
+- The legacy script `backtest/sma_backtest_voladj.py` run unchanged on the real data
+  loses 99% to 100% on every ticker (about 10,000 trades each).
+- `results/summary_with_commission_all.csv` lists 3 tickers (not the 50 claimed), two
+  of them with just 2 trades, and cannot be reproduced from any code in this repo.
+- Its generating pipeline (`/home/hermes/run_pipeline.sh`) and ticker list are absent.
+
+## Limitations
+
+- Single instrument at a time, long only, whole shares, no leverage or borrowing costs.
+- IEX volume is a small share of the consolidated tape; fills are assumed at the
+  quoted bar prices with no market impact or partial fills.
+- Clean-version data has some bars removed by the provider's outlier filter.
+- Prices are as provided; corporate-action handling is the provider's. Check before
+  trusting long histories.
+- Results are pre-tax. Not investment advice.
 
 ## License
 
-This project is provided for educational and research purposes. See individual files for any specific notices.
+Educational and research use. Data licence: see HF Data Library terms.

@@ -1,0 +1,15 @@
+[project]
+name = "algotrader"
+version = "0.1.0"
+description = "Small, tested backtester for SMA-crossover strategies on minute bars"
+requires-python = ">=3.10"
+dependencies = ["pandas", "numpy", "pyarrow"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools]
+packages = ["algotrader"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
