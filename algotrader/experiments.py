@@ -286,6 +286,15 @@ EXPERIMENTS += [
                         {"target_vol": [0.10, 0.20], "vol_lookback": [21, 63]}),
 ]
 
+
+# Roadmap S13: pre-holiday effect (Ariel 1990).
+from .calendar_effects import PreHolidayStrategy  # noqa: E402
+
+EXPERIMENTS += [
+    Experiment("pre_holiday_daily", "Ariel (1990) pre-holiday effect", PreHolidayStrategy, "1D",
+               {}, {"days_before": [1, 2], "days_after": [0, 1]}),
+]
+
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
 

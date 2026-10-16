@@ -84,6 +84,12 @@ Defaults use `atr_mult` 50, i.e. effectively no ATR stop.
   not prices; the last month of the data has no month-end positions (it may be
   incomplete).
 
+- **Pre-holiday** (`PreHolidayStrategy`, `calendar_effects.py`; Ariel 1990): a holiday is
+  a weekday without a session (business-day gap between bars). Long during the
+  `days_before` sessions ending with the last one before the holiday and the
+  `days_after` sessions after it: bought at the open of the first, sold at the open
+  after the last. Uses only the session calendar; the last bar is never pre-holiday.
+
 ## Overlays (`algotrader/overlays.py`)
 
 Wrappers around any strategy, selected by parameters in an experiment's grid:
