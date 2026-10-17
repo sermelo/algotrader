@@ -274,6 +274,24 @@ every January on all earlier scores. Deviations from the paper: much smaller net
 learning rate, fewer epochs, 6-year rolling window on S&P 500 members sampled every 20 days,
 one model instead of an ensemble of five.
 
+## Small-account intraday (`algotrader/slot.py`)
+
+For a 1,000 to 2,000-euro account. A model gives every stock an `edge` at each decision minute: the
+expected return over the next `hold_minutes`, before costs, known at that bar's close. `breakeven(cost,
+price, value, extra_bps)` is the round-trip cost as a fraction of the position: commissions and fees of one
+buy and one sale of whole shares plus the half-spread paid on each side, plus `extra_bps` for other costs
+(e.g. currency conversion). `SlotTrader` splits the account into `slots` equal positions (each the
+start-of-day equity / `slots`); at each decision minute, while a slot is free, it buys at the next bar's open
+the stock with the highest edge that is at least its own `breakeven` (for the slot's value) plus `min_margin`;
+shares = the slot's money / the fill price, reduced until the commission fits; each exit is the open of the
+first bar at or after entry + `hold_minutes`, or the last bar's close if the session ends first. At most
+`max_trades_per_day` trades a day (default one per slot: in a cash account the proceeds of a sale settle the
+next day and re-buying with unsettled money is a free-riding violation) and a stock at most once a day.
+Profits are compounded; the daily equity gives the Sharpe ratio. No look-ahead (unit-tested: later prices and
+later edges do not change an earlier trade). The cost model is passed in; `ibkr_tiered()` is the plan assumed
+for a small account. Splitting a small account raises the hurdle: the $0.35 minimum is per order, so a
+$770 position needs about 0.14% to 0.20% against 0.08% for the whole 2,000 euros in one stock.
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each

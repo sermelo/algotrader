@@ -59,6 +59,11 @@ Unverified figures, see https://www.interactivebrokers.com/en/pricing/commission
 - **Pattern day trading:** the $25k rule was removed by the SEC on 2026-06-04 but brokers
   have until 2027-10-20; if IBKR still applies it, a margin account under $25k can make
   3 day trades in 5 days (matters for the intraday strategies only).
+- **Small account (1,000 euros to start, up to 2,000 in 3 positions, 2026-10-17):** intraday strategies must
+  pick one to three stocks; a cash account (T+1 settlement, free-riding rule: one round trip per slot a day) or,
+  above $2,000 (about 1,750 euros), possibly a margin account under the new FINRA rule (check what IBKR applies). Costs: Tiered is the cheaper plan at this size
+  (break-even 0.10-0.19% against Fixed's 0.24% on a $1,000 trade); convert euros to dollars once (the manual
+  conversion has a $2 minimum). Research and plan: [`R&D/small-account-intraday.md`](R&D/small-account-intraday.md).
 - **Spanish two-month rule:** a loss is deferred if the same stock is bought back within
   two months: frequent trading of the same tickers changes after-tax results (results
   here are pre-tax; ask a tax adviser).
@@ -94,6 +99,14 @@ Updated 2026-10-17. In order; details in the sections below.
    buyable by sergio), S11 neural ranking, D5 SIP minute data, Russell 1000 membership.
 8. **Before any live trading**: paper trading per `docs/ibkr-integration.md`, stock-only
    strategies (PRIIPs), the Tiered cost model, PDT and Spanish two-month rule checks.
+10. **S14 Intraday for a small account (one to three stocks at a time, 1,000-2,000 euros)** (sergio, 2026-10-17; research in
+    `R&D/small-account-intraday.md`): engine and break-even helper done (`algotrader/slot.py`, `SlotTrader` with 1-3 slots,
+    `tests/test_slot.py`); next, in order: minute-feature extraction from the Hugging Face minute bars on the
+    VPS, walk-forward model per horizon (10, 20, 30, 90, 240 minutes) with calibrated edges, evaluation with
+    `SlotTrader` and Tiered costs. Awaiting sergio's go for the data extraction and the model.
+11. **Rerun the 35 + 35 experiments with Tiered costs** (optional, asked 2026-10-17): the headline results use
+    Pro Fixed + 2 bp; Tiered is the plan sergio would pick, so net numbers (intraday above all) would move up.
+    All fingerprints change, so it is one full rerun; batch it with other shared-code changes.
 9. **Ideas from the 2026-10-17 discussion** (not started; sergio will say what comes next):
    - *Confidence-aware portfolios*: today every strategy holds the top N at equal weight and uses
      only the rank of its score. Test weighting by score or probability, trading only when the

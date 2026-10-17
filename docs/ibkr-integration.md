@@ -89,6 +89,8 @@ is implemented yet; the backtester's cost model and live-trading constraints are
 See `ROADMAP.md`: PRIIPs (no US-domiciled ETFs for EU retail), PDT status at IBKR
 unconfirmed (SEC abolished it from 2026-06-04, brokers have until 2027-10-20), Spanish
 two-month rule, keep a USD balance.
+For a roughly 1,000-euro account see `R&D/small-account-intraday.md`: likely a cash account (T+1
+settlement, one round trip a day, free-riding rule), Tiered commissions, convert to dollars once.
 
 ## 7. Suggested safety controls for going live
 
