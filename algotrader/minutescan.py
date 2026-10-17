@@ -16,7 +16,8 @@ import pandas as pd
 
 from .minutefeat import LABELS
 
-SCAN_FEATURES = ["ret5", "ret15", "ret30", "ret60", "ret_open", "gap", "prev_ret", "vol30", "dvol20", "rvol_day",
+DERIVED = ["z5", "z30", "z_open", "z_gap"]
+SCAN_FEATURES = DERIVED + ["ret5", "ret15", "ret30", "ret60", "ret_open", "gap", "prev_ret", "vol30", "dvol20", "rvol_day",
                  "rvol30", "vwap_dist", "range_pos", "range_bp", "active30", "rel30", "rel_open", "price", "logdv20"]
 CONDITIONS = {                                    # name -> function of the dataset giving the conditioning value
     "dvol20": lambda d: d["dvol20"], "vol30": lambda d: d["vol30"], "range_bp": lambda d: d["range_bp"],
@@ -26,6 +27,16 @@ CONDITIONS = {                                    # name -> function of the data
 }
 DISCRETE = {"minute"}
 THRESHOLDS = (0.0008, 0.0014, 0.0019)
+
+
+def derived(df: pd.DataFrame) -> pd.DataFrame:
+    """Moves in units of the stock's own volatility: the 5 and 30-minute returns over the 30-minute volatility
+    scaled to that length (`z5`, `z30`), the move since the open and the gap over the 20-day daily volatility
+    (`z_open`, `z_gap`; the open move scaled by the square root of the share of the session elapsed)."""
+    v = (df["vol30"] * 1e-4).replace(0, np.nan)
+    d = df["dvol20"].replace(0, np.nan)
+    return df.assign(z5=df["ret5"] / (v * np.sqrt(5)), z30=df["ret30"] / (v * np.sqrt(30)),
+                     z_open=df["ret_open"] / (d * np.sqrt(np.maximum(df["minute"], 1) / 390.0)), z_gap=df["gap"] / d)
 
 
 def quantile_edges(values: np.ndarray, bins: int = 10) -> np.ndarray:

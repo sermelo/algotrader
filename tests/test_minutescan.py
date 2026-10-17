@@ -105,3 +105,15 @@ def test_rule_scan_picks_the_planted_signal_and_nets_the_cost():
     v = pick(f="volatile", s="f_good", p="high", k=1)
     assert v["days"] == len(DATES) and v["filter_mean_bp"] != pytest.approx(hi["filter_mean_bp"])   # a different filtered set
     assert 0 <= hi["win_net"] <= 1 and hi["years"] == 1
+
+
+def test_derived_z_scores_scale_moves_by_the_stocks_own_volatility():
+    from algotrader.minutescan import derived
+    df = pd.DataFrame({"vol30": [4.0, 8.0, 0.0], "dvol20": [0.02, 0.01, 0.0], "ret5": [0.002, 0.002, 0.001], "ret30": [0.006, 0.006, 0.001],
+                       "ret_open": [0.01, 0.01, 0.0], "gap": [0.01, 0.01, 0.0], "minute": [390.0, 90.0, 30.0]})
+    d = derived(df)
+    assert d["z5"].iloc[0] == pytest.approx(0.002 / (4e-4 * np.sqrt(5)))
+    assert d["z5"].iloc[0] == pytest.approx(2 * d["z5"].iloc[1])               # same move, half the volatility: twice the z
+    assert d["z30"].iloc[1] == pytest.approx(0.006 / (8e-4 * np.sqrt(30)))
+    assert d["z_open"].iloc[1] == pytest.approx(0.01 / (0.01 * np.sqrt(90 / 390)))
+    assert d["z_gap"].iloc[0] == pytest.approx(0.5) and np.isnan(d["z5"].iloc[2]) and np.isnan(d["z_gap"].iloc[2])

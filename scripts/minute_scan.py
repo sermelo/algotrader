@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from algotrader.minutescan import CONDITIONS, DISCRETE, THRESHOLDS, BinTable, SignalScan, quantile_edges
+from algotrader.minutescan import CONDITIONS, DISCRETE, THRESHOLDS, BinTable, SignalScan, derived, quantile_edges
 
 COST = 0.0014                                       # the 667-euro slot on Tiered, for the "typical move / cost" columns
 
@@ -24,17 +24,22 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--data", default="data/hf_minute")
     p.add_argument("--out", default="data/minute_scan")
+    p.add_argument("--vol-quantile", type=float, default=None, help="keep only decisions whose 30-minute volatility is at or above this quantile")
     a = p.parse_args(argv)
     files = sorted(f for f in Path(a.data).glob("*.parquet") if not f.name.startswith("carry"))
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     sample = pd.concat([pd.read_parquet(f) for f in files[::6]], ignore_index=True)
     bins = {n: BinTable(n, None if n in DISCRETE else quantile_edges(CONDITIONS[n](sample).to_numpy(), 10)) for n in CONDITIONS}
+    thr = sample["vol30"].quantile(a.vol_quantile) if a.vol_quantile else None
     scan = SignalScan()
     del sample
     t0 = time.time()
     for i, f in enumerate(files):
         df = pd.read_parquet(f)
+        if thr is not None:
+            df = df[df["vol30"] >= thr]
+        df = derived(df)
         scan.add(df)
         for b in bins.values():
             b.add(df)
@@ -45,7 +50,7 @@ def main(argv=None):
     cond.to_csv(out / "conditional.csv", index=False, float_format="%.6g")
     sig.to_csv(out / "signal_scan.csv", index=False, float_format="%.6g")
 
-    L = ["# Minute-feature scans (2008-2026, S&P 500 members, decisions at 10:00, 10:30 ... 15:00)", "",
+    L = ["# Minute-feature scans (2008-2026, S&P 500 members, decisions at 10:00, 10:30 ... 15:00" + (f"; only the stocks with 30-minute volatility at or above the {a.vol_quantile:.0%} quantile, {thr:.1f} bp a minute" if thr is not None else "") + ")", "",
          f"## Where are the big moves? Typical move (mean absolute return) as a multiple of a {COST * 100:.2f}% cost, lowest to highest tenth of each condition", ""]
     for lab in ("fwd30", "fwd90", "fwd240"):
         L += [f"### Horizon {lab[3:]} minutes", "", "| Condition | Lowest tenth | Median tenth | Highest tenth | Highest tenth: share rising more than the cost |", "|---|---|---|---|---|"]
