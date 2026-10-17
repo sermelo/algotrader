@@ -14,7 +14,7 @@ progress (runs on the VPS, what is committed and what is not, next steps).
 - Code lives in `algotrader/` (object-oriented: `BarLoader`, `CostModel`,
   `PositionSizer`, strategy classes in `strategy.py`, `tree.py`, `ml.py`, `intraday.py`,
   `meanrev.py`, `momentum.py`, overlays in `overlays.py`, the portfolio engine and
-  cross-sectional strategies in `portfolio.py`, `factors.py`, `buffered.py` and `trend.py`, `Backtester`, `Metrics`, `stats.py`, `french.py` (Fama-French factor regressions), `history.py` (long daily history), `hfdata.py` (adjusting the Hugging Face minute-bar daily aggregates), `edgar.py` (SEC fundamentals), `deep_arb.py` (PyTorch, CPU-only index in pyproject), and
+  cross-sectional strategies in `portfolio.py`, `factors.py`, `buffered.py` and `trend.py`, `Backtester`, `Metrics`, `stats.py`, `french.py` (Fama-French factor regressions), `history.py` (long daily history), `hfdata.py` (adjusting the Hugging Face minute-bar daily aggregates), `edgar.py` (SEC fundamentals), `deep_arb.py` and `chartcnn.py` (PyTorch, CPU-only index in pyproject), and
   the `experiments.py` runner). Add new strategies as
   new classes satisfying the `Strategy` protocol (`indicators(bars)` returning
   `want_long` and `atr`, plus an `atr_mult` attribute; `average_true_range` is

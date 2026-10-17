@@ -254,6 +254,26 @@ close, filled at the next open. No stop by default.
 - **Seasonality** (`seasonal.py`): at each month end, score = mean return of the coming
   calendar month in the previous `years` years (at least `min_years`); top/bottom N.
 
+## Price-chart CNN (`algotrader/chartcnn.py`, long history)
+
+Jiang, Kelly & Xiu (2023). **Image**: the last `d` = 20 days as a 64 x 60 black-and-white chart,
+3 pixels a day: the left pixel the open, the middle column the high-low line, the right pixel
+the close; a 20-day moving average of the closes (using closes from before the window) as one
+row per day; volume bars in the bottom 12 rows. Prices are divided by the window's first close
+and scaled to the window's own minimum and maximum, volume to its maximum. **Label**: 1 if the
+close `h` = 20 days later is above the close on the chart's last day. **Model**: three blocks of
+conv (5 x 3), batch norm, leaky ReLU, 2 x 1 max pool (channels 16, 32, 64), dropout 0.5, one
+logit; Adam, learning rate 1e-3, batches of 128, at most 5 epochs, early stopping (patience 2) on
+the last 20% of the sampled days (a time block). **Fitting**: every January on the previous 6
+years (from 2008 data for 2013), charts sampled every 20 trading days (non-overlapping), only S&P 500
+members of that day, only charts whose label was known before 1 January. **Scores**: probability of
+a positive return for every member at each month end of the year, from data up to that day.
+**Portfolio**: `top_n` highest (and `short_n` lowest) scores, equal weight, monthly, filled at the
+next open, same costs as the other long experiments; the parameters (top N, bottom N) are chosen
+every January on all earlier scores. Deviations from the paper: much smaller network, higher
+learning rate, fewer epochs, 6-year rolling window on S&P 500 members sampled every 20 days,
+one model instead of an ensemble of five.
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each
