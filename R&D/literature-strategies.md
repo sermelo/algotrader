@@ -210,6 +210,11 @@ most. Numbers below are the authors' claims, from abstracts and secondary source
    traded by a convolutional transformer, daily US large caps, reported profitable
    after costs. An independent replication on 2016-2024 (arXiv 2412.11432) finds even
    higher Sharpe ratios but suspects overfitting or missing costs.
+   **Our test (2026-10-17):** the paper's returns are close-to-close (positions taken at the
+   close that produced the signal). On S&P 500 members 2010-2018 a simple contrarian rule
+   on the same PCA residuals has gross Sharpe 1.57 close-to-close but 0.46 when traded at
+   the next open (lookback 1 day; -0.02 vs 0.78 at 5 days); our CNN+transformer run traded
+   at the next open lost (Sharpe -5.5, gross -0.3, turnover ~1,450% a year).
 2. **Price-chart CNN** (Jiang, Kelly & Xiu, "(Re-)Imag(in)ing Price Trends",
    *Journal of Finance* 78(6), 2023): CNN on OHLC/volume chart images predicts 1 to
    4-week returns; authors report transfer to other markets. Only an unreviewed GitHub
