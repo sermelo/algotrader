@@ -5,7 +5,7 @@ results and fingerprints are independent. Universe: on each day, only the stocks
 were S&P 500 members that day can be bought (`PointInTime`); a stock that leaves the
 index is sold at the next rebalance, and one whose data ends is sold at its last close.
 Prices come from `data/history` (Tiingo where its series passed `history check`, else
-Quandl WIKI). Folds start each January from `FIRST_FOLD`; at each fold start the
+the adjusted Hugging Face series, else Quandl WIKI). Folds start each January from `FIRST_FOLD`; at each fold start the
 parameters with the best portfolio Sharpe on all earlier data are chosen.
 
 Example:
@@ -61,10 +61,11 @@ def membership_matrix(members: pd.DataFrame) -> pd.DataFrame:
     return m.astype(bool)
 
 
-def load_frames(history=HISTORY, start=START, coverage=None) -> dict:
+def load_frames(history=HISTORY, start=START, coverage=None, use_hf=True) -> dict:
     """Daily frames per member ticker (and the benchmark): Tiingo unless coverage.csv
     marks it a mismatch or covering under half of the membership period (a reused
-    ticker), else WIKI. Columns open..volume (+ raw_close)."""
+    ticker), else the adjusted Hugging Face series in `history/hf` (`hfdata.build_source`,
+    skipped with `use_hf=False`), else WIKI. Columns open..volume (+ raw_close)."""
     history = Path(history)
     spans = member_spans(parse_members((history / "sp500_members.csv").read_text()), start)
     cov = None
@@ -79,7 +80,9 @@ def load_frames(history=HISTORY, start=START, coverage=None) -> dict:
         bad = cov is not None and t in cov.index and (
             cov.loc[t, "status"] == "mismatch"
             or (cov.loc[t, "status"] == "partial" and not cov.loc[t].get("cover", 1) >= 0.5))
-        src = tiingo if tiingo.exists() and not bad else wiki if wiki.exists() else None
+        hf = history / "hf" / f"{wiki_symbol(t)}.parquet"
+        src = (tiingo if tiingo.exists() and not bad else hf if use_hf and hf.exists()
+               else wiki if wiki.exists() else None)
         if src is None:
             continue
         df = pd.read_parquet(src)
@@ -429,13 +432,14 @@ def main(argv=None):
     p.add_argument("--list", action="store_true")
     p.add_argument("--history", default=str(HISTORY))
     p.add_argument("--out", default=str(OUT))
+    p.add_argument("--no-hf", action="store_true", help="ignore the Hugging Face series")
     args = p.parse_args(argv)
     if args.list:
         for e in EXPERIMENTS:
             print(f"{e.name:28s} {len(e.combos()):3d} configs  {e.description}")
         return
     names = args.names or [e.name for e in EXPERIMENTS]
-    frames = load_frames(args.history)
+    frames = load_frames(args.history, use_hf=not args.no_hf)
     members = membership_matrix(parse_members((Path(args.history) / "sp500_members.csv").read_text()))
     print(f"{len(frames)} tickers, {min(f.index.min() for f in frames.values()).date()} to "
           f"{max(f.index.max() for f in frames.values()).date()}")

@@ -95,4 +95,97 @@ def detect_splits(raw: pd.DataFrame, gap_tol: float = 0.05, vol_window: int = 20
                 best, err = 1.0 / k, e
         if best is not None:
             found[t] = best
-    return pd.Series(found, dtype=float)
+    return pd.Series(found, index=pd.DatetimeIndex(list(found)), dtype=float)
+
+
+# ---------------------------------------------------------------- building a price source
+
+def build_series(raw: pd.DataFrame, reference: pd.DataFrame = None, min_agree: float = 0.9,
+                 tol: float = 0.005, min_overlap: int = 60):
+    """Adjusted daily series from one ticker's raw HF bars, and a status dict.
+
+    `reference` is a WIKI-style frame (index = date; `raw_close`, `split`, `dividend`). Where it
+    has the ticker, it vouches for the identity (the share of common days with the raw closes
+    within `tol` must reach `min_agree`; a reused ticker fails and gives None) and its
+    split and dividend events are used up to its last day. After that day, or without a
+    reference, splits come from `detect_splits` and there are no dividends, so the series
+    understates returns by about the dividend yield there (status `unverified` without a
+    reference: nothing confirms it is the same company).
+    """
+    raw = raw[["open", "high", "low", "close", "volume"]]
+    raw = raw[(raw["close"] > 0) & (raw["open"] > 0)].sort_index()
+    info = {"hf_first": raw.index.min() if len(raw) else pd.NaT, "hf_last": raw.index.max() if len(raw) else pd.NaT,
+            "days": len(raw), "ref_days": 0, "agree": np.nan, "detected": 0}
+    if len(raw) < 20:
+        return None, {**info, "status": "too_short"}
+    events, ref_last = None, None
+    if reference is not None and len(reference):
+        ref = reference.dropna(subset=["raw_close"])
+        common = raw.index.intersection(ref.index)
+        info["ref_days"] = len(common)
+        if len(common) >= min_overlap:
+            info["agree"] = float(((raw.loc[common, "close"] / ref.loc[common, "raw_close"] - 1).abs() < tol).mean())
+            if info["agree"] < min_agree:
+                return None, {**info, "status": "mismatch"}
+        ref_last = ref.index.max()
+        events = ref[["split", "dividend"]]
+        events = events[(events["split"] != 1) | (events["dividend"] > 0)]
+    det = detect_splits(raw)
+    if ref_last is not None:
+        det = det[det.index > ref_last]
+    info["detected"] = len(det)
+    extra = pd.DataFrame({"split": det, "dividend": 0.0})
+    events = extra if events is None else pd.concat([events, extra]).sort_index()
+    adj = adjust_frame(raw, events)
+    al = align_events(raw.index, events)
+    adj["split"], adj["dividend"] = al["split"], al["dividend"]
+    verified = info["ref_days"] >= min_overlap
+    return adj, {**info, "status": "ok" if verified else "unverified"}
+
+
+def build_source(hf_dir, history, out=None, tickers=None, start="2008-01-01") -> pd.DataFrame:
+    """Write `history/hf/<ticker>.parquet` for every S&P 500 member ticker (or `tickers`)
+    found in the HF daily folder, with WIKI as the reference, and return the status table."""
+    from pathlib import Path
+    from .history import member_spans, parse_members, wiki_symbol
+    history = Path(history)
+    out = Path(out) if out else history / "hf"
+    out.mkdir(parents=True, exist_ok=True)
+    if tickers is None:
+        tickers = list(member_spans(parse_members((history / "sp500_members.csv").read_text()), start).index)
+    want = set(tickers)
+    parts = []
+    for f in sorted(Path(hf_dir).glob("*.parquet")):
+        d = pd.read_parquet(f, filters=[("ticker", "in", sorted(want))])
+        if len(d):
+            parts.append(d)
+    hf = pd.concat(parts, ignore_index=True)
+    rows = []
+    for t in sorted(want):
+        g = hf[hf["ticker"] == t]
+        if g.empty:
+            rows.append({"ticker": t, "status": "absent"})
+            continue
+        wp = history / "wiki" / f"{wiki_symbol(t)}.parquet"
+        ref = pd.read_parquet(wp) if wp.exists() else None
+        adj, info = build_series(g.set_index("date")[["open", "high", "low", "close", "volume"]], ref)
+        if adj is not None:
+            adj.to_parquet(out / f"{wiki_symbol(t)}.parquet")
+        rows.append({"ticker": t, **info})
+    status = pd.DataFrame(rows).set_index("ticker")
+    status.to_csv(out.parent / "hf_status.csv")
+    return status
+
+
+def main(argv=None):
+    import argparse
+    p = argparse.ArgumentParser(description="Build the adjusted HF price source for the S&P 500 members.")
+    p.add_argument("--hf", default="data/hf_daily")
+    p.add_argument("--history", default="data/history")
+    a = p.parse_args(argv)
+    s = build_source(a.hf, a.history)
+    print(s["status"].value_counts().to_string())
+
+
+if __name__ == "__main__":
+    main()

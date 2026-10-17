@@ -103,3 +103,58 @@ def test_exact_two_for_one_gap_needs_no_volume_jump_but_a_looser_one_does():
     assert detect_splits(exact).tolist() == [2.0]
     loose = frame([100.0] * 30 + [51.5] * 30, [1000.0] * 60)          # 3% off 1/2
     assert detect_splits(loose).empty
+
+
+from algotrader.hfdata import build_series
+
+
+def reference_for(raw, last=None, split=None):
+    ref = pd.DataFrame({"raw_close": raw["close"], "split": 1.0, "dividend": 0.0})
+    if split:
+        for d, k in split.items():
+            ref.loc[d, "split"] = k
+    return ref if last is None else ref[ref.index <= last]
+
+
+def test_build_with_matching_reference_uses_its_events_and_is_verified():
+    raw = frame([100.0] * 80 + [50.0] * 80, [1000.0] * 80 + [2000.0] * 80)
+    ref = reference_for(raw, split={raw.index[80]: 2.0})
+    adj, info = build_series(raw, ref)
+    assert info["status"] == "ok" and info["agree"] == 1.0
+    assert adj["close"].tolist() == pytest.approx([50.0] * 160)
+    assert adj["split"].iloc[80] == 2.0
+
+
+def test_build_rejects_a_reused_ticker():
+    raw = frame([100.0] * 100)
+    other = reference_for(frame([30.0] * 100))
+    adj, info = build_series(raw, other)
+    assert adj is None and info["status"] == "mismatch"
+
+
+def test_build_without_reference_detects_splits_and_is_unverified():
+    raw = frame([100.0] * 80 + [50.0] * 80, [1000.0] * 80 + [2000.0] * 80)
+    adj, info = build_series(raw)
+    assert info["status"] == "unverified" and info["detected"] == 1
+    assert adj["close"].tolist() == pytest.approx([50.0] * 160)
+
+
+def test_build_takes_reference_events_then_detected_splits_after_its_last_day():
+    closes = [100.0] * 60 + [50.0] * 60 + [25.0] * 60
+    vols = [1000.0] * 60 + [2000.0] * 60 + [4000.0] * 60
+    raw = frame(closes, vols)
+    ref = reference_for(raw, last=raw.index[119], split={raw.index[60]: 2.0})
+    adj, info = build_series(raw, ref)
+    assert info["status"] == "ok" and info["detected"] == 1
+    assert adj["close"].tolist() == pytest.approx([25.0] * 180)
+
+
+def test_build_too_short_series_is_dropped():
+    adj, info = build_series(frame([10.0] * 5))
+    assert adj is None and info["status"] == "too_short"
+
+
+def test_no_splits_gives_an_empty_series_on_a_date_index():
+    s = detect_splits(frame([10.0] * 40))
+    assert s.empty and isinstance(s.index, pd.DatetimeIndex)
+    assert (s.index > pd.Timestamp("2020-01-01")).tolist() == []

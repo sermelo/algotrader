@@ -108,3 +108,18 @@ def test_load_frames_skips_reused_tickers(tmp_path):
     pd.DataFrame({"status": ["partial"], "cover": [0.0]}, index=["AAA"]).to_csv(hist / "coverage.csv")
     frames = longrun.load_frames(hist)
     assert frames["AAA"].index.min() < pd.Timestamp("2009-01-01")   # WIKI used instead
+
+
+def test_load_frames_prefers_tiingo_then_hf_then_wiki(tmp_path):
+    hist = _history(tmp_path / "h")
+    (hist / "hf").mkdir()
+    (hist / "tiingo").mkdir()
+    idx = pd.bdate_range("2008-01-02", periods=100)
+    for folder, t, price in (("hf", "AAA", 7.0), ("hf", "BBB", 8.0), ("tiingo", "BBB", 9.0)):
+        pd.DataFrame({"open": price, "high": price, "low": price, "close": price, "volume": 1.0},
+                     index=idx).to_parquet(hist / folder / f"{t}.parquet")
+    frames = longrun.load_frames(hist)
+    assert frames["AAA"]["close"].iloc[0] == 7.0          # HF beats WIKI
+    assert frames["BBB"]["close"].iloc[0] == 9.0          # Tiingo beats HF
+    assert frames["CCC"]["close"].iloc[0] != 7.0          # no HF: WIKI
+    assert longrun.load_frames(hist, use_hf=False)["AAA"]["close"].iloc[0] != 7.0
