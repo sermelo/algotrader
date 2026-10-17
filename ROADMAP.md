@@ -103,7 +103,7 @@ Updated 2026-10-17. In order; details in the sections below.
 | D2 | ~~Fama-French + momentum daily factors~~ **done** (Kenneth French data library, free, from 1926) | Regress our returns on market, size, value, profitability, investment, momentum to see whether "alpha" is just factor exposure; long-history check of factor strategies; inputs for factor momentum (S5) | mba.tuck.dartmouth.edu Data Library (CSV) | **done**: `french.py`, see M1 |
 | D3 | ~~Point-in-time fundamentals and filing dates~~ **done** (`edgar.py`) | Unlocks value, profitability, investment (S3), the best-replicating categories after momentum; filing dates give earnings dates for PEAD (S7) and the overnight earnings filter | `data.sec.gov` companyfacts API / nightly bulk zip, free, User-Agent required, about 10 requests/s. Must key each fact to its filing date (not the period end) and keep amendments in order | **done**: 748 of 818 members since 2008 mapped to a CIK (590 by ticker, 158 by name); members with XBRL facts 82% in 2008, 90% in 2010, 96-98% from 2020; 1.54M facts for 722 companies; 430k earnings releases (8-K item 2.02) |
 | D4 | **Bigger, point-in-time universe** (e.g. historical S&P 500 / Russell 1000 members) | Cross-sectional strategies need breadth (papers use hundreds to thousands of stocks; deep stat arb used about 550 large caps) | Index membership lists (free ones are incomplete; paid ones exist); combine with D1 | **partly done**: point-in-time S&P 500 from GitHub `hanshof` (daily lists 1996 to 2025-08-23; after that the last list is carried forward), used by `longrun.py`. Russell 1000 not done |
-| D5 | Consolidated (SIP) minute data | Only if an intraday item gets promoted again: IEX volume is a small share of the tape | Alpaca paid plan or others; low priority | later |
+| D5 | Consolidated (SIP) minute data | Only if an intraday item gets promoted again: IEX volume is a small share of the tape; also 10 years of intraday history instead of 3.3 | **Alpaca free Basic plan** (checked 2026-10-17): historical SIP bars and trades since 2016, only the latest 15 minutes restricted. Unverified: delisted symbols, rate limits, terms of use; needs a free Alpaca account (sergio) | later (free source found) |
 
 ### P2. Strategies
 
@@ -159,6 +159,7 @@ Paid options that close the gap (prices as listed on 2026-10-16; check before bu
 | EODHD All-World EOD | $19.99/month | Says 60,191 delisted US tickers, EOD history | Reused tickers can map to the wrong company; no index membership in this plan |
 | Norgate Platinum (US stocks) | $346.50 / 6 months, $630 / year (no monthly) | Delisted from 1990, historical index constituents | Desktop updater software, made for trading platforms |
 | Tiingo Power | $30/month | More symbols and requests | Delisted coverage not documented |
+| Sierra Chart (Package 3 / 5) | about $26 / $36 a month (third-party figures) | US stocks: 1-minute bars from 2008 (tick data for the last 365 days), daily from 1980; NYSE, AMEX, NASDAQ, FINRA | Checked 2026-10-17, **declined (sergio: free sources only)**. Unconfirmed: delisted stocks, consolidated or not, export/licence terms; Windows charting app, export per chart or `.scid` files; its own daily stock data has no dividend adjustment or symbol-change handling. Alpaca's free plan covers the intraday need from 2016 |
 | CRSP (WRDS) | n/a | The academic standard | Only through a university affiliation |
 
 **One month and keep the data is not allowed by Sharadar** (terms, section 10, read
@@ -170,7 +171,7 @@ that month; reruns after a code change would need a new subscription, which brea
 "results committed with the code" workflow. Other vendors' retention terms (EODHD,
 Norgate) not checked yet.
 
-**Decision (sergio, 2026-10-16): free route for now.** Paid data only if the free
+**Decision (sergio, 2026-10-16, confirmed 2026-10-17): free data sources only.** Paid data only if the free
 results show the survivorship gap matters; then prefer an ongoing subscription
 (Sharadar Prices full history, $299/year) over a one-month download.
 
