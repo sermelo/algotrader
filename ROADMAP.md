@@ -69,16 +69,41 @@ Unverified figures, see https://www.interactivebrokers.com/en/pricing/commission
 - **Integration (TWS API via IB Gateway + ib_async, IBC, paper first, market data, API
   limits, safety controls):** see [`docs/ibkr-integration.md`](docs/ibkr-integration.md).
 
+## Pending tasks (keep this list current)
+
+Updated 2026-10-17. In order; details in the sections below.
+
+1. **Finish the batched rerun** (running on the VPS, `scripts/full_rerun.sh`): when
+   `data/full_rerun.done` exists, rsync `results/` back, check fingerprints, refresh the
+   README results table and reading, commit the uncommitted code (costs, engine, intraday,
+   two new experiments, docs) with the results, push. Update this file.
+2. **D1 second batch**: on or after 2026-11-01 rerun `scripts/history_queue.sh` on the VPS
+   for the remaining ~216 Tiingo symbols (the 500-symbol monthly quota stops it), then
+   `python -m algotrader.history check`.
+3. **Long-history results**: `python -m algotrader.longrun` on the VPS (19 experiments,
+   deep_arb_long takes about 12 hours), `python -m algotrader.french report --results
+   results/long`, `python -m algotrader.trials`, commit `results/long/` with docs.
+4. **S8 follow-up (optional)**: a market-on-close variant on the 1-minute data (signal at
+   ~15:45, trade at the close), the only honest test of the paper's timing (2022 on).
+5. **S9 price-chart CNN** (Jiang, Kelly & Xiu): next deep-learning item, needs the long
+   history; train on the VPS.
+6. **S13 leftovers** (next shared-code rerun): "stocks in play" ranking for ORB, overnight
+   earnings-gap filter (earnings dates from D3).
+7. **Low priority**: S10 deep momentum networks on ETFs (note PRIIPs: US ETFs are not
+   buyable by sergio), S11 neural ranking, D5 SIP minute data, Russell 1000 membership.
+8. **Before any live trading**: paper trading per `docs/ibkr-integration.md`, stock-only
+   strategies (PRIIPs), the Tiered cost model, PDT and Spanish two-month rule checks.
+
 ## Priority list
 
 ### P1. Data (unblocks everything else)
 
 | # | Task | Why (evidence / need) | Source options | Status |
 |---|---|---|---|---|
-| D1 | **Long daily price history** (20+ years) for the broad universe, ideally including delisted names | Power (above); seasonality, 12-month momentum, low-vol and trend need many years; the papers tested decades | Tiingo EOD (free plan: internal use, 1,000 requests/day; vendor claims history to 1962, a reviewer says 20-30 years); Stooq (free, fragile downloads); Alpaca (free plan; history from 2016 per a third-party page, unverified). Survivorship-free needs paid data: see "Data sources and costs" below. **Decision for sergio** | todo |
+| D1 | **Long daily price history** (20+ years) for the broad universe, ideally including delisted names | Power (above); seasonality, 12-month momentum, low-vol and trend need many years; the papers tested decades | Tiingo EOD (free plan, serves delisted stocks) + Quandl WIKI (Kaggle, to 2018); `history.py`. Free route decided by sergio 2026-10-16 | **in progress**: WIKI 673 of 818 members; Tiingo first batch ~500 symbols (437 on 2026-10-17 morning), remaining ~216 after the quota reset on 2026-11-01 |
 | D2 | ~~Fama-French + momentum daily factors~~ **done** (Kenneth French data library, free, from 1926) | Regress our returns on market, size, value, profitability, investment, momentum to see whether "alpha" is just factor exposure; long-history check of factor strategies; inputs for factor momentum (S5) | mba.tuck.dartmouth.edu Data Library (CSV) | **done**: `french.py`, see M1 |
 | D3 | ~~Point-in-time fundamentals and filing dates~~ **done** (`edgar.py`) | Unlocks value, profitability, investment (S3), the best-replicating categories after momentum; filing dates give earnings dates for PEAD (S7) and the overnight earnings filter | `data.sec.gov` companyfacts API / nightly bulk zip, free, User-Agent required, about 10 requests/s. Must key each fact to its filing date (not the period end) and keep amendments in order | **done**: 748 of 818 members since 2008 mapped to a CIK (590 by ticker, 158 by name); members with XBRL facts 82% in 2008, 90% in 2010, 96-98% from 2020; 1.54M facts for 722 companies; 430k earnings releases (8-K item 2.02) |
-| D4 | **Bigger, point-in-time universe** (e.g. historical S&P 500 / Russell 1000 members) | Cross-sectional strategies need breadth (papers use hundreds to thousands of stocks; deep stat arb used about 550 large caps) | Index membership lists (free ones are incomplete; paid ones exist); combine with D1 | todo |
+| D4 | **Bigger, point-in-time universe** (e.g. historical S&P 500 / Russell 1000 members) | Cross-sectional strategies need breadth (papers use hundreds to thousands of stocks; deep stat arb used about 550 large caps) | Index membership lists (free ones are incomplete; paid ones exist); combine with D1 | **partly done**: point-in-time S&P 500 from GitHub `hanshof` (daily lists 1996 to 2025-08-23; after that the last list is carried forward), used by `longrun.py`. Russell 1000 not done |
 | D5 | Consolidated (SIP) minute data | Only if an intraday item gets promoted again: IEX volume is a small share of the tape | Alpaca paid plan or others; low priority | later |
 
 ### P2. Strategies
@@ -96,8 +121,8 @@ Unverified figures, see https://www.interactivebrokers.com/en/pricing/commission
 | S9 | **Price-chart CNN** (Jiang, Kelly & Xiu, *JF* 2023) | Top journal, 2001-2019 out of sample, authors report transfer across markets; only an unreviewed replication; headline Sharpe ratios are equal-weighted | D1 + D4 (trained on all US stocks for decades) | todo |
 | S10 | **Deep momentum networks / Momentum Transformer** (Lim, Zohren & Roberts 2019; Wood et al. 2021) | Futures only; edge survives costs only to 2-3 bp (10 bp with turnover penalty); Pollok & Robik 2026: learned policies beat simple rules in some, not all, cases | Fits current data (ETFs); extends S2 | todo |
 | S11 | Neural / transformer cross-sectional ranking (Gu, Kelly & Xiu 2020; Kelly et al., NBER 2025) | Strong on the full market, weak for large caps (Avramov et al.). **Ours:** gradient-boosting ranking already lost | D1 + D4 + D3 features | low |
-| S12 | Market intraday momentum (Gao et al. 2018; Baltussen et al., *JFE* 2021, 60+ futures, explained by gamma hedging) | Peer-reviewed but on futures; **ours:** last-half-hour SPY-style rule loses to costs on stocks (-3.8 Sharpe) | Shorting in the single-ticker engine; could test on SPY/QQQ only | low |
-| S13 | Small items left from the first plan: ORB 10R target and "stocks in play", overnight day-of-week/earnings filters, ~~pre-holiday effect~~ (done 2026-10-17: Sharpe 0.17 / 0.07, no alpha) | ORB papers are SSRN working papers; **ours:** ORB and overnight already fail after costs (gross edges too small) | Minute data we have; earnings filter needs D3 | low |
+| S12 | Market intraday momentum (Gao et al. 2018; Baltussen et al., *JFE* 2021, 60+ futures, explained by gamma hedging) | Peer-reviewed but on futures; **ours:** last-half-hour SPY-style rule loses to costs on stocks (-3.8 Sharpe) | Shorting in the single-ticker engine; could test on SPY/QQQ only | **not doing** (2026-10-17): low evidence and our long-only version loses even before costs (gross -0.41) |
+| S13 | Small items left from the first plan: ORB 10R target and "stocks in play", overnight day-of-week/earnings filters, ~~pre-holiday effect~~ (done 2026-10-17: Sharpe 0.17 / 0.07, no alpha) | ORB papers are SSRN working papers; **ours:** ORB and overnight already fail after costs (gross edges too small) | Minute data we have; earnings filter needs D3 | ORB 10R target and overnight skip-weekday **code done** (`orb_5min_100k_target`, `overnight_1min_100k_weekday`); broad results: ORB target -0.19, overnight skipping Monday nights 0.47 (alpha t -0.13); core in the running rerun. Not done: "stocks in play" ranking, overnight earnings-gap filter |
 | S14 | Pretrained time-series models (Chronos, TimesFM); LSTM next-day direction | Evidence against: lose to CatBoost zero-shot (Rahimikia et al. 2025); LSTM direction has no profit after costs since 2010 (Fischer & Krauss, *EJOR* 2018) | | skip |
 
 ### P3. Method improvements (cheap, do alongside)
@@ -200,25 +225,31 @@ symbols) for the remaining ~216. Then:
 
 These touch shared code (`costs.py`, `engine.py`, `intraday.py`), so each would make every
 or many existing results stale and need the ~10-hour VPS rerun. Do them together:
-- an IBKR Pro Tiered `CostModel` variant (see "Constraints for trading it live");
-- shorting in the single-ticker engine (S12 long-short intraday momentum);
-- ORB 10R profit target and "stocks in play" ranking (S13);
-- overnight day-of-week and earnings-gap filters (S13; earnings dates from D3).
+- ~~IBKR Pro Tiered `CostModel` (`ibkr_tiered()`) and the 1% commission cap~~ code done;
+- ~~ORB 10R profit target~~ and ~~overnight day-of-week filter~~ code done (S13);
+- shorting in the single-ticker engine (S12): not doing;
+- still open for a later rerun: "stocks in play" ranking, overnight earnings-gap filter.
+
+Status 2026-10-17: the done items are **not committed yet**; `scripts/full_rerun.sh` is
+regenerating every result on the VPS (broad finished, 35/35 fingerprints current; core
+in progress). Commit code + `results/` together when it finishes (see HANDOFF.md).
 
 ## Recommended order
 
 1. ~~D2 and M1~~ done: current "alphas" are factor exposure (see M1).
-2. D1 (decide free vs paid with sergio), then rerun all daily experiments on the long
-   history: the biggest gain in statistical power.
+2. D1 (free route, in progress), then run the long history: the biggest gain in
+   statistical power.
 3. ~~S1 buy/hold spread and S2 multi-horizon trend~~ done (no edge on 3.3 years; retest on D1).
 4. ~~D3~~ done; next S3 (value/profitability/investment) and S7 (PEAD), once D1 prices are
    in (Tiingo download running on the VPS; second batch after the monthly quota resets).
    Known mapping limits: 70 members unmapped (mostly acquired/renamed before 2012:
    ANTM->Elevance, ABC->Cencora, BLL->Ball, LEHMQ, WAMUQ...); CVC maps to its
    subsidiary CSC Holdings; XBRL starts 2009-2011, so fundamentals strategies start 2010.
-5. S4 seasonality and S5 factor momentum (need D1/D2).
-6. D4, then S8 (deep stat arb) and S9 (chart CNN) on the VPS.
-7. S10 to S13 only if earlier results justify them.
+5. ~~S4~~ code done (results wait for D1); ~~S5~~ checked, deprioritised.
+6. ~~D4~~ partly done (S&P 500); ~~S8~~ built, fails with next-open execution (see S8);
+   S9 (chart CNN) next among the deep-learning items.
+7. S10 to S13 only if earlier results justify them (S13: pre-holiday, ORB target and
+   overnight weekday done).
 
 ## Sources
 
