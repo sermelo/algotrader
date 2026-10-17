@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from algotrader.minutefeat import LABELS
-from algotrader.minutemodel import WalkForward, best_of_day, information_coefficient, prepare, threshold_table
+from algotrader.minutemodel import WalkForward, best_of_day, information_coefficient, prepare, replay_fills, threshold_table
 
 FEATS = ["f_good", "f_noise", "vol30"]
 
@@ -86,3 +86,29 @@ def test_best_of_day_takes_the_single_most_confident_decision_each_day():
     assert t["gross_bp"].iloc[0] == pytest.approx(expected.mean() * 1e4)
     assert t["net_bp"].iloc[0] == pytest.approx(t["gross_bp"].iloc[0] - 8.0) and t["win"].iloc[0] > 0.9
     assert t["gross_bp"].iloc[1] >= t["gross_bp"].iloc[0]
+
+
+def test_a_model_trained_on_shuffled_targets_finds_nothing():
+    df = planted()
+    kw = dict(first_test_year=2020, horizons=("fwd90",), features=FEATS, min_train_rows=100,
+              params=dict(learning_rate=0.1, max_iter=60, max_leaf_nodes=8, min_samples_leaf=20, l2_regularization=1.0, random_state=0))
+    real = information_coefficient(WalkForward(**kw).run(frames(df, vol_rank=0.0)), "fwd90").mean()
+    placebo = information_coefficient(WalkForward(shuffle_seed=3, **kw).run(frames(df, vol_rank=0.0)), "fwd90").mean()
+    assert real > 0.3 and abs(placebo) < 0.1 and abs(placebo) < real / 4
+
+
+def test_replay_fills_hand_calculation():
+    minutes = list(range(0, 200))
+    bars = pd.DataFrame({"open": [100.0 + 0.1 * m for m in minutes], "high": [100.0 + 0.1 * m + 0.4 for m in minutes],
+                         "low": [100.0 + 0.1 * m - 0.2 for m in minutes], "close": [100.0 + 0.1 * m + 0.05 for m in minutes]}, index=minutes)
+    r = replay_fills(bars, d=30, hold=90)
+    assert r["base"] == pytest.approx(112.0 / 103.0 - 1)                       # open at 30 -> open at 120
+    assert r["worst_bar"] == pytest.approx((112.0 - 0.2) / (103.0 + 0.4) - 1)  # high of the entry bar, low of the exit bar
+    assert r["delay2"] == pytest.approx(112.0 / 103.2 - 1) and r["delay5"] == pytest.approx(112.0 / 103.5 - 1)
+    assert r["range_slip"] == pytest.approx((112.0 - 0.25 * 0.6) / (103.0 + 0.25 * 0.6) - 1)
+    assert r["worst_bar"] < r["range_slip"] < r["base"]
+    gap = bars.drop([30, 31])                                                     # no trade in the entry minute: no fill
+    assert replay_fills(gap, 30, 90) is None
+    skip = bars.drop([120, 121])
+    assert replay_fills(skip, 30, 90)["base"] == pytest.approx(112.2 / 103.0 - 1)  # exits at the next bar with a trade
+    assert replay_fills(bars, 150, 90)["base"] == pytest.approx((100.0 + 19.9 + 0.05) / 115.0 - 1)   # the session ends first: the last close

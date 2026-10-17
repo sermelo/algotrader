@@ -117,3 +117,23 @@ def test_derived_z_scores_scale_moves_by_the_stocks_own_volatility():
     assert d["z30"].iloc[1] == pytest.approx(0.006 / (8e-4 * np.sqrt(30)))
     assert d["z_open"].iloc[1] == pytest.approx(0.01 / (0.01 * np.sqrt(90 / 390)))
     assert d["z_gap"].iloc[0] == pytest.approx(0.5) and np.isnan(d["z5"].iloc[2]) and np.isnan(d["z_gap"].iloc[2])
+
+
+def test_rank_correlation_is_exact_and_small_decisions_are_skipped():
+    rng = np.random.default_rng(7)
+    parts = []
+    for d in DATES[:10]:
+        n = 30
+        x = rng.normal(size=n)
+        parts.append(pd.DataFrame({"date": d, "minute": 30.0, "ticker": [f"S{i}" for i in range(n)], "f_up": x, "f_down": -x, "fwd10": x ** 3}))
+        small = pd.DataFrame({"date": d, "minute": 60.0, "ticker": ["A", "B", "C"], "f_up": [1.0, 2.0, 3.0], "f_down": [1.0, 2.0, 3.0], "fwd10": [1.0, 2.0, 3.0]})
+        parts.append(small)
+    df = pd.concat(parts, ignore_index=True).sort_values(["date", "minute", "ticker"], ignore_index=True)
+    s = SignalScan(features=["f_up", "f_down"], labels=["fwd10"], min_group=10)
+    s.add(df)
+    r = s.result().set_index("feature")
+    assert r.loc["f_up", "ic"] == pytest.approx(1.0) and r.loc["f_down", "ic"] == pytest.approx(-1.0)     # a monotone relation is exactly +-1
+    assert r.loc["f_up", "days"] == 10                                                                      # only the 30-stock decisions count
+    tiny = SignalScan(features=["f_up"], labels=["fwd10"], min_group=2)
+    tiny.add(df[df["minute"] == 60.0])
+    assert tiny.result().iloc[0]["ic"] == pytest.approx(1.0)

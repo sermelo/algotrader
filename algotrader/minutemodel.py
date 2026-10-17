@@ -49,6 +49,7 @@ class WalkForward:
     params: dict = field(default_factory=lambda: dict(PARAMS))
     clip: float = 0.03
     min_train_rows: int = 5000
+    shuffle_seed: int = None                 # placebo: permute the training targets, which must leave nothing to learn
     log: list = field(default_factory=list)
 
     def fit_predict(self, train: pd.DataFrame, test: pd.DataFrame) -> pd.DataFrame:
@@ -58,6 +59,8 @@ class WalkForward:
         for lab in self.horizons:
             y = train[f"x_{lab}"].clip(-self.clip, self.clip).to_numpy(np.float32)
             ok = np.isfinite(y)
+            if self.shuffle_seed is not None:
+                y = np.random.default_rng(self.shuffle_seed).permutation(y)
             if ok.sum() < self.min_train_rows:
                 out[f"pred_{lab}"] = np.nan
                 continue
@@ -121,3 +124,31 @@ def best_of_day(preds: pd.DataFrame, label: str, cost: float, taus=(0.0, 0.0005,
                      "net_t": net.mean() / (net.std() / np.sqrt(len(sel))) if len(sel) > 2 and net.std() > 0 else np.nan,
                      "win": float((net > 0).mean()) if len(sel) else np.nan})
     return pd.DataFrame(rows)
+
+
+def replay_fills(bars: pd.DataFrame, d: int, hold: int) -> dict:
+    """Re-price one trade on the raw minute bars (index = minute after 09:30; columns open, high, low, close; only minutes with
+    trades) under several fills; returns the gross return of each, or None if the entry minute has no trade.
+
+    `base`: buy the open of minute d, sell the open of the first bar at or after d + hold (else the last close) - what the labels
+    assume. `worst_bar`: buy at that bar's high and sell at the exit bar's low. `delay1`, `delay2`, `delay5`: buy at the open of the
+    first bar at or after d + 1, 2 or 5, sell as `base`. `range_slip`: buy a quarter of the entry bar's range above its open and
+    sell a quarter of the exit bar's range below its open."""
+    if d not in bars.index:
+        return None
+    entry = bars.loc[d]
+    later = bars[bars.index >= d + hold]
+    if len(later):
+        ex = later.iloc[0]
+        exit_open, exit_low, exit_rng = ex["open"], ex["low"], ex["high"] - ex["low"]
+    else:
+        ex = bars.iloc[-1]
+        exit_open = exit_low = ex["close"]
+        exit_rng = 0.0
+    out = {"base": exit_open / entry["open"] - 1,
+           "worst_bar": exit_low / entry["high"] - 1,
+           "range_slip": (exit_open - 0.25 * exit_rng) / (entry["open"] + 0.25 * (entry["high"] - entry["low"])) - 1}
+    for k in (1, 2, 5):
+        e = bars[bars.index >= d + k]
+        out[f"delay{k}"] = exit_open / e.iloc[0]["open"] - 1 if len(e) else np.nan
+    return out

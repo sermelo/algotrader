@@ -118,8 +118,8 @@ class BinTable:
 class SignalScan:
     """Rank correlation and top/bottom picks of each feature against each forward return (see module doc)."""
 
-    def __init__(self, features=SCAN_FEATURES, labels=LABELS):
-        self.features, self.labels = list(features), list(labels)
+    def __init__(self, features=SCAN_FEATURES, labels=LABELS, min_group: int = 20):
+        self.features, self.labels, self.min_group = list(features), list(labels), min_group
         self.dates, self.ic, self.top10, self.bot10, self.top1, self.bot1, self.top1raw = [], [], [], [], [], [], []
 
     @staticmethod
@@ -136,9 +136,7 @@ class SignalScan:
         rk = np.column_stack([g[f].rank(pct=True).to_numpy() for f in self.features])         # (rows, F), NaN where missing
         yv = df[self.labels].to_numpy(dtype=float)
         ry = np.column_stack([g[l].rank(pct=True).to_numpy() for l in self.labels])
-        zf, zy = (rk - 0.5) * np.sqrt(12), (ry - 0.5) * np.sqrt(12)
-        fin_f = np.isfinite(zf)
-        zf0 = np.where(fin_f, zf, 0.0)
+        fin_f = np.isfinite(rk)
         n_g = len(starts)
         ic = np.zeros((n_g, F, L)); t10 = np.zeros_like(ic); b10 = np.zeros_like(ic); t1 = np.zeros_like(ic); b1 = np.zeros_like(ic); t1r = np.zeros_like(ic)
         sizes = np.diff(np.r_[starts, len(df)])
@@ -148,18 +146,25 @@ class SignalScan:
         for j in range(L):
             fy = np.isfinite(yv[:, j])
             y0 = np.where(fy, yv[:, j], 0.0)
-            zy0 = np.where(fy, zy[:, j], 0.0)
             gm = sums(y0) / np.maximum(sums(fy.astype(float)), 1)                            # group mean return
             both = fin_f & fy[:, None]
-            nb = np.maximum(sums(both.astype(float)), 1)
-            ic[:, :, j] = sums(zf0 * zy0[:, None] * both) / nb
+            nb = sums(both.astype(float))
+            small = nb < self.min_group                                                     # too few stocks for a rank correlation
+            nbm = np.maximum(nb, 1)
+            x = np.where(both, rk, 0.0)
+            yy = np.where(both, ry[:, [j]], 0.0)
+            sx, sy, sxx, syy, sxy = sums(x), sums(yy), sums(x * x), sums(yy * yy), sums(x * yy)
+            cov = sxy / nbm - sx * sy / nbm ** 2
+            den = np.sqrt(np.maximum(sxx / nbm - (sx / nbm) ** 2, 0) * np.maximum(syy / nbm - (sy / nbm) ** 2, 0))
+            ic[:, :, j] = np.where(small | (den <= 0), np.nan, cov / np.where(den > 0, den, 1))
             for key, store in (("t10", t10), ("b10", b10), ("t1", t1), ("b1", b1)):
                 msk = masks[key] & fy[:, None]
                 have = sums(msk.astype(float))
                 mean_y = sums(msk * y0[:, None]) / np.maximum(have, 1)
-                store[:, :, j] = np.where(have > 0, mean_y - gm[:, None], np.nan)
+                valid = (have > 0) & ~small
+                store[:, :, j] = np.where(valid, mean_y - gm[:, None], np.nan)
                 if key == "t1":
-                    t1r[:, :, j] = np.where(have > 0, mean_y, np.nan)
+                    t1r[:, :, j] = np.where(valid, mean_y, np.nan)
         self.dates.append(df["date"].to_numpy()[starts])
         for store, arr in ((self.ic, ic), (self.top10, t10), (self.bot10, b10), (self.top1, t1), (self.bot1, b1), (self.top1raw, t1r)):
             store.append(arr)
