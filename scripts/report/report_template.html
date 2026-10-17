@@ -79,9 +79,9 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
 
 <div class="wrap">
 <header style="display:grid;gap:14px">
-  <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026</div>
+  <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026 · long history 2012 – 2026</div>
   <h1>Algotrader Strategy Scorecard</h1>
-  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
+  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
   <div class="tiles" id="tiles"></div>
 </header>
 
@@ -237,8 +237,49 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
   <div class="verdict"><ul class="findings" id="tuneFindings"></ul></div>
 </section>
 
+<section id="s-long">
+  <div class="eyebrow">6 · Longer history</div>
+  <h2>The same question over 14.8 years: S&amp;P 500 members, 2012 – 2026</h2>
+  <p id="longIntro"></p>
+  <div class="tiles" id="longTiles"></div>
+  <div class="panel">
+    <div class="controls" role="group" aria-label="Price data">
+      <button class="seg" id="lu-hf" aria-pressed="true">With Hugging Face prices</button>
+      <button class="seg" id="lu-nohf" aria-pressed="false">Tiingo and WIKI only</button>
+    </div>
+    <p class="muted" id="longVariant"></p>
+    <div class="scroll" style="max-height:640px"><table id="longTable"></table></div>
+    <p class="muted">Alpha and beta come from regressing daily returns on SPY. "Other data" is the Sharpe of the same strategy with the other price data. Returns per month and per day are compound averages over the whole period (a month is 21 trading days, a year 252). Folds + counts the yearly test periods (of 15) with a positive Sharpe.</p>
+  </div>
+  <div class="panel">
+    <h3>Sharpe ratio of each strategy</h3>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--s-core)"></i>with Hugging Face prices</span>
+      <span><i class="sw" style="background:var(--s-broad)"></i>Tiingo and WIKI only</span>
+      <span><i class="sw dash" style="border-color:var(--s-hold)"></i>SPY buy and hold</span>
+      <span><i class="sw dash" style="border-color:var(--ink)"></i>luck bar</span>
+    </div>
+    <div class="scroll"><svg id="longSharpe" role="img" aria-label="Walk-forward Sharpe ratio per strategy over 2012 to 2026"></svg></div>
+  </div>
+  <div class="panel">
+    <h3>Equity curve against SPY</h3>
+    <div class="controls"><select id="longSel" aria-label="Strategy"></select></div>
+    <div class="legend">
+      <span><i class="sw line" id="longSw" style="border-color:var(--s-core)"></i><span id="longName">Strategy</span></span>
+      <span><i class="sw dash" style="border-color:var(--s-hold)"></i>SPY buy and hold</span>
+    </div>
+    <div class="scroll"><svg id="longCurve" role="img" aria-label="Cumulative value of $1, strategy against SPY, 2012 to 2026"></svg></div>
+    <p class="muted" id="longNote"></p>
+  </div>
+  <div class="panel">
+    <h3>Return by calendar year</h3>
+    <div class="scroll"><table id="longYears"></table></div>
+  </div>
+  <div class="verdict"><ul class="findings" id="longFindings"></ul></div>
+</section>
+
 <section id="s-all">
-  <div class="eyebrow">6 · Reference</div>
+  <div class="eyebrow">7 · Reference</div>
   <h2>All results</h2>
   <div class="panel">
     <div class="controls" role="group" aria-label="Universe">
@@ -571,4 +612,115 @@ function drawAll() {
 }
 seg("au", u => { allU = u; drawAll(); });
 drawAll();
+// ---------- 6. long history
+(() => {
+  const L = D.long; if (!L) { document.getElementById("s-long").hidden = true; return; }
+  const LE = L.experiments, LH = L.hold, LN = Object.keys(LE);
+  const fams = ["Price and momentum", "Fundamentals", "Earnings news", "Deep learning"];
+  const fmt = s => new Date(s).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  const PER = fmt(LH.first) + " – " + fmt(LH.last), YRS = LH.days / 252;
+  const lrate = (ret, n) => Math.pow(1 + ret, n / LH.days) - 1;
+  const lbp = ret => Math.pow(1 + ret, 1 / LH.days) - 1;
+  let v = "hf"; const other = () => v === "hf" ? "nohf" : "hf";
+  const sv = (n, w) => LE[n][w] ? LE[n][w].sharpe : null;
+  const longOnly = LN.filter(n => !LE[n].short && LE[n][v]);
+  const luck = L.luck.hf.bar;
+  document.getElementById("longIntro").innerHTML = `The main test covers only 3.3 years. This one reruns the portfolio strategies that need breadth on daily prices of the <b>stocks that were in the S&amp;P 500 on each day</b>, including those later dropped or acquired, from ${PER} (${LH.days.toLocaleString("en-GB")} trading days, ${YRS.toFixed(1)} years). Every January the parameters are chosen on all earlier data and used for the next year (15 yearly folds), with the same costs as above on a $1 million portfolio. Prices come from Tiingo, Quandl WIKI and, new here, a series built from the Hugging Face minute bars (US consolidated tape, adjusted with WIKI's split and dividend events, and with splits found from the prices after March 2018; it has no dividends after 2018, which understates returns by about 1.7% a year there). The two data settings are shown side by side: with Hugging Face, ${L.tickers.hf} tickers; without, ${L.tickers.nohf}, because ${L.tickers.hf - L.tickers.nohf} members after 2018 have no other price series yet.`;
+  const tiles = [
+    [pct(LH.cagr), "SPY buy and hold, per year"], [pct(lrate(LH.ret, 21), 2), "SPY, per month"], [bp(lbp(LH.ret)), "SPY, per trading day"],
+    [num(LH.sharpe), "SPY Sharpe, " + PER], [num(Math.max(...longOnly.map(n => sv(n, "hf") ?? -9))), "best strategy Sharpe (luck bar " + num(luck) + ")"],
+  ];
+  document.getElementById("longTiles").innerHTML = tiles.map(([a, k]) => `<div class="tile"><span class="v">${a}</span><span class="k">${k}</span></div>`).join("");
+  // table
+  const cell = (x, f) => `<td class="${sgn(x)}">${f(x)}</td>`;
+  function drawTable() {
+    document.getElementById("longVariant").textContent = v === "hf" ? "Prices: Tiingo where available, else the Hugging Face series, else WIKI (" + L.tickers.hf + " tickers)." : "Prices: Tiingo where available, else WIKI (" + L.tickers.nohf + " tickers); members whose WIKI series ends in March 2018 leave the portfolio then.";
+    let h = `<tr><th>Experiment</th><th>Sharpe [90% CI]</th><th>Other data</th><th>Per year</th><th>Per month</th><th>Per day</th><th>Max drawdown</th><th>Alpha/yr (t)</th><th>Beta</th><th>Gross</th><th>Stress</th><th>Turnover/yr</th><th>Folds + </th></tr>`;
+    h += `<tr class="hold"><td>SPY buy and hold</td><td>${num(LH.sharpe)}</td><td>–</td><td>${pct(LH.cagr)}</td><td>${pct(lrate(LH.ret, 21), 2)}</td><td>${bp(lbp(LH.ret))}</td><td>${pct(LH.mdd)}</td><td colspan="6"></td></tr>`;
+    for (const f of fams) { const ns = LN.filter(n => LE[n].family === f && LE[n][v]).sort((a, b) => sv(b, v) - sv(a, v)); if (!ns.length) continue;
+      h += `<tr class="grouprow"><td colspan="13">${f}</td></tr>`;
+      for (const n of ns) { const s = LE[n][v], o = LE[n][other()];
+        h += `<tr title="${LE[n].description}"><td>${n}</td><td>${num(s.sharpe)} [${num(s.ci[0])}, ${num(s.ci[1])}]</td><td>${o ? num(o.sharpe) : "–"}</td>${cell(s.cagr, x => pct(x))}${cell(s.cagr, x => pct(Math.pow(1 + x, 21 / 252) - 1, 2))}${cell(s.cagr, x => bp(Math.pow(1 + x, 1 / 252) - 1))}<td>${pct(s.mdd)}</td><td>${pct(s.alpha)} (${num(s.alpha_t)})</td><td>${num(s.beta)}</td><td>${num(s.gross)}</td><td>${num(s.stress)}</td><td>${s.turnover == null ? "–" : Math.round(s.turnover * 100) + "%"}</td><td>${s.folds_pos}/${s.folds}</td></tr>`; } }
+    const miss = LN.filter(n => !LE[n][v]);
+    document.getElementById("longTable").innerHTML = h;
+  }
+  const bh = document.getElementById("lu-hf"), bn = document.getElementById("lu-nohf");
+  function setV(x) { v = x; bh.setAttribute("aria-pressed", x === "hf"); bn.setAttribute("aria-pressed", x === "nohf"); drawTable(); drawYears(); drawCurve(); }
+  bh.addEventListener("click", () => setV("hf")); bn.addEventListener("click", () => setV("nohf"));
+  // Sharpe dot plot
+  (() => {
+    const svg = document.getElementById("longSharpe"), rows = [];
+    for (const f of fams) { const ns = LN.filter(n => LE[n].family === f).sort((a, b) => (sv(b, "hf") ?? -9) - (sv(a, "hf") ?? -9)); if (!ns.length) continue; rows.push({ g: f }); ns.forEach(n => rows.push({ n })); }
+    const W = 900, Lm = 230, R = 24, top = 30, rh = 22, Hh = top + rows.length * rh + 30, lo = -1, hi = 1.5;
+    svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "720px"; svg.style.width = "100%"; svg.style.height = "auto";
+    const x = t => Lm + (Math.max(lo, Math.min(hi, t)) - lo) / (hi - lo) * (W - Lm - R);
+    for (let t = -1; t <= 1.5; t += 0.5) { el("line", { x1: x(t), x2: x(t), y1: top - 6, y2: Hh - 26, class: "gridl" }, svg); el("text", { x: x(t), y: Hh - 10, "text-anchor": "middle" }, svg).textContent = num(t, 1); }
+    el("line", { x1: x(0), x2: x(0), y1: top - 6, y2: Hh - 26, class: "axis0" }, svg);
+    el("line", { x1: x(LH.sharpe), x2: x(LH.sharpe), y1: top - 6, y2: Hh - 26, stroke: css("--s-hold"), "stroke-width": 1.5, "stroke-dasharray": "4 3" }, svg);
+    el("line", { x1: x(luck), x2: x(luck), y1: top - 6, y2: Hh - 26, stroke: css("--ink"), "stroke-width": 1.5, "stroke-dasharray": "4 3" }, svg);
+    el("text", { x: x(luck) - 4, y: top - 12, class: "lbl", "text-anchor": "end" }, svg).textContent = "luck bar";
+    el("text", { x: x(LH.sharpe) + 4, y: top - 12, class: "lbl" }, svg).textContent = "SPY";
+    rows.forEach((r, i) => { const y = top + i * rh + rh / 2;
+      if (r.g) { el("text", { x: 0, y: y + 4, class: "grp" }, svg).textContent = r.g; return; }
+      const n = r.n, g = el("g", {}, svg);
+      el("rect", { x: 0, y: y - rh / 2, width: W, height: rh, fill: "transparent" }, g);
+      el("text", { x: 10, y: y + 4, class: "lbl" }, g).textContent = n;
+      [["hf", -4, "--s-core"], ["nohf", 4, "--s-broad"]].forEach(([w, dy, c]) => { const s = LE[n][w]; if (!s) return; const col = css(c);
+        el("line", { x1: x(s.ci[0]), x2: x(s.ci[1]), y1: y + dy, y2: y + dy, stroke: col, "stroke-width": 1.5, "stroke-opacity": .45 }, g);
+        el("circle", { cx: x(s.sharpe), cy: y + dy, r: 4.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, g); });
+      g.addEventListener("mousemove", ev => { const line = (t, s) => s ? `${t}: Sharpe ${num(s.sharpe)} [${num(s.ci[0])}, ${num(s.ci[1])}]<br>&nbsp; ${pct(s.cagr)} a year, ${bp(Math.pow(1 + s.cagr, 1 / 252) - 1)} a day, alpha t ${num(s.alpha_t)}` : `${t}: not run`;
+        showTip(ev, `<b>${n}</b><br><span class="muted">${LE[n].description}</span><br>${line("with HF", LE[n].hf)}<br>${line("without", LE[n].nohf)}`); });
+      g.addEventListener("mouseleave", hideTip); });
+  })();
+  // equity curve
+  const sel = document.getElementById("longSel");
+  LN.slice().sort((a, b) => (sv(b, "hf") ?? -9) - (sv(a, "hf") ?? -9)).forEach(n => { const o = document.createElement("option"); o.value = o.textContent = n; sel.appendChild(o); });
+  sel.value = LN.filter(n => !LE[n].short).sort((a, b) => (sv(b, "hf") ?? -9) - (sv(a, "hf") ?? -9))[0];
+  function drawCurve() {
+    const n = sel.value, svg = document.getElementById("longCurve"); svg.innerHTML = "";
+    const col = v === "hf" ? "--s-core" : "--s-broad"; document.getElementById("longSw").style.borderColor = `var(${col})`; document.getElementById("longName").textContent = n;
+    const s = LE[n][v], hold = LH.curve, W = 900, Hh = 340, Lm = 50, R = 20, T = 14, B = 30;
+    svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "560px"; svg.style.width = "100%"; svg.style.height = "auto";
+    if (!s) { el("text", { x: W / 2, y: Hh / 2, "text-anchor": "middle", class: "lbl" }, svg).textContent = "Not run with this data"; document.getElementById("longNote").textContent = ""; return; }
+    const pts = s.curve, t0 = +new Date(hold[0][0]), t1 = +new Date(hold[hold.length - 1][0]);
+    const vals = pts.map(p => p[1]).concat(hold.map(p => p[1]), [1]); let lo = Math.log(Math.min(...vals) * .95), hi = Math.log(Math.max(...vals) * 1.05);
+    const x = t => Lm + (t - t0) / (t1 - t0) * (W - Lm - R), y = q => T + (hi - Math.log(q)) / (hi - lo) * (Hh - T - B);
+    [0.5, 1, 2, 4, 8, 16].filter(q => Math.log(q) > lo && Math.log(q) < hi).forEach(q => { el("line", { x1: Lm, x2: W - R, y1: y(q), y2: y(q), class: q === 1 ? "axis0" : "gridl" }, svg); el("text", { x: Lm - 6, y: y(q) + 4, "text-anchor": "end" }, svg).textContent = "$" + q; });
+    for (let yr = 2014; yr <= 2026; yr += 2) { const t = +new Date(yr + "-01-01"); el("line", { x1: x(t), x2: x(t), y1: T, y2: Hh - B, class: "gridl" }, svg); el("text", { x: x(t), y: Hh - 10, "text-anchor": "middle" }, svg).textContent = yr; }
+    const path = p => p.map((q, i) => (i ? "L" : "M") + x(+new Date(q[0])).toFixed(1) + "," + y(q[1]).toFixed(1)).join("");
+    el("path", { d: path(hold), fill: "none", stroke: css("--s-hold"), "stroke-width": 2, "stroke-dasharray": "5 3" }, svg);
+    el("path", { d: path(pts), fill: "none", stroke: css(col), "stroke-width": 2 }, svg);
+    const last = pts[pts.length - 1], lastH = hold[hold.length - 1];
+    el("circle", { cx: x(+new Date(last[0])), cy: y(last[1]), r: 4, fill: css(col), stroke: css("--surface"), "stroke-width": 2 }, svg);
+    const cross = el("line", { y1: T, y2: Hh - B, stroke: css("--ink-3"), "stroke-width": 1, visibility: "hidden" }, svg);
+    const hit = el("rect", { x: Lm, y: T, width: W - Lm - R, height: Hh - T - B, fill: "transparent" }, svg), sMap = new Map(pts.map(p => [p[0], p[1]])), dates = hold.map(p => +new Date(p[0]));
+    hit.addEventListener("mousemove", ev => { const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width * W, t = t0 + (px - Lm) / (W - Lm - R) * (t1 - t0); let k = 0; while (k < hold.length - 1 && dates[k] < t) k++;
+      cross.setAttribute("x1", x(dates[k])); cross.setAttribute("x2", x(dates[k])); cross.setAttribute("visibility", "visible"); const q = sMap.get(hold[k][0]);
+      showTip(ev, `<b>week of ${hold[k][0]}</b><br>${n}: ${q != null ? "$" + q.toFixed(3) : "–"}<br>SPY: $${hold[k][1].toFixed(3)}`); });
+    hit.addEventListener("mouseleave", () => { hideTip(); cross.setAttribute("visibility", "hidden"); });
+    document.getElementById("longNote").textContent = `Over ${PER}, ${n}: $1 → $${last[1].toFixed(2)} (${pct(s.ret)} total, ${pct(s.cagr)} a year, ${pct(Math.pow(1 + s.cagr, 21 / 252) - 1, 2)} a month, ${bp(Math.pow(1 + s.cagr, 1 / 252) - 1)} a day; max drawdown ${pct(s.mdd)}). SPY: $1 → $${lastH[1].toFixed(2)} (${pct(LH.ret)} total, ${pct(LH.cagr)} a year). Log scale.`;
+  }
+  sel.addEventListener("change", drawCurve);
+  // years
+  function drawYears() {
+    const ys = Object.keys(LH.yearly); let h = `<tr><th>Strategy</th>${ys.map(y => `<th>${y}</th>`).join("")}</tr>`;
+    h += `<tr class="hold"><td>SPY</td>${ys.map(y => `<td>${pct(LH.yearly[y], 0)}</td>`).join("")}</tr>`;
+    for (const n of LN.filter(q => LE[q][v]).sort((a, b) => sv(b, v) - sv(a, v))) h += `<tr><td>${n}</td>${ys.map(y => { const x = LE[n][v].yearly[y]; return `<td class="${x > 0 ? "cellpos" : x < 0 ? "cellneg" : ""}">${x == null ? "–" : pct(x, 0)}</td>`; }).join("")}</tr>`;
+    document.getElementById("longYears").innerHTML = h;
+  }
+  // findings
+  const dif = LN.filter(n => LE[n].hf && LE[n].nohf).map(n => LE[n].hf.sharpe - LE[n].nohf.sharpe);
+  const meanAbs = dif.reduce((a, d) => a + Math.abs(d), 0) / dif.length, maxAbs = Math.max(...dif.map(Math.abs));
+  const bestLong = longOnly.slice().sort((a, b) => sv(b, "hf") - sv(a, "hf"))[0], shorts = LN.filter(n => LE[n].short && LE[n].hf);
+  const maxT = Math.max(...longOnly.map(n => LE[n].hf.alpha_t)), minT = Math.min(...longOnly.map(n => LE[n].hf.alpha_t));
+  const f = [
+    `<b>No strategy beats SPY.</b> SPY's Sharpe was ${num(LH.sharpe)} over ${PER}; the best strategy (${bestLong}, long-only) reached ${num(sv(bestLong, "hf"))}. The luck bar for the ${L.luck.hf.configs} configurations tried here is ${num(luck)}, so the long-only ones clear it, but only because they are about as invested in the market as SPY itself (beta near 1, alpha about zero: t-statistics from ${num(minT, 1)} to ${num(maxT, 1)}).`,
+    `<b>Long-short versions earn nothing.</b> The ${shorts.length} long-short strategies range from ${num(Math.min(...shorts.map(n => LE[n].hf.sharpe)))} to ${num(Math.max(...shorts.map(n => LE[n].hf.sharpe)))} in Sharpe, with returns between ${pct(Math.min(...shorts.map(n => LE[n].hf.cagr)))} and ${pct(Math.max(...shorts.map(n => LE[n].hf.cagr)))} a year. Momentum, value, profitability and asset growth do not survive costs and shorting in this large-cap universe over these years.`,
+    `<b>The new price data barely matters.</b> Adding the Hugging Face series changes a strategy's Sharpe by ${num(meanAbs)} on average (at most ${num(maxAbs)}). Long-only strategies come out slightly lower with it, which fits the missing dividends after 2018, while holding more of the real post-2018 members.`,
+    `<b>Conclusions match the 3.3-year test:</b> costs and the market's own return explain most of what looks like skill. Fourteen more years do not turn any of these rules into an edge.`,
+  ];
+  const pend = LN.length < 19 ? `<li>Still running: <code>deep_arb_long</code> (the deep-learning statistical arbitrage model, about 12 hours or more per run). It lost heavily in an earlier test on WIKI data alone (Sharpe −5.5).</li>` : "";
+  document.getElementById("longFindings").innerHTML = f.map(x => `<li>${x}</li>`).join("") + pend;
+  drawTable(); drawYears(); drawCurve();
+})();
 </script>
