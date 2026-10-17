@@ -50,7 +50,8 @@ on each session's last bar, so they are flat overnight.
 - **Overnight** (`OvernightStrategy`): `want_long` only on each session's
   second-to-last bar, so the engine buys at the last bar's open and sells at the
   next session's first open. On 1-minute bars that is 15:59 to 09:30. Optional trend
-  filter: close above the mean of the previous `trend_days` session closes.
+  filter: close above the mean of the previous `trend_days` session closes; optional
+  `skip_weekdays` (0 = Monday .. 4 = Friday): no hold on nights starting on those days.
 - **Intraday momentum** (`IntradayMomentumStrategy`, Gao et al. 2018): r1 = close at
   10:00 / previous close - 1. If r1 > `min_ret` (and, with `require_r12`, the half
   hour ending at the entry time was up), `want_long` from the bar ending at `entry`
@@ -67,7 +68,8 @@ on each session's last bar, so they are flat overnight.
   the previous `rv_lookback` sessions, when that filter is on), buy at the next open
   with `stop_price` = range low; exit at the close. Days without a complete range
   are skipped. Optional `trend_days`: only when the previous session's close is above
-  the mean of the `trend_days` closes before it. No profit target.
+  the mean of the `trend_days` closes before it. Optional `profit_r` (the paper's 10R):
+  take profit at entry + profit_r x (entry - range low).
 
 Session VWAP is on the typical price (H+L+C)/3 from the session's first bar.
 Defaults use `atr_mult` 50, i.e. effectively no ATR stop.
@@ -280,6 +282,7 @@ the overnight gap, and positions can be held overnight.
 | After a stop | No new entry until the next fresh crossover. |
 | Explicit stop | If the strategy has a `stop_price` column (not NaN on the signal bar), it replaces the ATR stop and sizing uses fill - stop. No entry if the fill is already at or below it. |
 | Size fraction | If the strategy has a `size_frac` column, the position is capped at that fraction of equity (decided on the signal bar). |
+| Profit target | If the strategy has a `target_r` column (on the signal bar), exit when a bar's high reaches entry + target_r x (entry - stop), at that price or the open if it gaps above. The stop is checked first when a bar touches both. |
 | Exit at close | On bars where the strategy's `exit_at_close` is True, an open position is closed at that bar's close (minus slippage), and no new order is placed from that bar. |
 | Backtest start | `Backtester.run(bars, start=...)` computes indicators on all bars but trades and records equity only from `start`. |
 | End of data | Open position closed at the last close. |
@@ -293,7 +296,11 @@ If the order plus commission exceeds cash, size is reduced until it fits.
 
 ## Costs
 
-- Commission: $0.005 per share, $1.00 minimum per order (Interactive Brokers fixed).
+- Commission: $0.005 per share, $1.00 minimum per order, at most 1% of the trade value
+  (Interactive Brokers Pro Fixed; exchange and regulatory fees included).
+- `ibkr_tiered()` (not used in the experiments): $0.0035 per share, $0.35 minimum, 1% cap,
+  plus pass-through fees (exchange ~$0.003 and clearing ~$0.0002 per share), SEC fee on
+  sales (~$20.6 per $1M) and FINRA TAF on sales ($0.000166 per share, capped at $8.30).
 - Slippage: fixed dollars per share per side, default 0 (`--slippage`).
 - Spread: `spread_bps`, a half-spread in basis points of the price paid on each side
   (default 0 in the CLI; 2 bp in the experiments).
@@ -310,6 +317,5 @@ commission, buy-and-hold return (first open to last close) and buy-and-hold Shar
 ## Not implemented (ideas)
 
 Shorting in the single-ticker engine (only the portfolio engine can short), ADX
-regime filter, volume-based partial fills, random latency, an ORB profit target and
-"stocks in play" ranking across tickers, overnight day-of-week and earnings-gap
-filters, the pre-holiday effect.
+regime filter, volume-based partial fills, random latency, "stocks in play" ranking
+across tickers for the ORB, an overnight earnings-gap filter.

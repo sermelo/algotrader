@@ -73,10 +73,9 @@ Unverified figures, see https://www.interactivebrokers.com/en/pricing/commission
 
 Updated 2026-10-17. In order; details in the sections below.
 
-1. **Finish the batched rerun** (running on the VPS, `scripts/full_rerun.sh`): when
-   `data/full_rerun.done` exists, rsync `results/` back, check fingerprints, refresh the
-   README results table and reading, commit the uncommitted code (costs, engine, intraday,
-   two new experiments, docs) with the results, push. Update this file.
+1. ~~**Finish the batched rerun**~~ **done 2026-10-17** (35 + 35 experiments, all
+   fingerprints current; numbers moved by at most 0.01 except broad `xs_reversal_daily`
+   0.50 -> 0.43). Committed with the code (costs, engine, intraday, two new experiments).
 2. **D1 second batch**: on or after 2026-11-01 rerun `scripts/history_queue.sh` on the VPS
    for the remaining ~216 Tiingo symbols (the 500-symbol monthly quota stops it), then
    `python -m algotrader.history check`.
@@ -122,7 +121,7 @@ Updated 2026-10-17. In order; details in the sections below.
 | S10 | **Deep momentum networks / Momentum Transformer** (Lim, Zohren & Roberts 2019; Wood et al. 2021) | Futures only; edge survives costs only to 2-3 bp (10 bp with turnover penalty); Pollok & Robik 2026: learned policies beat simple rules in some, not all, cases | Fits current data (ETFs); extends S2 | todo |
 | S11 | Neural / transformer cross-sectional ranking (Gu, Kelly & Xiu 2020; Kelly et al., NBER 2025) | Strong on the full market, weak for large caps (Avramov et al.). **Ours:** gradient-boosting ranking already lost | D1 + D4 + D3 features | low |
 | S12 | Market intraday momentum (Gao et al. 2018; Baltussen et al., *JFE* 2021, 60+ futures, explained by gamma hedging) | Peer-reviewed but on futures; **ours:** last-half-hour SPY-style rule loses to costs on stocks (-3.8 Sharpe) | Shorting in the single-ticker engine; could test on SPY/QQQ only | **not doing** (2026-10-17): low evidence and our long-only version loses even before costs (gross -0.41) |
-| S13 | Small items left from the first plan: ORB 10R target and "stocks in play", overnight day-of-week/earnings filters, ~~pre-holiday effect~~ (done 2026-10-17: Sharpe 0.17 / 0.07, no alpha) | ORB papers are SSRN working papers; **ours:** ORB and overnight already fail after costs (gross edges too small) | Minute data we have; earnings filter needs D3 | ORB 10R target and overnight skip-weekday **code done** (`orb_5min_100k_target`, `overnight_1min_100k_weekday`); broad results: ORB target -0.19, overnight skipping Monday nights 0.47 (alpha t -0.13); core in the running rerun. Not done: "stocks in play" ranking, overnight earnings-gap filter |
+| S13 | Small items left from the first plan: ORB 10R target and "stocks in play", overnight day-of-week/earnings filters, ~~pre-holiday effect~~ (done 2026-10-17: Sharpe 0.17 / 0.07, no alpha) | ORB papers are SSRN working papers; **ours:** ORB and overnight already fail after costs (gross edges too small) | Minute data we have; earnings filter needs D3 | ORB 10R target and overnight skip-weekday **code done** (`orb_5min_100k_target`, `overnight_1min_100k_weekday`); results: ORB target 0.10 core / -0.19 broad, overnight skipping Monday nights 0.42 / 0.47 (alpha t -0.22 / -0.13), no edge. Not done: "stocks in play" ranking, overnight earnings-gap filter |
 | S14 | Pretrained time-series models (Chronos, TimesFM); LSTM next-day direction | Evidence against: lose to CatBoost zero-shot (Rahimikia et al. 2025); LSTM direction has no profit after costs since 2010 (Fischer & Krauss, *EJOR* 2018) | | skip |
 
 ### P3. Method improvements (cheap, do alongside)
@@ -132,7 +131,7 @@ Updated 2026-10-17. In order; details in the sections below.
   the momentum factor and its alpha falls from t 1.5 to t 0.5 / 0.4, so it is the known
   momentum premium. Dual momentum on broad keeps +14.8% (t 1.47): gold and bonds, which
   the equity factors do not span. Nothing has a factor alpha t above 1.5.
-- M2. **Done** (`trials.py`, `results/trials.md`): 746 configurations over core and broad,
+- M2. **Done** (`trials.py`, `results/trials.md`): 778 configurations over core and broad,
   luck bar 1.75 over 3.3 years; the long-history count is added when `results/long/` exists.
 - M3. Turnover per strategy: **done in `longrun.py`** (one-sided, per year); not yet in the main runner (would change every fingerprint).
 
@@ -231,9 +230,7 @@ or many existing results stale and need the ~10-hour VPS rerun. Do them together
 - shorting in the single-ticker engine (S12): not doing;
 - still open for a later rerun: "stocks in play" ranking, overnight earnings-gap filter.
 
-Status 2026-10-17: the done items are **not committed yet**; `scripts/full_rerun.sh` is
-regenerating every result on the VPS (broad finished, 35/35 fingerprints current; core
-in progress). Commit code + `results/` together when it finishes (see HANDOFF.md).
+Status 2026-10-17: the done items are committed with the full rerun (`scripts/full_rerun.sh`).
 
 ## Recommended order
 

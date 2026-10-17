@@ -18,7 +18,7 @@ class Trade:
     entry_price: float
     exit_price: float
     commission: float
-    exit_reason: str          # 'signal', 'stop', 'close' (exit_at_close) or 'end'
+    exit_reason: str          # 'signal', 'stop', 'target', 'close' (exit_at_close) or 'end'
 
     @property
     def pnl(self) -> float:
@@ -61,6 +61,9 @@ class Backtester:
       * `exit_at_close`: on bars where it is True, an open position is closed at
         that bar's close ('close') and no new order is placed from that bar. Used
         by intraday strategies to be flat overnight.
+      * `target_r`: profit target as a multiple of the initial risk, decided on the
+        signal bar: exit when the high reaches entry + target_r * (entry - stop), at
+        that price (or the open if it gaps above). The stop is checked first.
       * `size_frac`: fraction of equity to put into the position, decided on the
         signal bar; the sizer's result is capped at that (volatility targeting).
 
@@ -100,13 +103,15 @@ class Backtester:
         stop_px = df["stop_price"].to_numpy(float) if "stop_price" in df else np.full(n, np.nan)
         eod = df["exit_at_close"].to_numpy(bool) if "exit_at_close" in df else np.zeros(n, bool)
         frac = df["size_frac"].to_numpy(float) if "size_frac" in df else np.full(n, np.nan)
+        tgt_r = df["target_r"].to_numpy(float) if "target_r" in df else np.full(n, np.nan)
 
         cash = self.initial_capital
         shares = 0
         stop = entry_fill = entry_comm = 0.0
+        target = np.inf
         entry_time = None
         pending = None                      # 'buy' / 'sell' decided at prior close
-        pending_atr = pending_stop = pending_frac = np.nan
+        pending_atr = pending_stop = pending_frac = pending_tgt = np.nan
         equity = np.empty(n)
         held = np.zeros(n, dtype=int)
         trades = []
@@ -114,7 +119,7 @@ class Backtester:
         def close_position(i, price, reason):
             nonlocal cash, shares
             fill = self.costs.sell_price(price)
-            comm = self.costs.commission(shares)
+            comm = self.costs.commission(shares, fill, sell=True)
             cash += shares * fill - comm
             trades.append(Trade(entry_time, idx[i], shares, entry_fill, fill,
                                 entry_comm + comm, reason))
@@ -129,13 +134,15 @@ class Backtester:
                 qty = self.sizer.shares(cash, fill, fill - new_stop)
                 if not np.isnan(pending_frac):
                     qty = min(qty, int(cash * max(pending_frac, 0.0) // fill))
-                while qty > 0 and qty * fill + self.costs.commission(qty) > cash:
+                while qty > 0 and qty * fill + self.costs.commission(qty, fill) > cash:
                     qty -= 1
                 if qty > 0:
-                    entry_comm = self.costs.commission(qty)
+                    entry_comm = self.costs.commission(qty, fill)
                     cash -= qty * fill + entry_comm
                     shares, entry_fill, entry_time = qty, fill, idx[i]
                     stop = new_stop
+                    target = (fill + pending_tgt * (fill - new_stop)
+                              if np.isfinite(pending_tgt) and fill > new_stop else np.inf)
             elif pending == "sell" and shares > 0:
                 close_position(i, o[i], "signal")
             pending = None
@@ -143,6 +150,9 @@ class Backtester:
             # 2. Protective stop, checked against the bar's low.
             if shares > 0 and l[i] <= stop:
                 close_position(i, min(o[i], stop), "stop")
+            # 2b. Profit target (after the stop: if a bar touches both, the stop counts).
+            if shares > 0 and h[i] >= target:
+                close_position(i, max(o[i], target), "target")
 
             # 3. Intraday strategies: flat at this bar's close.
             if eod[i] and shares > 0:
@@ -158,6 +168,7 @@ class Backtester:
                         and not (np.isnan(atr[i]) and np.isnan(stop_px[i])):
                     pending, pending_atr, pending_stop = "buy", atr[i], stop_px[i]
                     pending_frac = frac[i]
+                    pending_tgt = tgt_r[i]
 
         if shares > 0:
             close_position(n - 1, c[-1], "end")

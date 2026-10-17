@@ -295,6 +295,17 @@ EXPERIMENTS += [
                {}, {"days_before": [1, 2], "days_after": [0, 1]}),
 ]
 
+
+# Roadmap S13: ORB 10R profit target (Zarattini & Aziz) and overnight weekday filters.
+EXPERIMENTS += [
+    Experiment("orb_5min_100k_target", "Opening-range breakout, $100k, with or without a 10R target",
+               OpeningRangeBreakoutStrategy, "5min", {"min_rel_volume": 1.5},
+               {"or_minutes": [5, 15, 30], "profit_r": [None, 10.0]}, capital=100_000.0),
+    Experiment("overnight_1min_100k_weekday", "Overnight hold, $100k, skipping Friday or Monday nights",
+               OvernightStrategy, "1min", {},
+               {"trend_days": [None, 200], "skip_weekdays": [(), (4,), (0,)]}, capital=100_000.0),
+]
+
 BY_NAME = {e.name: e for e in EXPERIMENTS}
 
 

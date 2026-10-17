@@ -1,10 +1,15 @@
 {
   "dual_momentum_daily": {
     "capital": 100000.0,
-    "code_sha256": "568ac9d78d56be1e",
+    "code_sha256": "25fdc07bfc33ef59",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -480,7 +485,7 @@
       }
     },
     "git": {
-      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -512,7 +517,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "63738f9b5333cb89",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "lookback": 126,
@@ -545,7 +550,7 @@
         "sharpe": 1.1377498662981547
       }
     },
-    "run_at": "2026-10-16T20:23:36+00:00",
+    "run_at": "2026-10-17T05:47:04+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -612,18 +617,23 @@
         "sharpe": 1.1890957766293093
       },
       "vs_hold": {
-        "alpha": 0.1621217040061597,
-        "alpha_t": 1.5663579190399721,
-        "beta": 0.4868667689990319
+        "alpha": 0.1621217040061598,
+        "alpha_t": 1.5663579190399732,
+        "beta": 0.4868667689990311
       }
     }
   },
   "gbm_30min": {
     "capital": 10000.0,
-    "code_sha256": "5b5c3d060da491cd",
+    "code_sha256": "051c50109ef2928e",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -1125,7 +1135,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "entry_quantile": 0.8,
       "horizon": 4,
@@ -1157,7 +1167,7 @@
         "sharpe": 0.2937167391377856
       }
     },
-    "run_at": "2026-10-16T18:45:34+00:00",
+    "run_at": "2026-10-17T04:53:03+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -1232,10 +1242,15 @@
   },
   "gbm_daily": {
     "capital": 10000.0,
-    "code_sha256": "c1dc4ec0223d1589",
+    "code_sha256": "7cfc1fc4605b5df1",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -1737,7 +1752,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "entry_quantile": 0.7,
       "horizon": 1,
@@ -1769,7 +1784,7 @@
         "sharpe": 1.262784032183834
       }
     },
-    "run_at": "2026-10-16T18:59:08+00:00",
+    "run_at": "2026-10-17T05:06:32+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -1844,10 +1859,15 @@
   },
   "high52_daily": {
     "capital": 100000.0,
-    "code_sha256": "354d93ac5343d606",
+    "code_sha256": "1c2479fce800829d",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -2317,7 +2337,7 @@
       }
     },
     "git": {
-      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -2346,7 +2366,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "63738f9b5333cb89",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "lookback": 252,
@@ -2354,31 +2374,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.1282294793322074,
-        "max_drawdown": -0.11085747646034816,
-        "return": 0.3981328929615,
-        "sharpe": 1.0522784788513722
+        "cagr": 0.1282294793322054,
+        "max_drawdown": -0.11085747646034871,
+        "return": 0.3981328929614938,
+        "sharpe": 1.0522784788513702
       },
       "stress": {
-        "cagr": 0.11889202560989198,
-        "max_drawdown": -0.11224485512070359,
-        "return": 0.36622654256991716,
-        "sharpe": 0.9816710572637339
+        "cagr": 0.11882516747288352,
+        "max_drawdown": -0.11223797094529853,
+        "return": 0.36599978424389756,
+        "sharpe": 0.981184106211251
       },
       "test": {
-        "cagr": 0.12301163573650076,
-        "max_drawdown": -0.11141299571858432,
-        "return": 0.38024526810499304,
-        "sharpe": 1.013487048651173
+        "cagr": 0.123011624946604,
+        "max_drawdown": -0.11132194124607919,
+        "return": 0.3802452312677769,
+        "sharpe": 1.0133896158161655
       },
       "train": {
-        "cagr": 0.06348970824188993,
-        "max_drawdown": -0.10980530312472425,
-        "return": 0.11837305833019962,
-        "sharpe": 0.8933527996480066
+        "cagr": 0.06349756790580341,
+        "max_drawdown": -0.10980046219745365,
+        "return": 0.11838808018741331,
+        "sharpe": 0.8934614416949795
       }
     },
-    "run_at": "2026-10-16T20:21:38+00:00",
+    "run_at": "2026-10-17T05:46:00+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -2402,31 +2422,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 1004,
+      "rows": 1003,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.09224762877228265,
-        "max_drawdown": -0.13964985859931467,
-        "return": 0.3353898919184166,
-        "sharpe": 0.7682640257646386
+        "cagr": 0.09223517931166247,
+        "max_drawdown": -0.1396625152876585,
+        "return": 0.33534000216255166,
+        "sharpe": 0.7681098280073988
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": -0.3949635331646022,
-        "2024-01-01": 2.1139318291735516,
-        "2024-07-01": 1.6440453649612237,
-        "2025-01-01": 0.7388507226349882,
-        "2025-07-01": 0.23584949002184455,
-        "2026-01-01": 0.6201598524742515
+        "2023-07-01": -0.39546248974120735,
+        "2024-01-01": 2.120723827343198,
+        "2024-07-01": 1.6452748637098054,
+        "2025-01-01": 0.7391812153968231,
+        "2025-07-01": 0.2317162809613143,
+        "2026-01-01": 0.6168565372974482
       },
       "gross": {
-        "cagr": 0.09761002393871832,
-        "max_drawdown": -0.13816351384225856,
-        "return": 0.35699974871426465,
-        "sharpe": 0.8079337440792865
+        "cagr": 0.09755180718124024,
+        "max_drawdown": -0.13815507919123104,
+        "return": 0.3567638459729576,
+        "sharpe": 0.8074952452895703
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -2435,28 +2455,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        0.010411896195199994,
-        1.6522919959905904
+        0.009943340583705114,
+        1.6533045081236855
       ],
       "stress": {
-        "cagr": 0.0878509815735875,
-        "max_drawdown": -0.14101091462956428,
-        "return": 0.31785124955884925,
-        "sharpe": 0.7351587558273085
+        "cagr": 0.08778139913786531,
+        "max_drawdown": -0.14097595863364432,
+        "return": 0.31757497271817337,
+        "sharpe": 0.7346657809918288
       },
       "vs_hold": {
-        "alpha": -0.001343934132678482,
-        "alpha_t": -0.02755343080042359,
-        "beta": 0.6141446961406537
+        "alpha": -0.0013529179924948614,
+        "alpha_t": -0.0277318774894857,
+        "beta": 0.6141391219719725
       }
     }
   },
   "intraday_momentum_5min": {
     "capital": 10000.0,
-    "code_sha256": "74be776b6eb178f4",
+    "code_sha256": "a2bdfff3bc631d29",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -2949,7 +2974,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "min_ret": 0.005,
       "require_r12": true
@@ -2980,7 +3005,7 @@
         "sharpe": -3.0043274814375818
       }
     },
-    "run_at": "2026-10-16T18:01:28+00:00",
+    "run_at": "2026-10-17T04:09:07+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -3055,10 +3080,15 @@
   },
   "low_vol_daily": {
     "capital": 100000.0,
-    "code_sha256": "7c5de634ad5f815e",
+    "code_sha256": "3ed08f7c8d6935d3",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -3528,7 +3558,7 @@
       }
     },
     "git": {
-      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -3557,7 +3587,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "63738f9b5333cb89",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "lookback": 126,
@@ -3565,31 +3595,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.05682914102223657,
+        "cagr": 0.056829141022235685,
         "max_drawdown": -0.09576425571946978,
-        "return": 0.16595004757861376,
-        "sharpe": 0.6585974082502527
+        "return": 0.16595004757861087,
+        "sharpe": 0.658597408250252
       },
       "stress": {
-        "cagr": 0.054944170835446116,
-        "max_drawdown": -0.0970811830845999,
-        "return": 0.16018253728593268,
-        "sharpe": 0.6383344409698806
+        "cagr": 0.054921026453414123,
+        "max_drawdown": -0.09707917084422846,
+        "return": 0.16011183532376116,
+        "sharpe": 0.6381549318486425
       },
       "test": {
-        "cagr": 0.05573759780818599,
-        "max_drawdown": -0.09658280869308622,
-        "return": 0.16260798327663561,
-        "sharpe": 0.6468307629596176
+        "cagr": 0.05574700006935851,
+        "max_drawdown": -0.09657623606048316,
+        "return": 0.16263674471228828,
+        "sharpe": 0.6469428400911232
       },
       "train": {
-        "cagr": 0.06255122729388085,
-        "max_drawdown": -0.09160259191427034,
-        "return": 0.1165800301213562,
-        "sharpe": 0.8100968369237713
+        "cagr": 0.06255605842504974,
+        "max_drawdown": -0.09159723363231409,
+        "return": 0.11658925699455724,
+        "sharpe": 0.8101563315626418
       }
     },
-    "run_at": "2026-10-16T20:20:47+00:00",
+    "run_at": "2026-10-17T05:45:32+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -3619,25 +3649,25 @@
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.04601958448395638,
-        "max_drawdown": -0.10153350144458706,
-        "return": 0.15890323229746706,
-        "sharpe": 0.5465272591177269
+        "cagr": 0.04603819725779301,
+        "max_drawdown": -0.1015083281945548,
+        "return": 0.15897082608249935,
+        "sharpe": 0.5467421398000637
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": -0.02969398115094475,
-        "2024-01-01": 1.7021727613180042,
-        "2024-07-01": 0.5806575337241231,
-        "2025-01-01": 0.4305800977047731,
-        "2025-07-01": 1.0397127924650558,
-        "2026-01-01": 0.14183184781878427
+        "2023-07-01": -0.02893768631667763,
+        "2024-01-01": 1.702447435670616,
+        "2024-07-01": 0.5807251510598108,
+        "2025-01-01": 0.4306569189808828,
+        "2025-07-01": 1.039763489155308,
+        "2026-01-01": 0.14193933597694056
       },
       "gross": {
-        "cagr": 0.047268870280158914,
-        "max_drawdown": -0.1010752445087465,
-        "return": 0.16344619628340817,
-        "sharpe": 0.5600928156283916
+        "cagr": 0.04726887028015847,
+        "max_drawdown": -0.10107524450874628,
+        "return": 0.16344619628340706,
+        "sharpe": 0.5600928156283902
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -3646,28 +3676,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -0.33841992497158263,
-        1.5059283194886728
+        -0.33817263260903613,
+        1.5061796121250952
       ],
       "stress": {
-        "cagr": 0.04519031152056807,
-        "max_drawdown": -0.10181950168757992,
-        "return": 0.15589444004098207,
-        "sharpe": 0.5375281770576931
+        "cagr": 0.04518148603900918,
+        "max_drawdown": -0.10179292670383078,
+        "return": 0.15586244839824137,
+        "sharpe": 0.5374861997896621
       },
       "vs_hold": {
-        "alpha": -0.02672737659638866,
-        "alpha_t": -0.8431447412256868,
-        "beta": 0.4774327593476274
+        "alpha": -0.026707437753550983,
+        "alpha_t": -0.8425507322708933,
+        "beta": 0.4774174376537987
       }
     }
   },
   "noise_area_1min": {
     "capital": 10000.0,
-    "code_sha256": "7e10b685c9662ca4",
+    "code_sha256": "30ee5019cf320503",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -4167,7 +4202,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "band_mult": 1.0,
       "decision_minutes": 60,
@@ -4199,7 +4234,7 @@
         "sharpe": -1.060651510810612
       }
     },
-    "run_at": "2026-10-16T18:13:54+00:00",
+    "run_at": "2026-10-17T04:21:37+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -4274,10 +4309,15 @@
   },
   "orb_5min": {
     "capital": 10000.0,
-    "code_sha256": "22c967105e3e3bfa",
+    "code_sha256": "73c5368af7de90e8",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -4771,7 +4811,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "min_rel_volume": 1.5,
       "or_minutes": 15
@@ -4802,7 +4842,7 @@
         "sharpe": 0.6575796480831118
       }
     },
-    "run_at": "2026-10-16T18:16:25+00:00",
+    "run_at": "2026-10-17T04:24:10+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -4877,10 +4917,15 @@
   },
   "orb_5min_100k": {
     "capital": 100000.0,
-    "code_sha256": "a06009025e6dd1cb",
+    "code_sha256": "5a66f22da4b36a05",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -5374,7 +5419,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "min_rel_volume": 1.5,
       "or_minutes": 15
@@ -5405,7 +5450,7 @@
         "sharpe": 0.7749019756480199
       }
     },
-    "run_at": "2026-10-16T19:06:44+00:00",
+    "run_at": "2026-10-17T05:14:09+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -5480,10 +5525,15 @@
   },
   "orb_5min_100k_filters": {
     "capital": 100000.0,
-    "code_sha256": "5486190a1e223f9d",
+    "code_sha256": "dae3c104e8058019",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -5996,7 +6046,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "min_rel_volume": 1.5,
       "or_minutes": 15,
@@ -6029,7 +6079,7 @@
         "sharpe": 0.8899287345540374
       }
     },
-    "run_at": "2026-10-16T19:28:54+00:00",
+    "run_at": "2026-10-17T05:36:04+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -6102,12 +6152,631 @@
       }
     }
   },
-  "overnight_1min": {
-    "capital": 10000.0,
-    "code_sha256": "82ba15afb9cee943",
+  "orb_5min_100k_target": {
+    "capital": 100000.0,
+    "code_sha256": "9393d3a09f87c807",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ABC": {
+        "bytes": 2177595,
+        "sha256": "b311d3b24492c67d"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "ADT": {
+        "bytes": 4240167,
+        "sha256": "f156462a6b28f5d2"
+      },
+      "AFL": {
+        "bytes": 6077160,
+        "sha256": "0383435d7f35434d"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "ANET": {
+        "bytes": 8093565,
+        "sha256": "1703f5a70d1c5f6a"
+      },
+      "ANF": {
+        "bytes": 6187104,
+        "sha256": "22d503c5265b41f3"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "BHF": {
+        "bytes": 4035411,
+        "sha256": "909df6f367efe8e1"
+      },
+      "CEG": {
+        "bytes": 7467178,
+        "sha256": "c2b7abc5e58acc03"
+      },
+      "CHTR": {
+        "bytes": 7542880,
+        "sha256": "c31f41f7aa7ada30"
+      },
+      "CNP": {
+        "bytes": 5900642,
+        "sha256": "5736e89b7e246dfe"
+      },
+      "COIN": {
+        "bytes": 8199606,
+        "sha256": "e44ba002b7a5e4c5"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CSGP": {
+        "bytes": 6354730,
+        "sha256": "ad84a09c21bba5f0"
+      },
+      "CVNA": {
+        "bytes": 8210103,
+        "sha256": "eb0c4e753b39d940"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DGX": {
+        "bytes": 5586133,
+        "sha256": "fc72969335c6f0c6"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "DISCA": {
+        "bytes": 162452,
+        "sha256": "6283e6508f0e3436"
+      },
+      "DLR": {
+        "bytes": 6416817,
+        "sha256": "f270232c02e67729"
+      },
+      "DT": {
+        "bytes": 6357861,
+        "sha256": "b18a7fe52f20ed31"
+      },
+      "GLD": {
+        "bytes": 6067952,
+        "sha256": "a011f0e9b4a56bac"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "HPQ": {
+        "bytes": 6615816,
+        "sha256": "1797e65400dce262"
+      },
+      "HRI": {
+        "bytes": 4180195,
+        "sha256": "94e3088222b2481a"
+      },
+      "INCY": {
+        "bytes": 5848895,
+        "sha256": "d8149e5765d1f4b7"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "ISRG": {
+        "bytes": 7905647,
+        "sha256": "194b1a14aeeeff7f"
+      },
+      "ITB": {
+        "bytes": 4384511,
+        "sha256": "1bb0333c450b30b8"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KDP": {
+        "bytes": 6356042,
+        "sha256": "e1c46b5198dd0f58"
+      },
+      "KEX": {
+        "bytes": 4438610,
+        "sha256": "79b894ca14e436bc"
+      },
+      "KMX": {
+        "bytes": 6389428,
+        "sha256": "1207fdb0eac8de0c"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "KRTX": {
+        "bytes": 2271184,
+        "sha256": "4cfb226235316c68"
+      },
+      "LUV": {
+        "bytes": 6644188,
+        "sha256": "532c906ef17536a5"
+      },
+      "LW": {
+        "bytes": 6024534,
+        "sha256": "206c260f7d6e1dc8"
+      },
+      "MAT": {
+        "bytes": 5476687,
+        "sha256": "134c07c1229b02c0"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NDSN": {
+        "bytes": 4422620,
+        "sha256": "519ba4674c5b93b3"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NOW": {
+        "bytes": 8935980,
+        "sha256": "5a4e017ba85fe06f"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "OKE": {
+        "bytes": 6372005,
+        "sha256": "685128cad3d8caab"
+      },
+      "ORLY": {
+        "bytes": 8048795,
+        "sha256": "6d999718f4d00aa9"
+      },
+      "PEP": {
+        "bytes": 6955582,
+        "sha256": "7b774d49015c6177"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "PRU": {
+        "bytes": 5943692,
+        "sha256": "8c51152fb4761685"
+      },
+      "PSA": {
+        "bytes": 5948584,
+        "sha256": "0a47540761009423"
+      },
+      "PSTG": {
+        "bytes": 6390125,
+        "sha256": "8d8be336e33024b5"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "RCL": {
+        "bytes": 7608755,
+        "sha256": "85cedb0c4fd2f0f5"
+      },
+      "REGN": {
+        "bytes": 7162401,
+        "sha256": "0d952c03892a22f2"
+      },
+      "RMBS": {
+        "bytes": 5659179,
+        "sha256": "1a476847e70f0a13"
+      },
+      "RTX": {
+        "bytes": 7138660,
+        "sha256": "02f4c9fe7cc083a1"
+      },
+      "SBAC": {
+        "bytes": 6226985,
+        "sha256": "c873f07f9b3f112d"
+      },
+      "SDS": {
+        "bytes": 2614700,
+        "sha256": "c4e6027a7cf358b4"
+      },
+      "SEDG": {
+        "bytes": 7075092,
+        "sha256": "103ae4efc5c21847"
+      },
+      "SHOP": {
+        "bytes": 8002952,
+        "sha256": "bf7a573db81f8e7b"
+      },
+      "SLG": {
+        "bytes": 5110497,
+        "sha256": "a3be266b2cd8821a"
+      },
+      "SMH": {
+        "bytes": 7890844,
+        "sha256": "a958fcfd7abfed26"
+      },
+      "SPG": {
+        "bytes": 6188089,
+        "sha256": "3ea1bb84276b1906"
+      },
+      "SPOT": {
+        "bytes": 8142240,
+        "sha256": "61ed527e5950d634"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "SQ": {
+        "bytes": 4729694,
+        "sha256": "6ec987b0fbe1ce02"
+      },
+      "SQSP": {
+        "bytes": 2114636,
+        "sha256": "7e75d168e2ca4ff3"
+      },
+      "SWI": {
+        "bytes": 1828448,
+        "sha256": "047f3901a2924f03"
+      },
+      "TECH": {
+        "bytes": 5904753,
+        "sha256": "e964afb8165d1c73"
+      },
+      "TIP": {
+        "bytes": 3234901,
+        "sha256": "79ffc696986f447f"
+      },
+      "TJX": {
+        "bytes": 7077066,
+        "sha256": "75cb6cb4e8c48260"
+      },
+      "TLRY": {
+        "bytes": 3920292,
+        "sha256": "e6294915a7841558"
+      },
+      "TLT": {
+        "bytes": 6986199,
+        "sha256": "b16eaa9129fa8617"
+      },
+      "TM": {
+        "bytes": 3366087,
+        "sha256": "6518a8b94ac2120e"
+      },
+      "TOST": {
+        "bytes": 6511167,
+        "sha256": "c1bf791426150400"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "TSM": {
+        "bytes": 8321014,
+        "sha256": "73e197cd3b3953a4"
+      },
+      "TSN": {
+        "bytes": 6228763,
+        "sha256": "b45fed9e905b524d"
+      },
+      "TTWO": {
+        "bytes": 6731489,
+        "sha256": "5fc33668d3c28331"
+      },
+      "UNH": {
+        "bytes": 8135254,
+        "sha256": "2b4d2db650d27b57"
+      },
+      "VRSN": {
+        "bytes": 5616865,
+        "sha256": "5d767640454ad8f3"
+      },
+      "VVV": {
+        "bytes": 5078616,
+        "sha256": "5736a0a68ec917a6"
+      },
+      "WAT": {
+        "bytes": 5753791,
+        "sha256": "c628ad4737bd055d"
+      },
+      "WHR": {
+        "bytes": 5888476,
+        "sha256": "1003167fff1c8871"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XBI": {
+        "bytes": 6650037,
+        "sha256": "7bdd6a6e0a27006c"
+      },
+      "XLB": {
+        "bytes": 6390157,
+        "sha256": "8414485830a5d70f"
+      },
+      "XLE": {
+        "bytes": 7147384,
+        "sha256": "c5117cd3808b9200"
+      },
+      "XLF": {
+        "bytes": 6795492,
+        "sha256": "2186f3172f1b1210"
+      },
+      "XLI": {
+        "bytes": 7069711,
+        "sha256": "b03e1b09a9873d6d"
+      },
+      "XLK": {
+        "bytes": 7056315,
+        "sha256": "e83a5ebaedc227b4"
+      },
+      "XLP": {
+        "bytes": 6459764,
+        "sha256": "eb78e491e24bb35f"
+      },
+      "XLU": {
+        "bytes": 6679738,
+        "sha256": "dcae0a8153926377"
+      },
+      "XLV": {
+        "bytes": 6750544,
+        "sha256": "5f07ce9d689daf21"
+      },
+      "XLY": {
+        "bytes": 6425437,
+        "sha256": "24d115e994d6f4b6"
+      },
+      "XM": {
+        "bytes": 1222982,
+        "sha256": "8223b9323207806e"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      },
+      "YUMC": {
+        "bytes": 5806254,
+        "sha256": "890654104acf02f6"
+      },
+      "ZBH": {
+        "bytes": 6130290,
+        "sha256": "ad68555c4cdd67df"
+      }
+    },
+    "description": "Opening-range breakout, $100k, with or without a 10R target",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "min_rel_volume": 1.5,
+        "or_minutes": 15,
+        "profit_r": 10.0
+      },
+      "2024-01-01": {
+        "min_rel_volume": 1.5,
+        "or_minutes": 15,
+        "profit_r": 10.0
+      },
+      "2024-07-01": {
+        "min_rel_volume": 1.5,
+        "or_minutes": 15,
+        "profit_r": null
+      },
+      "2025-01-01": {
+        "min_rel_volume": 1.5,
+        "or_minutes": 15,
+        "profit_r": 10.0
+      },
+      "2025-07-01": {
+        "min_rel_volume": 1.5,
+        "or_minutes": 15,
+        "profit_r": 10.0
+      },
+      "2026-01-01": {
+        "min_rel_volume": 1.5,
+        "or_minutes": 15,
+        "profit_r": 10.0
+      }
+    },
+    "git": {
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
+      "dirty": true
+    },
+    "grid": {
+      "or_minutes": [
+        "5",
+        "15",
+        "30"
+      ],
+      "profit_r": [
+        "None",
+        "10.0"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.15820414200529176,
+        "max_drawdown": -0.17483450949108614,
+        "return": 0.503768113012955,
+        "sharpe": 1.1012886340796084
+      },
+      "train": {
+        "cagr": 0.0751947186578148,
+        "max_drawdown": -0.23975311637212915,
+        "return": 0.14084487454530503,
+        "sharpe": 0.4491496435193151
+      }
+    },
+    "kind": "per ticker",
+    "package_sha256": "93094fe205ed8582",
+    "params": {
+      "min_rel_volume": 1.5,
+      "or_minutes": 15,
+      "profit_r": 10.0
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.011530601589655687,
+        "max_drawdown": -0.009843732823026863,
+        "return": 0.03235871299879722,
+        "sharpe": 0.926027003555838
+      },
+      "stress": {
+        "cagr": -0.014929951958943533,
+        "max_drawdown": -0.0415558970181934,
+        "return": -0.0409238419884731,
+        "sharpe": -1.1996070358958695
+      },
+      "test": {
+        "cagr": -0.00147091832849644,
+        "max_drawdown": -0.015568633559558731,
+        "return": -0.004080544059220426,
+        "sharpe": -0.11176875254438587
+      },
+      "train": {
+        "cagr": 0.010955434482521786,
+        "max_drawdown": -0.01063185661383581,
+        "return": 0.020000166297041266,
+        "sharpe": 0.778854462222893
+      }
+    },
+    "run_at": "2026-10-17T05:52:56+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "OpeningRangeBreakoutStrategy",
+    "test_exposure": 0.05265613201394863,
+    "test_trades_per_year": 22.476233092791293,
+    "tickers": 107,
+    "timeframe": "5min",
+    "trade_log": {
+      "rows": 7760,
+      "written": true
+    },
+    "universe": "broad",
+    "walk_forward": {
+      "base": {
+        "cagr": -0.0023805499840096056,
+        "max_drawdown": -0.020525717636289298,
+        "return": -0.007781780163941487,
+        "sharpe": -0.18927643186804527
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": -0.786148539282874,
+        "2024-01-01": -2.8776962877300565,
+        "2024-07-01": 0.7927862315275969,
+        "2025-01-01": -0.12368277906375005,
+        "2025-07-01": 0.21866451776694157,
+        "2026-01-01": 0.37497936517744856
+      },
+      "gross": {
+        "cagr": 0.011060110670903178,
+        "max_drawdown": -0.009851559547026434,
+        "return": 0.03671138394740869,
+        "sharpe": 0.908133203377039
+      },
+      "hold": {
+        "cagr": 0.1597155711621583,
+        "max_drawdown": -0.18187832188391984,
+        "return": 0.6252863145481757,
+        "sharpe": 1.0968584654435536
+      },
+      "sharpe_90": [
+        -1.0205299089246471,
+        0.5247835770319147
+      ],
+      "stress": {
+        "cagr": -0.01623338981808098,
+        "max_drawdown": -0.05374777815898757,
+        "return": -0.05223250083766995,
+        "sharpe": -1.3353599909371514
+      },
+      "vs_hold": {
+        "alpha": -0.007521060789807998,
+        "alpha_t": -1.2081927897800704,
+        "beta": 0.032854210874838224
+      }
+    }
+  },
+  "overnight_1min": {
+    "capital": 10000.0,
+    "code_sha256": "8b34cdd576371c89",
+    "costs": {
+      "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
+      "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -6591,7 +7260,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "trend_days": 200
     },
@@ -6621,7 +7290,7 @@
         "sharpe": -0.9649813185747923
       }
     },
-    "run_at": "2026-10-16T17:59:27+00:00",
+    "run_at": "2026-10-17T04:07:08+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -6696,10 +7365,15 @@
   },
   "overnight_1min_100k": {
     "capital": 100000.0,
-    "code_sha256": "91dd485e179f1d26",
+    "code_sha256": "75c597da6d44841c",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -7183,7 +7857,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "trend_days": 200
     },
@@ -7213,7 +7887,7 @@
         "sharpe": -0.7438394239749865
       }
     },
-    "run_at": "2026-10-16T19:04:11+00:00",
+    "run_at": "2026-10-17T05:11:37+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -7288,10 +7962,15 @@
   },
   "overnight_1min_100k_filters": {
     "capital": 100000.0,
-    "code_sha256": "0535f72e654195c6",
+    "code_sha256": "d6aa18fa6ba79771",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -7783,7 +8462,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "regime_days": null,
       "trend_days": 200
@@ -7814,7 +8493,7 @@
         "sharpe": -0.7438394239749865
       }
     },
-    "run_at": "2026-10-16T19:22:30+00:00",
+    "run_at": "2026-10-17T05:29:43+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -7887,12 +8566,638 @@
       }
     }
   },
-  "pairs_daily": {
+  "overnight_1min_100k_weekday": {
     "capital": 100000.0,
-    "code_sha256": "4036fc8771d3a832",
+    "code_sha256": "a0718baa7139e40a",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
+      "slippage_per_share": 0.0,
+      "spread_bps": 2.0
+    },
+    "data": {
+      "AAPL": {
+        "bytes": 8097496,
+        "sha256": "0aaaa8f191671de3"
+      },
+      "ABC": {
+        "bytes": 2177595,
+        "sha256": "b311d3b24492c67d"
+      },
+      "ADM": {
+        "bytes": 6635458,
+        "sha256": "b13066a22087b4d4"
+      },
+      "ADT": {
+        "bytes": 4240167,
+        "sha256": "f156462a6b28f5d2"
+      },
+      "AFL": {
+        "bytes": 6077160,
+        "sha256": "0383435d7f35434d"
+      },
+      "AMC": {
+        "bytes": 5280118,
+        "sha256": "4c87eb68a2093a75"
+      },
+      "AMGN": {
+        "bytes": 7173727,
+        "sha256": "2c0ad405fd82c7aa"
+      },
+      "AMZN": {
+        "bytes": 8609936,
+        "sha256": "09380ba8a99238e6"
+      },
+      "ANET": {
+        "bytes": 8093565,
+        "sha256": "1703f5a70d1c5f6a"
+      },
+      "ANF": {
+        "bytes": 6187104,
+        "sha256": "22d503c5265b41f3"
+      },
+      "BAC": {
+        "bytes": 7052636,
+        "sha256": "7f565243173100fa"
+      },
+      "BHF": {
+        "bytes": 4035411,
+        "sha256": "909df6f367efe8e1"
+      },
+      "CEG": {
+        "bytes": 7467178,
+        "sha256": "c2b7abc5e58acc03"
+      },
+      "CHTR": {
+        "bytes": 7542880,
+        "sha256": "c31f41f7aa7ada30"
+      },
+      "CNP": {
+        "bytes": 5900642,
+        "sha256": "5736e89b7e246dfe"
+      },
+      "COIN": {
+        "bytes": 8199606,
+        "sha256": "e44ba002b7a5e4c5"
+      },
+      "CSCO": {
+        "bytes": 7145328,
+        "sha256": "043f0049a37ab22e"
+      },
+      "CSGP": {
+        "bytes": 6354730,
+        "sha256": "ad84a09c21bba5f0"
+      },
+      "CVNA": {
+        "bytes": 8210103,
+        "sha256": "eb0c4e753b39d940"
+      },
+      "CVX": {
+        "bytes": 7259537,
+        "sha256": "a8142e1159c6bf9c"
+      },
+      "DGX": {
+        "bytes": 5586133,
+        "sha256": "fc72969335c6f0c6"
+      },
+      "DIA": {
+        "bytes": 5149404,
+        "sha256": "69b7c7284756247e"
+      },
+      "DIS": {
+        "bytes": 7241525,
+        "sha256": "c33326c5a18da322"
+      },
+      "DISCA": {
+        "bytes": 162452,
+        "sha256": "6283e6508f0e3436"
+      },
+      "DLR": {
+        "bytes": 6416817,
+        "sha256": "f270232c02e67729"
+      },
+      "DT": {
+        "bytes": 6357861,
+        "sha256": "b18a7fe52f20ed31"
+      },
+      "GLD": {
+        "bytes": 6067952,
+        "sha256": "a011f0e9b4a56bac"
+      },
+      "GOOGL": {
+        "bytes": 8863650,
+        "sha256": "1a653e0fa346b913"
+      },
+      "HD": {
+        "bytes": 7454602,
+        "sha256": "30f0a0302577a3bd"
+      },
+      "HPQ": {
+        "bytes": 6615816,
+        "sha256": "1797e65400dce262"
+      },
+      "HRI": {
+        "bytes": 4180195,
+        "sha256": "94e3088222b2481a"
+      },
+      "INCY": {
+        "bytes": 5848895,
+        "sha256": "d8149e5765d1f4b7"
+      },
+      "INTC": {
+        "bytes": 7427806,
+        "sha256": "0444937cd836a41d"
+      },
+      "ISRG": {
+        "bytes": 7905647,
+        "sha256": "194b1a14aeeeff7f"
+      },
+      "ITB": {
+        "bytes": 4384511,
+        "sha256": "1bb0333c450b30b8"
+      },
+      "IWM": {
+        "bytes": 7654330,
+        "sha256": "c00b238b2ed4d673"
+      },
+      "JNJ": {
+        "bytes": 7287227,
+        "sha256": "eea384fdb572b249"
+      },
+      "JPM": {
+        "bytes": 7885974,
+        "sha256": "64d6b522b3e89fc2"
+      },
+      "KDP": {
+        "bytes": 6356042,
+        "sha256": "e1c46b5198dd0f58"
+      },
+      "KEX": {
+        "bytes": 4438610,
+        "sha256": "79b894ca14e436bc"
+      },
+      "KMX": {
+        "bytes": 6389428,
+        "sha256": "1207fdb0eac8de0c"
+      },
+      "KO": {
+        "bytes": 6918794,
+        "sha256": "f7a5d97e89f4e7fc"
+      },
+      "KRTX": {
+        "bytes": 2271184,
+        "sha256": "4cfb226235316c68"
+      },
+      "LUV": {
+        "bytes": 6644188,
+        "sha256": "532c906ef17536a5"
+      },
+      "LW": {
+        "bytes": 6024534,
+        "sha256": "206c260f7d6e1dc8"
+      },
+      "MAT": {
+        "bytes": 5476687,
+        "sha256": "134c07c1229b02c0"
+      },
+      "MSFT": {
+        "bytes": 8429923,
+        "sha256": "8e2775070407c296"
+      },
+      "NDSN": {
+        "bytes": 4422620,
+        "sha256": "519ba4674c5b93b3"
+      },
+      "NFLX": {
+        "bytes": 9619546,
+        "sha256": "1042dbb6e31b04e7"
+      },
+      "NOW": {
+        "bytes": 8935980,
+        "sha256": "5a4e017ba85fe06f"
+      },
+      "NVDA": {
+        "bytes": 9538493,
+        "sha256": "518c74f66af691ba"
+      },
+      "OKE": {
+        "bytes": 6372005,
+        "sha256": "685128cad3d8caab"
+      },
+      "ORLY": {
+        "bytes": 8048795,
+        "sha256": "6d999718f4d00aa9"
+      },
+      "PEP": {
+        "bytes": 6955582,
+        "sha256": "7b774d49015c6177"
+      },
+      "PFE": {
+        "bytes": 7012717,
+        "sha256": "1bf81453506f1749"
+      },
+      "PG": {
+        "bytes": 7010372,
+        "sha256": "837419e18e599cd4"
+      },
+      "PRU": {
+        "bytes": 5943692,
+        "sha256": "8c51152fb4761685"
+      },
+      "PSA": {
+        "bytes": 5948584,
+        "sha256": "0a47540761009423"
+      },
+      "PSTG": {
+        "bytes": 6390125,
+        "sha256": "8d8be336e33024b5"
+      },
+      "QQQ": {
+        "bytes": 8742653,
+        "sha256": "bbf66b7e8839387f"
+      },
+      "RCL": {
+        "bytes": 7608755,
+        "sha256": "85cedb0c4fd2f0f5"
+      },
+      "REGN": {
+        "bytes": 7162401,
+        "sha256": "0d952c03892a22f2"
+      },
+      "RMBS": {
+        "bytes": 5659179,
+        "sha256": "1a476847e70f0a13"
+      },
+      "RTX": {
+        "bytes": 7138660,
+        "sha256": "02f4c9fe7cc083a1"
+      },
+      "SBAC": {
+        "bytes": 6226985,
+        "sha256": "c873f07f9b3f112d"
+      },
+      "SDS": {
+        "bytes": 2614700,
+        "sha256": "c4e6027a7cf358b4"
+      },
+      "SEDG": {
+        "bytes": 7075092,
+        "sha256": "103ae4efc5c21847"
+      },
+      "SHOP": {
+        "bytes": 8002952,
+        "sha256": "bf7a573db81f8e7b"
+      },
+      "SLG": {
+        "bytes": 5110497,
+        "sha256": "a3be266b2cd8821a"
+      },
+      "SMH": {
+        "bytes": 7890844,
+        "sha256": "a958fcfd7abfed26"
+      },
+      "SPG": {
+        "bytes": 6188089,
+        "sha256": "3ea1bb84276b1906"
+      },
+      "SPOT": {
+        "bytes": 8142240,
+        "sha256": "61ed527e5950d634"
+      },
+      "SPY": {
+        "bytes": 8700775,
+        "sha256": "6ac77f4f9213083b"
+      },
+      "SQ": {
+        "bytes": 4729694,
+        "sha256": "6ec987b0fbe1ce02"
+      },
+      "SQSP": {
+        "bytes": 2114636,
+        "sha256": "7e75d168e2ca4ff3"
+      },
+      "SWI": {
+        "bytes": 1828448,
+        "sha256": "047f3901a2924f03"
+      },
+      "TECH": {
+        "bytes": 5904753,
+        "sha256": "e964afb8165d1c73"
+      },
+      "TIP": {
+        "bytes": 3234901,
+        "sha256": "79ffc696986f447f"
+      },
+      "TJX": {
+        "bytes": 7077066,
+        "sha256": "75cb6cb4e8c48260"
+      },
+      "TLRY": {
+        "bytes": 3920292,
+        "sha256": "e6294915a7841558"
+      },
+      "TLT": {
+        "bytes": 6986199,
+        "sha256": "b16eaa9129fa8617"
+      },
+      "TM": {
+        "bytes": 3366087,
+        "sha256": "6518a8b94ac2120e"
+      },
+      "TOST": {
+        "bytes": 6511167,
+        "sha256": "c1bf791426150400"
+      },
+      "TSLA": {
+        "bytes": 9122347,
+        "sha256": "79adfae392ee57d6"
+      },
+      "TSM": {
+        "bytes": 8321014,
+        "sha256": "73e197cd3b3953a4"
+      },
+      "TSN": {
+        "bytes": 6228763,
+        "sha256": "b45fed9e905b524d"
+      },
+      "TTWO": {
+        "bytes": 6731489,
+        "sha256": "5fc33668d3c28331"
+      },
+      "UNH": {
+        "bytes": 8135254,
+        "sha256": "2b4d2db650d27b57"
+      },
+      "VRSN": {
+        "bytes": 5616865,
+        "sha256": "5d767640454ad8f3"
+      },
+      "VVV": {
+        "bytes": 5078616,
+        "sha256": "5736a0a68ec917a6"
+      },
+      "WAT": {
+        "bytes": 5753791,
+        "sha256": "c628ad4737bd055d"
+      },
+      "WHR": {
+        "bytes": 5888476,
+        "sha256": "1003167fff1c8871"
+      },
+      "WMT": {
+        "bytes": 7552249,
+        "sha256": "8d6122b77019f511"
+      },
+      "XBI": {
+        "bytes": 6650037,
+        "sha256": "7bdd6a6e0a27006c"
+      },
+      "XLB": {
+        "bytes": 6390157,
+        "sha256": "8414485830a5d70f"
+      },
+      "XLE": {
+        "bytes": 7147384,
+        "sha256": "c5117cd3808b9200"
+      },
+      "XLF": {
+        "bytes": 6795492,
+        "sha256": "2186f3172f1b1210"
+      },
+      "XLI": {
+        "bytes": 7069711,
+        "sha256": "b03e1b09a9873d6d"
+      },
+      "XLK": {
+        "bytes": 7056315,
+        "sha256": "e83a5ebaedc227b4"
+      },
+      "XLP": {
+        "bytes": 6459764,
+        "sha256": "eb78e491e24bb35f"
+      },
+      "XLU": {
+        "bytes": 6679738,
+        "sha256": "dcae0a8153926377"
+      },
+      "XLV": {
+        "bytes": 6750544,
+        "sha256": "5f07ce9d689daf21"
+      },
+      "XLY": {
+        "bytes": 6425437,
+        "sha256": "24d115e994d6f4b6"
+      },
+      "XM": {
+        "bytes": 1222982,
+        "sha256": "8223b9323207806e"
+      },
+      "XOM": {
+        "bytes": 7400296,
+        "sha256": "ae9f20f926da2516"
+      },
+      "YUMC": {
+        "bytes": 5806254,
+        "sha256": "890654104acf02f6"
+      },
+      "ZBH": {
+        "bytes": 6130290,
+        "sha256": "ad68555c4cdd67df"
+      }
+    },
+    "description": "Overnight hold, $100k, skipping Friday or Monday nights",
+    "fit": "",
+    "fold_notes": {},
+    "fold_params": {
+      "2023-07-01": {
+        "skip_weekdays": [
+          4
+        ],
+        "trend_days": null
+      },
+      "2024-01-01": {
+        "skip_weekdays": [
+          0
+        ],
+        "trend_days": 200
+      },
+      "2024-07-01": {
+        "skip_weekdays": [
+          0
+        ],
+        "trend_days": 200
+      },
+      "2025-01-01": {
+        "skip_weekdays": [
+          0
+        ],
+        "trend_days": 200
+      },
+      "2025-07-01": {
+        "skip_weekdays": [
+          0
+        ],
+        "trend_days": 200
+      },
+      "2026-01-01": {
+        "skip_weekdays": [
+          0
+        ],
+        "trend_days": 200
+      }
+    },
+    "git": {
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
+      "dirty": true
+    },
+    "grid": {
+      "skip_weekdays": [
+        "()",
+        "(4,)",
+        "(0,)"
+      ],
+      "trend_days": [
+        "None",
+        "200"
+      ]
+    },
+    "hold": {
+      "test": {
+        "cagr": 0.15820414200529176,
+        "max_drawdown": -0.17483450949108614,
+        "return": 0.503768113012955,
+        "sharpe": 1.1012886340796084
+      },
+      "train": {
+        "cagr": 0.0751947186578148,
+        "max_drawdown": -0.23975311637212915,
+        "return": 0.14084487454530503,
+        "sharpe": 0.4491496435193151
+      }
+    },
+    "kind": "per ticker",
+    "package_sha256": "93094fe205ed8582",
+    "params": {
+      "skip_weekdays": [
+        0
+      ],
+      "trend_days": 200
+    },
+    "portfolio": {
+      "gross": {
+        "cagr": 0.09570549571849551,
+        "max_drawdown": -0.06060167246524095,
+        "return": 0.2890229999278,
+        "sharpe": 1.9548786037311716
+      },
+      "stress": {
+        "cagr": -0.05200686771695362,
+        "max_drawdown": -0.14948230881124314,
+        "return": -0.13787552344736165,
+        "sharpe": -1.1120698845674282
+      },
+      "test": {
+        "cagr": 0.023427872631657243,
+        "max_drawdown": -0.07651983570349408,
+        "return": 0.0664408675575332,
+        "sharpe": 0.5146633164424489
+      },
+      "train": {
+        "cagr": -0.011962416633529038,
+        "max_drawdown": -0.06687423330780229,
+        "return": -0.021634838364631648,
+        "sharpe": -0.3611301194925671
+      }
+    },
+    "run_at": "2026-10-17T05:59:08+00:00",
+    "selection_note": "",
+    "sizer": {
+      "max_position_frac": 1.0,
+      "risk_per_trade": 1.0
+    },
+    "split": {
+      "fold_starts": [
+        "2023-07-01",
+        "2024-01-01",
+        "2024-07-01",
+        "2025-01-01",
+        "2025-07-01",
+        "2026-01-01"
+      ],
+      "test_start": "2024-01-01",
+      "valid_months": 6
+    },
+    "strategy": "OvernightStrategy",
+    "test_exposure": 0.0016914082611177415,
+    "test_trades_per_year": 127.07092762959044,
+    "tickers": 107,
+    "timeframe": "1min",
+    "trade_log": {
+      "rows": 47266,
+      "written": true
+    },
+    "universe": "broad",
+    "walk_forward": {
+      "base": {
+        "cagr": 0.02331331972381978,
+        "max_drawdown": -0.07796769556930783,
+        "return": 0.07846500020410963,
+        "sharpe": 0.47268689339773484
+      },
+      "days": 826,
+      "fold_sharpe": {
+        "2023-07-01": 0.34606268473739715,
+        "2024-01-01": 1.3999933293766371,
+        "2024-07-01": 1.58588633071797,
+        "2025-01-01": -1.8075479547229527,
+        "2025-07-01": 1.598761168222874,
+        "2026-01-01": -0.20822795739465175
+      },
+      "gross": {
+        "cagr": 0.10497864141233726,
+        "max_drawdown": -0.06175987784239867,
+        "return": 0.3870892174004632,
+        "sharpe": 1.956866540016522
+      },
+      "hold": {
+        "cagr": 0.1597155711621583,
+        "max_drawdown": -0.18187832188391984,
+        "return": 0.6252863145481757,
+        "sharpe": 1.0968584654435536
+      },
+      "sharpe_90": [
+        -0.38098327975936425,
+        1.309066185579696
+      ],
+      "stress": {
+        "cagr": -0.05963354336390814,
+        "max_drawdown": -0.18178421106332898,
+        "return": -0.1825260473251762,
+        "sharpe": -1.1679549395645998
+      },
+      "vs_hold": {
+        "alpha": -0.003231456204451923,
+        "alpha_t": -0.12959406145930594,
+        "beta": 0.17402886912814328
+      }
+    }
+  },
+  "pairs_daily": {
+    "capital": 100000.0,
+    "code_sha256": "53834350ace00b28",
+    "costs": {
+      "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
+      "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -8394,7 +9699,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "entry_z": 2.0,
       "exit_z": 0.5,
@@ -8402,31 +9707,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": -0.013124163125042387,
-        "max_drawdown": -0.04995338912425207,
-        "return": -0.036032163842351306,
-        "sharpe": -0.4455637987581601
+        "cagr": -0.013124163125042942,
+        "max_drawdown": -0.04995338912425362,
+        "return": -0.03603216384235275,
+        "sharpe": -0.44556379875817465
       },
       "stress": {
-        "cagr": -0.022260860238639935,
-        "max_drawdown": -0.06697025803179546,
-        "return": -0.06061922317834045,
-        "sharpe": -0.7701960308588265
+        "cagr": -0.02222217176116159,
+        "max_drawdown": -0.06683717707489534,
+        "return": -0.06051596770509582,
+        "sharpe": -0.7687228971781387
       },
       "test": {
-        "cagr": -0.01967634732462309,
-        "max_drawdown": -0.06124431428668908,
-        "return": -0.053705454983603795,
-        "sharpe": -0.6767245409995398
+        "cagr": -0.01970160814102906,
+        "max_drawdown": -0.0613305844043488,
+        "return": -0.05377318665452013,
+        "sharpe": -0.6774864549034318
       },
       "train": {
-        "cagr": -0.0012660846409273674,
-        "max_drawdown": -0.03308839673361175,
-        "return": -0.0022998677338103013,
-        "sharpe": -0.06353606595272882
+        "cagr": -0.001221013842177654,
+        "max_drawdown": -0.03304325786612905,
+        "return": -0.0022180366253113926,
+        "sharpe": -0.06095815838906077
       }
     },
-    "run_at": "2026-10-16T19:31:27+00:00",
+    "run_at": "2026-10-17T05:38:34+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -8450,31 +9755,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 662,
+      "rows": 665,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": -0.024497572175141924,
-        "max_drawdown": -0.1013585465441319,
-        "return": -0.07808062944715954,
-        "sharpe": -0.7339136127343265
+        "cagr": -0.02452812555455197,
+        "max_drawdown": -0.10144590733458281,
+        "return": -0.07817527230667398,
+        "sharpe": -0.7347795379335497
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 0.24904799807700279,
-        "2024-01-01": -0.22962397003598078,
-        "2024-07-01": -1.1955039460386339,
-        "2025-01-01": -1.5605438161805676,
-        "2025-07-01": -1.979123231820739,
-        "2026-01-01": 0.5350139100258477
+        "2023-07-01": 0.2490479302439267,
+        "2024-01-01": -0.22572407253668675,
+        "2024-07-01": -1.201280944013037,
+        "2025-01-01": -1.563486931519346,
+        "2025-07-01": -1.9791233684510723,
+        "2026-01-01": 0.5348142777038265
       },
       "gross": {
-        "cagr": -0.01858947870267369,
-        "max_drawdown": -0.09125964248988383,
-        "return": -0.05965236442927646,
-        "sharpe": -0.552618055185075
+        "cagr": -0.018589478702673468,
+        "max_drawdown": -0.09125964248988316,
+        "return": -0.05965236442927557,
+        "sharpe": -0.5526180551850655
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -8483,28 +9788,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -1.559004148714364,
-        0.06491374673788827
+        -1.5593305991491127,
+        0.06388384828388159
       ],
       "stress": {
-        "cagr": -0.02678277852242872,
-        "max_drawdown": -0.10468257760431277,
-        "return": -0.08514072284481977,
-        "sharpe": -0.8061086740773984
+        "cagr": -0.02673192813221159,
+        "max_drawdown": -0.10467086410830595,
+        "return": -0.0849840318092504,
+        "sharpe": -0.8044925228756988
       },
       "vs_hold": {
-        "alpha": -0.026574886715672673,
-        "alpha_t": -1.4543951851618742,
-        "beta": 0.014618902900619004
+        "alpha": -0.02660504187417866,
+        "alpha_t": -1.455887338398207,
+        "beta": 0.014612306114452318
       }
     }
   },
   "pre_holiday_daily": {
     "capital": 10000.0,
-    "code_sha256": "23b2ff0aac7d3dc6",
+    "code_sha256": "490b8ba6c2c18c83",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -8968,7 +10278,7 @@
       }
     },
     "git": {
-      "commit": "8d819279519ad95f6fcb6c7a901a079adf1320da",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -8996,7 +10306,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "277c3c35945ad988",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "days_after": 0,
       "days_before": 2
@@ -9027,7 +10337,7 @@
         "sharpe": 1.1522405320102544
       }
     },
-    "run_at": "2026-10-16T22:38:53+00:00",
+    "run_at": "2026-10-17T05:50:42+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -9094,18 +10404,23 @@
         "sharpe": -0.12715310305557612
       },
       "vs_hold": {
-        "alpha": -0.0049400842974245416,
-        "alpha_t": -0.388724085135966,
-        "beta": 0.0422881688674152
+        "alpha": -0.00494008429742452,
+        "alpha_t": -0.38872408513596424,
+        "beta": 0.04228816886741513
       }
     }
   },
   "rsi2_daily": {
     "capital": 10000.0,
-    "code_sha256": "e8f4cddbdf655897",
+    "code_sha256": "87ec4255ffac1558",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -9614,7 +10929,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "entry": 20.0,
       "exit_sma": 5,
@@ -9647,7 +10962,7 @@
         "sharpe": 0.6406089119561303
       }
     },
-    "run_at": "2026-10-16T18:17:32+00:00",
+    "run_at": "2026-10-17T04:25:13+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -9722,10 +11037,15 @@
   },
   "rsi2_daily_overlays": {
     "capital": 10000.0,
-    "code_sha256": "66a2e89a7d83dc0b",
+    "code_sha256": "c566f6edf99876c1",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -10254,7 +11574,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "entry": 20.0,
       "exit_sma": 5,
@@ -10289,7 +11609,7 @@
         "sharpe": 0.6406089119561303
       }
     },
-    "run_at": "2026-10-16T19:15:51+00:00",
+    "run_at": "2026-10-17T05:22:59+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -10364,10 +11684,15 @@
   },
   "sector_momentum_daily": {
     "capital": 100000.0,
-    "code_sha256": "af6013f2429fb8f4",
+    "code_sha256": "19aa9fd104c93b0f",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -10837,7 +12162,7 @@
       }
     },
     "git": {
-      "commit": "63456db386a714dd7b275efec7c34a784c140a5c",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -10867,7 +12192,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "63738f9b5333cb89",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "lookback": 252,
@@ -10875,31 +12200,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.1830999353623879,
-        "max_drawdown": -0.17935240906008898,
-        "return": 0.5952814209184072,
-        "sharpe": 1.223956614662043
+        "cagr": 0.18239287239045554,
+        "max_drawdown": -0.1792731924110771,
+        "return": 0.5926345014171313,
+        "sharpe": 1.2201952640413343
       },
       "stress": {
-        "cagr": 0.17906692539663283,
-        "max_drawdown": -0.1809032614599546,
-        "return": 0.5802213891052288,
-        "sharpe": 1.1997979875238227
+        "cagr": 0.17826436649832478,
+        "max_drawdown": -0.18094374657097,
+        "return": 0.5772353802402252,
+        "sharpe": 1.1956993912450113
       },
       "test": {
-        "cagr": 0.1810678045642624,
-        "max_drawdown": -0.180125470346705,
-        "return": 0.5876816281719388,
-        "sharpe": 1.2118643420777493
+        "cagr": 0.1802866719735441,
+        "max_drawdown": -0.18013598433958533,
+        "return": 0.5847665144873673,
+        "sharpe": 1.207756111526523
       },
       "train": {
-        "cagr": 0.1085642871870216,
-        "max_drawdown": -0.09105045094189068,
-        "return": 0.20601061279499966,
-        "sharpe": 1.270583893697729
+        "cagr": 0.10850391379135038,
+        "max_drawdown": -0.09099156961249466,
+        "return": 0.20589124391499936,
+        "sharpe": 1.2700847604545311
       }
     },
-    "run_at": "2026-10-16T20:22:37+00:00",
+    "run_at": "2026-10-17T05:46:31+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -10923,31 +12248,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 90,
+      "rows": 89,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.12552031686346266,
-        "max_drawdown": -0.21373932884774827,
-        "return": 0.4734141389265809,
-        "sharpe": 0.8533389655811049
+        "cagr": 0.12492842174869367,
+        "max_drawdown": -0.21372353042760606,
+        "return": 0.4708758817278631,
+        "sharpe": 0.8500965860602604
       },
       "days": 826,
       "fold_sharpe": {
         "2023-07-01": 0.6353956021706262,
-        "2024-01-01": 1.3099182152568463,
-        "2024-07-01": 0.7851700143195073,
-        "2025-01-01": -0.6432506134615669,
-        "2025-07-01": 0.6140203919628455,
-        "2026-01-01": 2.488541558372607
+        "2024-01-01": 1.3099232566060115,
+        "2024-07-01": 0.7846819733634415,
+        "2025-01-01": -0.6421022809095422,
+        "2025-07-01": 0.5939725537247644,
+        "2026-01-01": 2.488171873420001
       },
       "gross": {
-        "cagr": 0.1276562083132846,
-        "max_drawdown": -0.2132076734116003,
-        "return": 0.48259891443495495,
-        "sharpe": 0.8659667749140719
+        "cagr": 0.12707124946151604,
+        "max_drawdown": -0.2132104446804347,
+        "return": 0.4800795256472299,
+        "sharpe": 0.8626966940017667
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -10956,28 +12281,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        0.04727255871451334,
-        1.8145298164110977
+        0.04641058710843816,
+        1.8110144668795893
       ],
       "stress": {
-        "cagr": 0.12334380791147259,
-        "max_drawdown": -0.21439726247242696,
-        "return": 0.46409545202957325,
-        "sharpe": 0.8402039820939312
+        "cagr": 0.12274612994959067,
+        "max_drawdown": -0.21440758656580017,
+        "return": 0.4615436894494278,
+        "sharpe": 0.8369830333190559
       },
       "vs_hold": {
-        "alpha": -0.0003524199668885154,
-        "alpha_t": -0.006679906817871659,
-        "beta": 0.8209860148377336
+        "alpha": -0.0008778052187780343,
+        "alpha_t": -0.01664979924006838,
+        "beta": 0.8209347339077077
       }
     }
   },
   "sma_daily": {
     "capital": 10000.0,
-    "code_sha256": "88e5814d1ebf8d50",
+    "code_sha256": "5619ee1607e98dad",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -11489,7 +12819,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "atr_mult": 3.0,
       "atr_period": 14,
@@ -11522,7 +12852,7 @@
         "sharpe": 0.47341645549010897
       }
     },
-    "run_at": "2026-10-16T17:36:17+00:00",
+    "run_at": "2026-10-17T03:40:15+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -11597,10 +12927,15 @@
   },
   "sma_daily_overlays": {
     "capital": 10000.0,
-    "code_sha256": "cd2488057e930ae7",
+    "code_sha256": "cc018a9311e5ab09",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -12129,7 +13464,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "atr_mult": 50.0,
       "atr_period": 14,
@@ -12164,7 +13499,7 @@
         "sharpe": 0.6576994892858556
       }
     },
-    "run_at": "2026-10-16T19:12:18+00:00",
+    "run_at": "2026-10-17T05:19:33+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -12239,10 +13574,15 @@
   },
   "tree_1min": {
     "capital": 10000.0,
-    "code_sha256": "d17e6e982173e5e3",
+    "code_sha256": "b634e0dead9d9f4b",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -12725,7 +14065,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "atr_mult": 50.0,
       "max_depth": 4
@@ -12738,25 +14078,25 @@
         "sharpe": 6.279644694418398
       },
       "stress": {
-        "cagr": -0.6998068039295908,
-        "max_drawdown": -0.9637625349332932,
-        "return": -0.9646543738504973,
-        "sharpe": -10.727552357992286
+        "cagr": -0.7009631394134677,
+        "max_drawdown": -0.9641489466111225,
+        "return": -0.965031275564765,
+        "sharpe": -10.757339464058168
       },
       "test": {
-        "cagr": -0.6700090418267122,
-        "max_drawdown": -0.9534379024635098,
-        "return": -0.9540267012114401,
-        "sharpe": -13.320387627897237
+        "cagr": -0.6708250157690798,
+        "max_drawdown": -0.9537570189795179,
+        "return": -0.9543417823550099,
+        "sharpe": -13.390728640690691
       },
       "train": {
-        "cagr": -0.7953903181522226,
-        "max_drawdown": -0.9431014742409247,
-        "return": -0.9440711774349837,
-        "sharpe": -13.29581366435179
+        "cagr": -0.7977378016021797,
+        "max_drawdown": -0.9442823372712739,
+        "return": -0.9452319153981718,
+        "sharpe": -13.377810627641296
       }
     },
-    "run_at": "2026-10-16T17:51:57+00:00",
+    "run_at": "2026-10-17T03:59:37+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -12775,30 +14115,30 @@
       "valid_months": 6
     },
     "strategy": "DecisionTreeStrategy",
-    "test_exposure": 0.017405971235459564,
-    "test_trades_per_year": 760.9076006876228,
+    "test_exposure": 0.01744551316317874,
+    "test_trades_per_year": 762.9120045904489,
     "tickers": 107,
     "timeframe": "1min",
     "trade_log": {
-      "rows": 918124,
+      "rows": 918839,
       "written": false
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": -0.9628130670517684,
-        "max_drawdown": -0.999979278382458,
-        "return": -0.9999793909822438,
-        "sharpe": -26.98290936761326
+        "cagr": -0.9630234088048615,
+        "max_drawdown": -0.9999796600966631,
+        "return": -0.9999797706222411,
+        "sharpe": -27.078594948645126
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": -36.3579000697233,
-        "2024-01-01": -28.159138666666813,
-        "2024-07-01": -35.822090517062264,
-        "2025-01-01": -28.17523550958087,
-        "2025-07-01": -30.600344328757483,
-        "2026-01-01": -19.237232966016638
+        "2023-07-01": -36.23000364524903,
+        "2024-01-01": -28.158722925870386,
+        "2024-07-01": -36.21775114454219,
+        "2025-01-01": -28.467648188147024,
+        "2025-07-01": -30.664760292517528,
+        "2026-01-01": -19.27800483389361
       },
       "gross": {
         "cagr": 0.21971478314982185,
@@ -12813,28 +14153,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -31.31345808784378,
-        -24.31247923670683
+        -31.36816499928468,
+        -24.408769106153905
       ],
       "stress": {
-        "cagr": -0.9799498319648384,
-        "max_drawdown": -0.9999972478548942,
-        "return": -0.9999972790524779,
-        "sharpe": -20.577925741420223
+        "cagr": -0.9800733862058896,
+        "max_drawdown": -0.9999973030549925,
+        "return": -0.9999973336268425,
+        "sharpe": -20.605183898385725
       },
       "vs_hold": {
-        "alpha": -3.289517481992383,
-        "alpha_t": -50.11639119342,
-        "beta": 0.16737283875975673
+        "alpha": -3.2951129018650063,
+        "alpha_t": -50.294391432431816,
+        "beta": 0.1671832847518345
       }
     }
   },
   "tree_30min": {
     "capital": 10000.0,
-    "code_sha256": "c1a28f5bc95bca50",
+    "code_sha256": "b38a4c2f5eeb32b8",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -13323,7 +14668,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "atr_mult": 50.0,
       "max_depth": 2
@@ -13336,10 +14681,10 @@
         "sharpe": 1.332253473110663
       },
       "stress": {
-        "cagr": -0.11187515647085466,
-        "max_drawdown": -0.291213262815495,
-        "return": -0.280762580279206,
-        "sharpe": -1.6110718971632922
+        "cagr": -0.111845182263133,
+        "max_drawdown": -0.29114681207814586,
+        "return": -0.28069514976116416,
+        "sharpe": -1.6113478691081489
       },
       "test": {
         "cagr": -0.004782994491468018,
@@ -13354,7 +14699,7 @@
         "sharpe": 1.253608448706929
       }
     },
-    "run_at": "2026-10-16T17:54:27+00:00",
+    "run_at": "2026-10-17T04:02:06+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -13429,10 +14774,15 @@
   },
   "trend_multi_daily": {
     "capital": 100000.0,
-    "code_sha256": "c977d1deffbd7920",
+    "code_sha256": "bdd7689d40466379",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -13904,7 +15254,7 @@
       }
     },
     "git": {
-      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -13932,7 +15282,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "6b48c906e7dcaed4",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "target_vol": 0.1,
@@ -13940,31 +15290,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.029484382362721995,
-        "max_drawdown": -0.04225032591555933,
-        "return": 0.084063934295044,
-        "sharpe": 0.6833300026690983
+        "cagr": 0.02948438236272155,
+        "max_drawdown": -0.04225032591555955,
+        "return": 0.08406393429504266,
+        "sharpe": 0.6833300026691069
       },
       "stress": {
-        "cagr": 0.024612854543957452,
-        "max_drawdown": -0.04421953557733449,
-        "return": 0.06987435640992712,
-        "sharpe": 0.5748096329799476
+        "cagr": 0.024620922374435805,
+        "max_drawdown": -0.04421611808243442,
+        "return": 0.06989775718709756,
+        "sharpe": 0.5749983472214443
       },
       "test": {
-        "cagr": 0.026649006294350297,
-        "max_drawdown": -0.043511085330038,
-        "return": 0.07579061966123035,
-        "sharpe": 0.6191243713192341
+        "cagr": 0.026653233480521177,
+        "max_drawdown": -0.04352659274673654,
+        "return": 0.07580292394180743,
+        "sharpe": 0.61921900205287
       },
       "train": {
-        "cagr": -0.008407875859213099,
-        "max_drawdown": -0.03662702192207645,
-        "return": -0.015228439904104718,
-        "sharpe": -0.34941472905967436
+        "cagr": -0.00840581556829989,
+        "max_drawdown": -0.03662333419309971,
+        "return": -0.015224721160105315,
+        "sharpe": -0.34932197906853163
       }
     },
-    "run_at": "2026-10-16T21:02:29+00:00",
+    "run_at": "2026-10-17T05:49:35+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -13994,25 +15344,25 @@
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.024757578808919156,
-        "max_drawdown": -0.07767146305551254,
-        "return": 0.08346212248252871,
-        "sharpe": 0.36799154748693497
+        "cagr": 0.024762097951258166,
+        "max_drawdown": -0.07767032831516774,
+        "return": 0.08347778387245453,
+        "sharpe": 0.36805497089420003
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": -0.7167350457319323,
-        "2024-01-01": 0.517259171293404,
-        "2024-07-01": 0.667320470868782,
-        "2025-01-01": 0.3604482231802262,
-        "2025-07-01": 1.8140157487195747,
-        "2026-01-01": -0.1868081125491103
+        "2023-07-01": -0.7163364699527578,
+        "2024-01-01": 0.5166173216872836,
+        "2024-07-01": 0.6674292875229595,
+        "2025-01-01": 0.36065712259184324,
+        "2025-07-01": 1.8141666970366312,
+        "2026-01-01": -0.186808638600266
       },
       "gross": {
-        "cagr": 0.029059022447618155,
-        "max_drawdown": -0.07554209002444723,
-        "return": 0.09844037803721561,
-        "sharpe": 0.4243360472183406
+        "cagr": 0.02905902244761749,
+        "max_drawdown": -0.07554209002444656,
+        "return": 0.0984403780372134,
+        "sharpe": 0.4243360472183385
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -14021,28 +15371,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -0.4408308737844174,
-        1.2287652817532495
+        -0.440823813531829,
+        1.2287935889177488
       ],
       "stress": {
-        "cagr": 0.022122221728201996,
-        "max_drawdown": -0.0787135761458122,
-        "return": 0.07435588212296329,
-        "sharpe": 0.33280669431430676
+        "cagr": 0.022132559214135927,
+        "max_drawdown": -0.07871242542697054,
+        "return": 0.07439149809291101,
+        "sharpe": 0.3329470080578977
       },
       "vs_hold": {
-        "alpha": -0.008852175828478265,
-        "alpha_t": -0.24147391198568147,
-        "beta": 0.2271810254875239
+        "alpha": -0.00884717815983945,
+        "alpha_t": -0.24134031260205122,
+        "beta": 0.22717688617925832
       }
     }
   },
   "trend_multi_long_daily": {
     "capital": 100000.0,
-    "code_sha256": "e1309fb40322c358",
+    "code_sha256": "aabc97d218250158",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -14520,7 +15875,7 @@
       }
     },
     "git": {
-      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -14548,7 +15903,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "6b48c906e7dcaed4",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "long_only": true,
@@ -14557,31 +15912,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.06984777959052901,
-        "max_drawdown": -0.06842906397532433,
-        "return": 0.20628512171009028,
-        "sharpe": 0.8893501947776621
+        "cagr": 0.06984777959052835,
+        "max_drawdown": -0.06842906397532345,
+        "return": 0.20628512171008784,
+        "sharpe": 0.8893501947776616
       },
       "stress": {
-        "cagr": 0.06552239336471954,
-        "max_drawdown": -0.07015943661960067,
-        "return": 0.19278653036077387,
-        "sharpe": 0.8375950087004937
+        "cagr": 0.06552916378105689,
+        "max_drawdown": -0.07015544915759209,
+        "return": 0.19280758343262971,
+        "sharpe": 0.8376925627332141
       },
       "test": {
-        "cagr": 0.06741316468148839,
-        "max_drawdown": -0.06936329126404961,
-        "return": 0.19867525778276063,
-        "sharpe": 0.8606226307959132
+        "cagr": 0.06741594141770224,
+        "max_drawdown": -0.06936018147502432,
+        "return": 0.19868391946234332,
+        "sharpe": 0.8606623181171346
       },
       "train": {
-        "cagr": 0.012088521172443967,
-        "max_drawdown": -0.05459537306291984,
-        "return": 0.022078882499999564,
-        "sharpe": 0.3370274227609093
+        "cagr": 0.012091500308456737,
+        "max_drawdown": -0.05459014275789631,
+        "return": 0.022084350414401044,
+        "sharpe": 0.3371066043543719
       }
     },
-    "run_at": "2026-10-16T21:03:14+00:00",
+    "run_at": "2026-10-17T05:49:59+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -14611,25 +15966,25 @@
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.06846447743799566,
-        "max_drawdown": -0.06953791332982784,
-        "return": 0.24242212709709032,
-        "sharpe": 0.8582211586353445
+        "cagr": 0.0684651450077538,
+        "max_drawdown": -0.0695374588493578,
+        "return": 0.2424246714981,
+        "sharpe": 0.8584052935834883
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 0.2981088474206768,
-        "2024-01-01": 1.1328655636163305,
-        "2024-07-01": 0.6733484822798348,
-        "2025-01-01": 0.8002494802311881,
-        "2025-07-01": 1.8132265885015657,
-        "2026-01-01": 0.5050490170327636
+        "2023-07-01": 0.29826778395169173,
+        "2024-01-01": 1.1328789009530613,
+        "2024-07-01": 0.6734467884259909,
+        "2025-01-01": 0.8002493052507587,
+        "2025-07-01": 1.8143369684953743,
+        "2026-01-01": 0.5054917536876341
       },
       "gross": {
-        "cagr": 0.071452059665575,
-        "max_drawdown": -0.06864867916015283,
-        "return": 0.25384540962942914,
-        "sharpe": 0.8925183671309173
+        "cagr": 0.07145205966557389,
+        "max_drawdown": -0.06864867916015249,
+        "return": 0.25384540962942537,
+        "sharpe": 0.8925183671309119
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -14638,28 +15993,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        0.07640354539168,
-        1.6607503081902464
+        0.07660633913419786,
+        1.660770046839638
       ],
       "stress": {
-        "cagr": 0.06634179308348798,
-        "max_drawdown": -0.07054184609193193,
-        "return": 0.23434994217248795,
-        "sharpe": 0.8334540912990571
+        "cagr": 0.0663880584409684,
+        "max_drawdown": -0.07054138358910533,
+        "return": 0.23452549133364942,
+        "sharpe": 0.8340635814636308
       },
       "vs_hold": {
-        "alpha": 0.004391384641893305,
-        "alpha_t": 0.14387610818043592,
-        "beta": 0.41049182563775133
+        "alpha": 0.004401035505330596,
+        "alpha_t": 0.14423598294222437,
+        "beta": 0.4104255977537192
       }
     }
   },
   "tsmom_daily": {
     "capital": 10000.0,
-    "code_sha256": "535d14bc47f77641",
+    "code_sha256": "b7abe7767d05fee7",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -15162,7 +16522,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "lookback": 126,
       "skip": 0,
@@ -15194,7 +16554,7 @@
         "sharpe": 0.7414908093094862
       }
     },
-    "run_at": "2026-10-16T19:07:47+00:00",
+    "run_at": "2026-10-17T05:15:11+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -15269,10 +16629,15 @@
   },
   "turn_of_month_daily": {
     "capital": 10000.0,
-    "code_sha256": "8fc3965e429e1b29",
+    "code_sha256": "0b3e6149587d4ea7",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -15767,7 +17132,7 @@
       }
     },
     "kind": "per ticker",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "days_after": 1,
       "days_before": 3
@@ -15798,7 +17163,7 @@
         "sharpe": 1.1673284573437344
       }
     },
-    "run_at": "2026-10-16T19:08:53+00:00",
+    "run_at": "2026-10-17T05:16:15+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -15873,10 +17238,15 @@
   },
   "xs_gbm_daily": {
     "capital": 100000.0,
-    "code_sha256": "90187a15770dc64a",
+    "code_sha256": "36a2adb79024d0d1",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -16374,7 +17744,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "W",
       "horizon": 5,
@@ -16382,31 +17752,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.0964267269026926,
-        "max_drawdown": -0.35785512473990777,
-        "return": 0.2913812665031801,
-        "sharpe": 0.44416550537230554
+        "cagr": 0.09042312797895646,
+        "max_drawdown": -0.360086835929072,
+        "return": 0.2718348074323971,
+        "sharpe": 0.42741843547885255
       },
       "stress": {
-        "cagr": 0.0631855401897281,
-        "max_drawdown": -0.36341049027794436,
-        "return": 0.18553412478920883,
-        "sharpe": 0.3500349371867818
+        "cagr": 0.05688509702911815,
+        "max_drawdown": -0.3657471872837018,
+        "return": 0.16612153798048568,
+        "sharpe": 0.331867116032225
       },
       "test": {
-        "cagr": 0.07796253348630167,
-        "max_drawdown": -0.36080566901778377,
-        "return": 0.23187244280570085,
-        "sharpe": 0.3922458652638284
+        "cagr": 0.0720069413972213,
+        "max_drawdown": -0.3630231098246617,
+        "return": 0.21305981256830986,
+        "sharpe": 0.3753303649458644
       },
       "train": {
-        "cagr": 2.348358505959928,
-        "max_drawdown": -0.15468183646601485,
-        "return": 7.992102421374096,
-        "sharpe": 3.3201690350854163
+        "cagr": 2.342189395289554,
+        "max_drawdown": -0.15531907931434163,
+        "return": 7.962014680224858,
+        "sharpe": 3.3101294219146564
       }
     },
-    "run_at": "2026-10-16T19:33:53+00:00",
+    "run_at": "2026-10-17T05:41:01+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -16430,31 +17800,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 2087,
+      "rows": 2086,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.18843108775948525,
-        "max_drawdown": -0.3578070895467831,
-        "return": 0.7609544553943763,
-        "sharpe": 0.6575175950348631
+        "cagr": 0.18994076254353098,
+        "max_drawdown": -0.3576497083076384,
+        "return": 0.768297314998192,
+        "sharpe": 0.660395300635967
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 1.0669035965177747,
-        "2024-01-01": 1.217436525711546,
-        "2024-07-01": 0.37434586097594513,
-        "2025-01-01": 0.3551248601029023,
-        "2025-07-01": 1.6208348759393398,
-        "2026-01-01": -0.16355682105236138
+        "2023-07-01": 1.0692273451496208,
+        "2024-01-01": 1.2201862989887187,
+        "2024-07-01": 0.41007261233105535,
+        "2025-01-01": 0.3509196616241535,
+        "2025-07-01": 1.621144813993837,
+        "2026-01-01": -0.17029739776399866
       },
       "gross": {
-        "cagr": 0.20980524451181282,
-        "max_drawdown": -0.3545099626364562,
-        "return": 0.8669079538303155,
-        "sharpe": 0.7067554853746478
+        "cagr": 0.21130044932353487,
+        "max_drawdown": -0.3543830151356696,
+        "return": 0.8744814920650503,
+        "sharpe": 0.7094369801854299
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -16463,28 +17833,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -0.12209571631767469,
-        1.4943193604322698
+        -0.12214764170290138,
+        1.4981220573146596
       ],
       "stress": {
-        "cagr": 0.17113562450092124,
-        "max_drawdown": -0.360627930759434,
-        "return": 0.6783368452829988,
-        "sharpe": 0.6170171531152912
+        "cagr": 0.17258562001786082,
+        "max_drawdown": -0.3604244332550869,
+        "return": 0.6851575677735844,
+        "sharpe": 0.6198897122921011
       },
       "vs_hold": {
-        "alpha": -0.06655786910407085,
-        "alpha_t": -0.5177232763266179,
-        "beta": 1.9190619499589665
+        "alpha": -0.06607570848215225,
+        "alpha_t": -0.5138481686652496,
+        "beta": 1.9258927317969559
       }
     }
   },
   "xs_gbm_ls_daily": {
     "capital": 100000.0,
-    "code_sha256": "599f1d77f5b17374",
+    "code_sha256": "45b282497e8f3170",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -16992,7 +18367,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "W",
       "horizon": 5,
@@ -17001,31 +18376,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.03252291052914469,
-        "max_drawdown": -0.1746372525207207,
-        "return": 0.09297510317466107,
-        "sharpe": 0.2946925589762917
+        "cagr": 0.032522910529145355,
+        "max_drawdown": -0.1746372525207196,
+        "return": 0.09297510317466284,
+        "sharpe": 0.294692558976269
       },
       "stress": {
-        "cagr": -0.007872883856760104,
-        "max_drawdown": -0.20106641138985193,
-        "return": -0.02171639162287764,
-        "sharpe": 0.016459408229674656
+        "cagr": -0.007904138296799479,
+        "max_drawdown": -0.2010645905248296,
+        "return": -0.021801995713384592,
+        "sharpe": 0.016233216230610203
       },
       "test": {
-        "cagr": 0.010000768486441824,
-        "max_drawdown": -0.1897474827129475,
-        "return": 0.02802750393302511,
-        "sharpe": 0.14095795139972953
+        "cagr": 0.009949860191948101,
+        "max_drawdown": -0.18979177360416277,
+        "return": 0.027883574498701824,
+        "sharpe": 0.14060657338440025
       },
       "train": {
-        "cagr": 2.0654812331477777,
-        "max_drawdown": -0.049761631520959804,
-        "return": 6.659351706785954,
-        "sharpe": 6.724701459953227
+        "cagr": 2.0656707052041163,
+        "max_drawdown": -0.04976132715147652,
+        "return": 6.660212134573651,
+        "sharpe": 6.725359367785696
       }
     },
-    "run_at": "2026-10-16T19:37:57+00:00",
+    "run_at": "2026-10-17T05:45:05+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -17049,31 +18424,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 4283,
+      "rows": 4285,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.07206393672367062,
-        "max_drawdown": -0.16868776663155893,
-        "return": 0.25619394639711657,
-        "sharpe": 0.4993905928599678
+        "cagr": 0.07206082601269936,
+        "max_drawdown": -0.16868704301151793,
+        "return": 0.2561819989878358,
+        "sharpe": 0.49937878780265155
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 1.0114415063038942,
-        "2024-01-01": 0.14170287753514763,
-        "2024-07-01": 0.7000574493977239,
-        "2025-01-01": 0.4525892771839466,
-        "2025-07-01": 1.3319254782541685,
-        "2026-01-01": -0.3579318861068034
+        "2023-07-01": 1.0114449346475265,
+        "2024-01-01": 0.14189472534086134,
+        "2024-07-01": 0.700063779775533,
+        "2025-01-01": 0.45271127548600265,
+        "2025-07-01": 1.3314157741556436,
+        "2026-01-01": -0.35785174350346605
       },
       "gross": {
-        "cagr": 0.09597963200243309,
-        "max_drawdown": -0.16253768062218998,
-        "return": 0.35040393514181734,
-        "sharpe": 0.6310363418962821
+        "cagr": 0.09597963200243087,
+        "max_drawdown": -0.16253768062218976,
+        "return": 0.35040393514180823,
+        "sharpe": 0.6310363418962719
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -17082,28 +18457,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -0.2683377508305589,
-        1.295336337444455
+        -0.2683652724080915,
+        1.295327068011916
       ],
       "stress": {
-        "cagr": 0.05358105172418193,
-        "max_drawdown": -0.1738482023163247,
-        "return": 0.18658951735778162,
-        "sharpe": 0.39551078267074463
+        "cagr": 0.05353370389966883,
+        "max_drawdown": -0.17388653315275304,
+        "return": 0.1864147381108472,
+        "sharpe": 0.3952336210343437
       },
       "vs_hold": {
-        "alpha": -0.004691263049756441,
-        "alpha_t": -0.05771904778727953,
-        "beta": 0.5563117072310089
+        "alpha": -0.004693258908236071,
+        "alpha_t": -0.05774459267114558,
+        "beta": 0.5563029958100659
       }
     }
   },
   "xs_momentum_buffer_daily": {
     "capital": 100000.0,
-    "code_sha256": "cc948062f567ea18",
+    "code_sha256": "3254827f31a81ed0",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -17585,7 +18965,7 @@
       }
     },
     "git": {
-      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -17621,7 +19001,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "6b48c906e7dcaed4",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "keep_n": 20,
@@ -17631,31 +19011,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.3174894782679327,
-        "max_drawdown": -0.36317180087037737,
-        "return": 1.1509533307628672,
-        "sharpe": 0.8662380758202315
+        "cagr": 0.316274124181104,
+        "max_drawdown": -0.3632195862598807,
+        "return": 1.1454461670954235,
+        "sharpe": 0.8642862969448
       },
       "stress": {
-        "cagr": 0.3137445170352091,
-        "max_drawdown": -0.36405848872643765,
-        "return": 1.1340126537177966,
-        "sharpe": 0.859431645998483
+        "cagr": 0.31248906082578554,
+        "max_drawdown": -0.36412991075094825,
+        "return": 1.12835265718655,
+        "sharpe": 0.8573875309842557
       },
       "test": {
-        "cagr": 0.31555801737938305,
-        "max_drawdown": -0.36362035295719064,
-        "return": 1.14220548422501,
-        "sharpe": 0.8628251597204026
+        "cagr": 0.31426173205463415,
+        "max_drawdown": -0.3637349908923029,
+        "return": 1.1363472224887126,
+        "sharpe": 0.8606371507246128
       },
       "train": {
-        "cagr": 0.6428286798175884,
-        "max_drawdown": -0.1955283828125901,
-        "return": 1.4650765274450066,
-        "sharpe": 1.9818072721997924
+        "cagr": 0.6431234991782353,
+        "max_drawdown": -0.19548033649823782,
+        "return": 1.4658805920070064,
+        "sharpe": 1.9827812476683864
       }
     },
-    "run_at": "2026-10-16T20:59:32+00:00",
+    "run_at": "2026-10-17T05:47:51+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -17679,31 +19059,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 163,
+      "rows": 164,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.32402775987994015,
-        "max_drawdown": -0.3615337748056524,
-        "return": 1.509294155872512,
-        "sharpe": 0.9125708622240299
+        "cagr": 0.32148527028802,
+        "max_drawdown": -0.3640964163419639,
+        "return": 1.4935346309028397,
+        "sharpe": 0.9074670714965551
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 2.234041827923622,
-        "2024-01-01": 2.286614860031275,
-        "2024-07-01": 1.2731772808526007,
-        "2025-01-01": 1.130148020614988,
-        "2025-07-01": -1.7034588618493967,
-        "2026-01-01": 0.47108363579138307
+        "2023-07-01": 2.234086463513761,
+        "2024-01-01": 2.285831410078056,
+        "2024-07-01": 1.2727617152065458,
+        "2025-01-01": 1.1095232104979917,
+        "2025-07-01": -1.715494768887185,
+        "2026-01-01": 0.47910851938523275
       },
       "gross": {
-        "cagr": 0.32602978818935524,
-        "max_drawdown": -0.3607279894933275,
-        "return": 1.5217522593758326,
-        "sharpe": 0.9163243666358952
+        "cagr": 0.323465333121683,
+        "max_drawdown": -0.36319648560589335,
+        "return": 1.5058020303264104,
+        "sharpe": 0.9113459337185278
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -17712,28 +19092,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        0.06919475911901252,
-        1.8732214370138227
+        0.05981564699615088,
+        1.8648186500147252
       ],
       "stress": {
-        "cagr": 0.32245437065362936,
-        "max_drawdown": -0.3624054181676004,
-        "return": 1.4995334259435795,
-        "sharpe": 0.9093906541324547
+        "cagr": 0.3198416091430871,
+        "max_drawdown": -0.3649460520170096,
+        "return": 1.4833831462107416,
+        "sharpe": 0.9042809379844735
       },
       "vs_hold": {
-        "alpha": 0.07832933447235675,
-        "alpha_t": 0.4746651648475121,
-        "beta": 1.7604180620026855
+        "alpha": 0.07655421448912508,
+        "alpha_t": 0.4634932366302862,
+        "beta": 1.7598616389181556
       }
     }
   },
   "xs_momentum_buffer_ls_daily": {
     "capital": 100000.0,
-    "code_sha256": "12b2aae3d6d6e325",
+    "code_sha256": "d55515a8e3a7094a",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -18221,7 +19606,7 @@
       }
     },
     "git": {
-      "commit": "4cd8743516b1f419f198d94bb980c0d5fcc277af",
+      "commit": "2a26497054156081890f3c759aec885ec68212ad",
       "dirty": true
     },
     "grid": {
@@ -18261,7 +19646,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "6b48c906e7dcaed4",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "keep_n": 20,
@@ -18272,31 +19657,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.13835140808402735,
-        "max_drawdown": -0.22220410426818638,
-        "return": 0.433254097017046,
-        "sharpe": 0.689804823809049
+        "cagr": 0.13835140808402357,
+        "max_drawdown": -0.2222041042681865,
+        "return": 0.43325409701703266,
+        "sharpe": 0.6898048238090483
       },
       "stress": {
-        "cagr": 0.1299290551320611,
-        "max_drawdown": -0.22372705815676142,
-        "return": 0.4039911769291571,
-        "sharpe": 0.6564772675914315
+        "cagr": 0.13012591723661493,
+        "max_drawdown": -0.22372340673744984,
+        "return": 0.40467075613370884,
+        "sharpe": 0.6572197159997596
       },
       "test": {
-        "cagr": 0.13283274854582894,
-        "max_drawdown": -0.22297789630902065,
-        "return": 0.41403624846780773,
-        "sharpe": 0.6679338566822259
+        "cagr": 0.13282803038691982,
+        "max_drawdown": -0.2229633526984489,
+        "return": 0.414019889224837,
+        "sharpe": 0.6679502679604038
       },
       "train": {
-        "cagr": 0.08555283753868426,
-        "max_drawdown": -0.2414992693572704,
-        "return": 0.1608984132849276,
-        "sharpe": 0.5711216954085365
+        "cagr": 0.08561148809633723,
+        "max_drawdown": -0.241490927864367,
+        "return": 0.16101240936667072,
+        "sharpe": 0.5714606471170947
       }
     },
-    "run_at": "2026-10-16T21:01:41+00:00",
+    "run_at": "2026-10-17T05:49:09+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -18326,25 +19711,25 @@
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.15634208086830403,
-        "max_drawdown": -0.2444104164544666,
-        "return": 0.6098409563821214,
-        "sharpe": 0.7587762516096256
+        "cagr": 0.15634210988252462,
+        "max_drawdown": -0.24440848705634333,
+        "return": 0.6098410887818417,
+        "sharpe": 0.758756441689526
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": -0.6343030458682776,
-        "2024-01-01": 2.4306010551897423,
-        "2024-07-01": 1.3910844220755527,
-        "2025-01-01": 2.045730687822154,
-        "2025-07-01": -1.9907296802781216,
-        "2026-01-01": 0.9208816593065874
+        "2023-07-01": -0.6341859315224797,
+        "2024-01-01": 2.4306548427734684,
+        "2024-07-01": 1.3906190218209762,
+        "2025-01-01": 2.045512135380942,
+        "2025-07-01": -1.9907296661131078,
+        "2026-01-01": 0.920928839716738
       },
       "gross": {
-        "cagr": 0.1622565161577929,
+        "cagr": 0.16225651615779157,
         "max_drawdown": -0.24360454440404644,
-        "return": 0.6369876793892653,
-        "sharpe": 0.7817929538021613
+        "return": 0.6369876793892593,
+        "sharpe": 0.7817929538021552
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -18353,28 +19738,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -0.09766052858395023,
-        1.6792271559839498
+        -0.09757541886262727,
+        1.6793706520229907
       ],
       "stress": {
-        "cagr": 0.1541772549794569,
-        "max_drawdown": -0.24489195197453006,
-        "return": 0.5999833178065523,
-        "sharpe": 0.7502083455026073
+        "cagr": 0.1542014896982069,
+        "max_drawdown": -0.24488959774285513,
+        "return": 0.6000934389770802,
+        "sharpe": 0.7502915903434271
       },
       "vs_hold": {
-        "alpha": 0.11116818828812933,
-        "alpha_t": 0.9197112320126265,
-        "beta": 0.3744916283817895
+        "alpha": 0.11115708100365586,
+        "alpha_t": 0.9195953341822233,
+        "beta": 0.3745736896006051
       }
     }
   },
   "xs_momentum_daily": {
     "capital": 100000.0,
-    "code_sha256": "87c600c577bb0c51",
+    "code_sha256": "a674f3d02d69b85b",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -18882,7 +20272,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "lookback": 126,
@@ -18891,31 +20281,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.11291865053371652,
-        "max_drawdown": -0.30931212962427,
-        "return": 0.34606197768230507,
-        "sharpe": 0.5065190027939387
+        "cagr": 0.11819923920812969,
+        "max_drawdown": -0.3032612255069427,
+        "return": 0.36387803296109533,
+        "sharpe": 0.52231350187016
       },
       "stress": {
-        "cagr": 0.10622484124561815,
-        "max_drawdown": -0.3119325077583467,
-        "return": 0.32369290439509024,
-        "sharpe": 0.48631009219928406
+        "cagr": 0.11119485933197026,
+        "max_drawdown": -0.30586105458436497,
+        "return": 0.3402785449297996,
+        "sharpe": 0.5012126452233318
       },
       "test": {
-        "cagr": 0.10946288748652244,
-        "max_drawdown": -0.3102898377337715,
-        "return": 0.334483707026926,
-        "sharpe": 0.4961183903741106
+        "cagr": 0.11495737951197049,
+        "max_drawdown": -0.3041121511438877,
+        "return": 0.35292263248803324,
+        "sharpe": 0.5125564719158501
       },
       "train": {
-        "cagr": 0.4671675954695651,
-        "max_drawdown": -0.2074271696985187,
-        "return": 1.0071059408297511,
-        "sharpe": 1.7778310868608325
+        "cagr": 0.466330583096515,
+        "max_drawdown": -0.20970993512910074,
+        "return": 1.0050253527707507,
+        "sharpe": 1.774435435340941
       }
     },
-    "run_at": "2026-10-16T19:29:28+00:00",
+    "run_at": "2026-10-17T05:36:38+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -18939,31 +20329,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 316,
+      "rows": 317,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.34947574093324096,
-        "max_drawdown": -0.3186650243318724,
-        "return": 1.6708666948093027,
-        "sharpe": 0.976285809781755
+        "cagr": 0.3492212775476342,
+        "max_drawdown": -0.31702998716886266,
+        "return": 1.66921625888047,
+        "sharpe": 0.9758822843064892
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 2.0373077000528856,
-        "2024-01-01": 1.9791775424667333,
-        "2024-07-01": 0.5457514265281886,
-        "2025-01-01": 1.4103679543401921,
-        "2025-07-01": -0.9573864854249513,
-        "2026-01-01": 1.15259928260746
+        "2023-07-01": 2.025878865684173,
+        "2024-01-01": 1.9797626425717747,
+        "2024-07-01": 0.5448595218391623,
+        "2025-01-01": 1.4190195021703296,
+        "2025-07-01": -0.9597984148591971,
+        "2026-01-01": 1.1535635815519216
       },
       "gross": {
-        "cagr": 0.35246019390641425,
-        "max_drawdown": -0.31829548460586243,
-        "return": 1.6902766663670108,
-        "sharpe": 0.982046748562921
+        "cagr": 0.35239933777481425,
+        "max_drawdown": -0.3166310023347473,
+        "return": 1.6898799007352436,
+        "sharpe": 0.9821315097680055
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -18972,28 +20362,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        0.13710895897154238,
-        1.949413440131418
+        0.13072503570458957,
+        1.947106224134461
       ],
       "stress": {
-        "cagr": 0.34640494664223875,
-        "max_drawdown": -0.31895215975786784,
-        "return": 1.6509969870631331,
-        "sharpe": 0.9702831183610524
+        "cagr": 0.34580155074825036,
+        "max_drawdown": -0.31748373888909365,
+        "return": 1.6471047999008195,
+        "sharpe": 0.9691396040482922
       },
       "vs_hold": {
-        "alpha": 0.10717335920938258,
-        "alpha_t": 0.6550101259105799,
-        "beta": 1.6755700266290445
+        "alpha": 0.1067133459553031,
+        "alpha_t": 0.6527840526973652,
+        "beta": 1.6771065366871385
       }
     }
   },
   "xs_momentum_ls_daily": {
     "capital": 100000.0,
-    "code_sha256": "dba8d5b0c278daa3",
+    "code_sha256": "f069fecb33341160",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -19511,7 +20906,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "M",
       "lookback": 252,
@@ -19521,31 +20916,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.22553073866048834,
-        "max_drawdown": -0.2676532034606872,
-        "return": 0.7593207464678731,
-        "sharpe": 1.0050139588854592
+        "cagr": 0.22553073866048878,
+        "max_drawdown": -0.2676532034606868,
+        "return": 0.7593207464678748,
+        "sharpe": 1.0050139588854623
       },
       "stress": {
-        "cagr": 0.21600601874092162,
-        "max_drawdown": -0.27102397281157053,
-        "return": 0.7216012452886122,
-        "sharpe": 0.970181267261133
+        "cagr": 0.21600867072169394,
+        "max_drawdown": -0.271021189987945,
+        "return": 0.7216116748382579,
+        "sharpe": 0.9701972385937636
       },
       "test": {
-        "cagr": 0.21958546565842219,
-        "max_drawdown": -0.2701217723439693,
-        "return": 0.7357151116042482,
-        "sharpe": 0.9838766082686339
+        "cagr": 0.2195906653362547,
+        "max_drawdown": -0.2701181432434848,
+        "return": 0.7357356677546016,
+        "sharpe": 0.9839049899611484
       },
       "train": {
-        "cagr": 0.11362606505886563,
-        "max_drawdown": -0.1507079997830041,
-        "return": 0.216037538691509,
-        "sharpe": 0.987586901456778
+        "cagr": 0.11362859634783007,
+        "max_drawdown": -0.1507079997830043,
+        "return": 0.21604256228698726,
+        "sharpe": 0.9876079821136979
       }
     },
-    "run_at": "2026-10-16T19:30:48+00:00",
+    "run_at": "2026-10-17T05:37:55+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -19575,25 +20970,25 @@
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.20892988467822904,
-        "max_drawdown": -0.27012177234396884,
-        "return": 0.862483948435478,
-        "sharpe": 0.9809623165599136
+        "cagr": 0.20893703169334277,
+        "max_drawdown": -0.2701181432434838,
+        "return": 0.8625200394056147,
+        "sharpe": 0.9810003386835118
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": 1.0444465032201717,
-        "2024-01-01": 3.5175159287408913,
-        "2024-07-01": 0.4668972310607995,
-        "2025-01-01": 1.701002536710403,
-        "2025-07-01": -2.1861818618469075,
-        "2026-01-01": 1.1974107314356208
+        "2023-07-01": 1.0445801930060197,
+        "2024-01-01": 3.5175825180176297,
+        "2024-07-01": 0.46694143207458544,
+        "2025-01-01": 1.7010304796270725,
+        "2025-07-01": -2.1861834395238176,
+        "2026-01-01": 1.1974179089604857
       },
       "gross": {
-        "cagr": 0.21565567681803133,
-        "max_drawdown": -0.2676532034606851,
-        "return": 0.8966633077468942,
-        "sharpe": 1.006364707805421
+        "cagr": 0.2156556768180311,
+        "max_drawdown": -0.267653203460685,
+        "return": 0.8966633077468926,
+        "sharpe": 1.0063647078054212
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -19602,28 +20997,33 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        0.09035131833287954,
-        2.0149691627654884
+        0.09039677689994313,
+        2.014988748293875
       ],
       "stress": {
-        "cagr": 0.20501173225587577,
-        "max_drawdown": -0.27102397281156987,
-        "return": 0.8427711415468166,
-        "sharpe": 0.9651873627567448
+        "cagr": 0.2050310963990125,
+        "max_drawdown": -0.27102118998794567,
+        "return": 0.8428682072636393,
+        "sharpe": 0.9652697900963485
       },
       "vs_hold": {
-        "alpha": 0.18138055330518865,
-        "alpha_t": 1.518223901945544,
-        "beta": 0.20235776223145407
+        "alpha": 0.1813864820927792,
+        "alpha_t": 1.518294893853943,
+        "beta": 0.20235343310555665
       }
     }
   },
   "xs_reversal_daily": {
     "capital": 100000.0,
-    "code_sha256": "38db0fb0de03cc4a",
+    "code_sha256": "db399c8407265af9",
     "costs": {
       "commission_per_share": 0.005,
+      "fee_per_share": 0.0,
+      "max_commission_frac": 0.01,
       "min_commission": 1.0,
+      "sale_fee_cap": 0.0,
+      "sale_fee_per_share": 0.0,
+      "sale_fee_rate": 0.0,
       "slippage_per_share": 0.0,
       "spread_bps": 2.0
     },
@@ -20087,9 +21487,9 @@
         "top_n": 10
       },
       "2026-01-01": {
-        "every": "M",
+        "every": "W",
         "lookback": 5,
-        "top_n": 5
+        "top_n": 10
       }
     },
     "git": {
@@ -20125,7 +21525,7 @@
       }
     },
     "kind": "portfolio",
-    "package_sha256": "0c5551f52a5e74a3",
+    "package_sha256": "93094fe205ed8582",
     "params": {
       "every": "W",
       "lookback": 5,
@@ -20133,31 +21533,31 @@
     },
     "portfolio": {
       "gross": {
-        "cagr": 0.15479269593699896,
-        "max_drawdown": -0.2103875405240372,
-        "return": 0.4914967138859896,
-        "sharpe": 0.6551634580325978
+        "cagr": 0.15967054932131952,
+        "max_drawdown": -0.21004361301812846,
+        "return": 0.5090627541236366,
+        "sharpe": 0.6702288866625947
       },
       "stress": {
-        "cagr": 0.08805413568773468,
-        "max_drawdown": -0.2501855268547719,
-        "return": 0.2641742958504112,
-        "sharpe": 0.44172776981114054
+        "cagr": 0.09358185144160136,
+        "max_drawdown": -0.24760644010509314,
+        "return": 0.28209516349612485,
+        "sharpe": 0.4598607455714762
       },
       "test": {
-        "cagr": 0.11737793650234929,
-        "max_drawdown": -0.2331532799156406,
-        "return": 0.3610972088815365,
-        "sharpe": 0.5371801911650597
+        "cagr": 0.12279468456915277,
+        "max_drawdown": -0.22974977872646762,
+        "return": 0.3795047137830234,
+        "sharpe": 0.5544034116389294
       },
       "train": {
-        "cagr": 0.13536348306428403,
-        "max_drawdown": -0.4584863420562546,
-        "return": 0.25952134687349093,
-        "sharpe": 0.5227800482086751
+        "cagr": 0.1397883857472877,
+        "max_drawdown": -0.45750998057516046,
+        "return": 0.26845708375617594,
+        "sharpe": 0.5328681191023685
       }
     },
-    "run_at": "2026-10-16T19:30:04+00:00",
+    "run_at": "2026-10-17T05:37:11+00:00",
     "selection_note": "",
     "sizer": {
       "max_position_frac": 1.0,
@@ -20181,31 +21581,31 @@
     "tickers": 107,
     "timeframe": "1D",
     "trade_log": {
-      "rows": 2120,
+      "rows": 2769,
       "written": true
     },
     "universe": "broad",
     "walk_forward": {
       "base": {
-        "cagr": 0.1090137669167015,
-        "max_drawdown": -0.3754616461441762,
-        "return": 0.4037613951253307,
-        "sharpe": 0.501905846005842
+        "cagr": 0.08522306370933364,
+        "max_drawdown": -0.2630608163895781,
+        "return": 0.3074450289372812,
+        "sharpe": 0.4322582703110378
       },
       "days": 826,
       "fold_sharpe": {
-        "2023-07-01": -0.2602190510388954,
-        "2024-01-01": 0.3262056946913089,
-        "2024-07-01": 0.4431060185333546,
-        "2025-01-01": 0.9254252649923423,
-        "2025-07-01": 0.9640690700964997,
-        "2026-01-01": 0.5330908448871267
+        "2023-07-01": -0.25132405469759633,
+        "2024-01-01": 0.3352432695702834,
+        "2024-07-01": 0.4650932884066254,
+        "2025-01-01": 0.9831945278066353,
+        "2025-07-01": 0.957006857529346,
+        "2026-01-01": 0.1562635098592738
       },
       "gross": {
-        "cagr": 0.13472216253353508,
-        "max_drawdown": -0.37022482126582335,
-        "return": 0.5132675017126853,
-        "sharpe": 0.5810985271282872
+        "cagr": 0.11629002366474328,
+        "max_drawdown": -0.26258657667357954,
+        "return": 0.4341762665388076,
+        "sharpe": 0.5335826906176347
       },
       "hold": {
         "cagr": 0.1597155711621583,
@@ -20214,19 +21614,19 @@
         "sharpe": 1.0968584654435536
       },
       "sharpe_90": [
-        -0.346598489495538,
-        1.3921117576639763
+        -0.29612597309185423,
+        1.2159060340472176
       ],
       "stress": {
-        "cagr": 0.08849047302899549,
-        "max_drawdown": -0.37986476794258806,
-        "return": 0.3203922337924212,
-        "sharpe": 0.43723673226622833
+        "cagr": 0.0602301410854329,
+        "max_drawdown": -0.26420221015491807,
+        "return": 0.21131204535206627,
+        "sharpe": 0.3485181956959381
       },
       "vs_hold": {
-        "alpha": -0.09384137004005923,
-        "alpha_t": -0.8924872637923145,
-        "beta": 1.5053706456870872
+        "alpha": -0.1213722400515642,
+        "alpha_t": -1.2898273157934301,
+        "beta": 1.5230187017717378
       }
     }
   }

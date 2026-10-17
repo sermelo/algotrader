@@ -101,17 +101,17 @@ class PortfolioBacktester:
                 for t in [t for t in ready if want[t] < shares[t]]:          # sells first
                     q = int(want[t] - shares[t])
                     fill = self.costs.sell_price(o[t])
-                    comm = self.costs.commission(-q)
+                    comm = self.costs.commission(-q, fill, sell=True)
                     cash += -q * fill - comm
                     shares[t] += q
                     orders.append((day, t, q, fill, comm))
                 for t in [t for t in ready if want[t] > shares[t]]:
                     q = int(want[t] - shares[t])
                     fill = self.costs.buy_price(o[t])
-                    while q > 0 and q * fill + self.costs.commission(q) > cash:
-                        q = int(min(q - 1, (cash - self.costs.commission(q)) // fill))
+                    while q > 0 and q * fill + self.costs.commission(q, fill) > cash:
+                        q = int(min(q - 1, (cash - self.costs.commission(q, fill)) // fill))
                     if q > 0:
-                        comm = self.costs.commission(q)
+                        comm = self.costs.commission(q, fill)
                         cash -= q * fill + comm
                         shares[t] += q
                         orders.append((day, t, q, fill, comm))
@@ -122,7 +122,7 @@ class PortfolioBacktester:
                 if shares[t] and last_bar[t] == day:
                     q = int(shares[t])
                     fill = self.costs.sell_price(c[t]) if q > 0 else self.costs.buy_price(c[t])
-                    comm = self.costs.commission(abs(q))
+                    comm = self.costs.commission(abs(q), fill, sell=q > 0)
                     cash += q * fill - comm
                     orders.append((day, t, -int(shares[t]), fill, comm))
                     shares[t] = 0

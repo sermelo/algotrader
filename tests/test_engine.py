@@ -222,3 +222,30 @@ def test_exit_at_close_flattens_and_blocks_new_orders():
     # want stays True on the exit bar but no order is placed from it; the next entry
     # needs a fresh signal (bar 4) and fills at bar 5's open
     assert res.trades[1].entry_time == bars.index[5]
+
+
+def test_profit_target_in_r_multiples():
+    import numpy as np
+    import pandas as pd
+    from algotrader import Backtester, CostModel, PositionSizer
+
+    class TargetStrat:
+        atr_mult = 50.0
+
+        def indicators(self, bars):
+            df = bars.copy()
+            df["want_long"] = [False, True, True, True, True]
+            df["atr"] = 1.0
+            df["stop_price"] = 99.0
+            df["target_r"] = 1.0
+            return df
+
+    idx = pd.date_range("2024-01-02 09:30", periods=5, freq="min")
+    bars = pd.DataFrame({"open": [100, 100, 100.5, 101, 101], "high": [100, 100.5, 102.5, 103, 103],
+                         "low": [100, 99.8, 100.2, 100.8, 100.8], "close": [100, 100.2, 102, 102, 102],
+                         "volume": 1}, index=idx, dtype=float)
+    res = Backtester(TargetStrat(), CostModel(0, 0, max_commission_frac=0), PositionSizer(1.0, 1.0)).run(bars)
+    [t] = res.trades
+    assert t.entry_price == 100.5 and t.exit_reason == "target"
+    assert t.exit_price == pytest.approx(100.5 + 1.0 * (100.5 - 99.0))   # 102.0, high 102.5
+    assert t.exit_time == idx[2]

@@ -68,15 +68,19 @@ class OvernightStrategy:
     one bar before the close); `want_long` is False on the last bar, so the
     position is sold at the next session's first open. Use 1-minute bars for a
     close-to-open hold. Optional trend filter: only when the close is above the
-    mean of the previous `trend_days` session closes.
+    mean of the previous `trend_days` session closes. `skip_weekdays` (0 = Monday ..
+    4 = Friday) skips the nights that start on those days (e.g. (4,) skips weekends).
     """
     trend_days: int | None = None
     atr_period: int = 14
     atr_mult: float = 50.0
+    skip_weekdays: tuple = ()
 
     def __post_init__(self):
         if self.trend_days is not None and self.trend_days < 1:
             raise ValueError("trend_days must be >= 1 or None")
+        if any(d not in range(5) for d in self.skip_weekdays):
+            raise ValueError("skip_weekdays must be in 0..4")
 
     def indicators(self, bars: pd.DataFrame) -> pd.DataFrame:
         df = bars.copy()
@@ -87,6 +91,8 @@ class OvernightStrategy:
             daily.index = daily.index.normalize()
             sma_prev = _per_day(daily.rolling(self.trend_days).mean().shift(), df.index)
             want &= df["close"] > sma_prev
+        if self.skip_weekdays:
+            want &= ~pd.Series(df.index.dayofweek, index=df.index).isin(self.skip_weekdays)
         df["atr"] = average_true_range(df, self.atr_period)
         df["want_long"] = want.to_numpy()
         return df
@@ -194,8 +200,8 @@ class OpeningRangeBreakoutStrategy:
     "stocks in play" filter: opening-range volume at least `min_rel_volume` times its
     mean over the previous `rv_lookback` sessions. Optional trend filter: only when
     the previous session's close is above the mean of the `trend_days` session
-    closes before it. (The paper's 10R profit target is not modelled; it is rarely
-    reached.)
+    closes before it. Optional `profit_r`: take profit at entry + profit_r x (entry -
+    range low), the paper's 10R target (rarely reached intraday).
     """
     or_minutes: int = 5
     min_rel_volume: float = 0.0
@@ -203,8 +209,11 @@ class OpeningRangeBreakoutStrategy:
     trend_days: int | None = None
     atr_period: int = 14
     atr_mult: float = 50.0
+    profit_r: float | None = None
 
     def __post_init__(self):
+        if self.profit_r is not None and self.profit_r <= 0:
+            raise ValueError("profit_r must be > 0 or None")
         if self.or_minutes < 1 or self.rv_lookback < 1 or self.min_rel_volume < 0:
             raise ValueError("require or_minutes >= 1, rv_lookback >= 1, min_rel_volume >= 0")
         if self.trend_days is not None and self.trend_days < 1:
@@ -236,6 +245,8 @@ class OpeningRangeBreakoutStrategy:
         ok_bar = _per_day(ok.astype(float), df.index).fillna(0.0) > 0
         df["want_long"] = ((end >= or_end) & ok_bar).to_numpy()
         df["stop_price"] = df["or_low"]
+        if self.profit_r is not None:
+            df["target_r"] = float(self.profit_r)
         df["exit_at_close"] = last.to_numpy()
         df["atr"] = average_true_range(df, self.atr_period)
         return df

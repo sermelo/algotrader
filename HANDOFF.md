@@ -5,36 +5,22 @@ priority list; keep it updated as items are done).
 
 ## Where things stand
 
-- Everything is committed and pushed: 28 experiments on the core (27 tickers,
-  `results/`) and broad (107 tickers, `results/broad/`) universes, all fingerprints
-  current, 158 tests passing.
-- **Running on the VPS:** `scripts/history_queue.sh` (Tiingo daily prices, first ~500
-  symbols of the free monthly quota; log `~/algotrader-work/history.log`, done marker
-  `history_queue.done`). On or after 2026-11-01 run it again for the remaining ~216
-  symbols, then `python -m algotrader.history check`, run `python -m algotrader.longrun`
-  on the VPS, `python -m algotrader.french report --results results/long`, and commit
-  `results/long/` (see ROADMAP "Long-history runner"). Nothing else is running.
-- **Also running on the VPS (dry run, not for committing):** `longrun deep_arb_long` on the
-  WIKI-only history (`data/history_wiki`, 2008 to Mar 2018), output
-  `data/long_wiki_provisional/`, log `data/deep_dryrun.log`; started 2026-10-17 ~00:30
-  Madrid, ~4-5 hours. It checks the deep-arbitrage pipeline end to end; the real run
-  waits for all Tiingo prices (November).
-- **Uncommitted on purpose (2026-10-17 ~00:45):** shared-code changes from ROADMAP
-  "Changes to batch into one full rerun": `costs.py` (1% commission cap, pass-through
-  and sale fees, `ibkr_tiered()`), `engine.py` (`target_r` profit target), `portfolio.py`
-  (prices/side passed to commissions), `intraday.py` (ORB `profit_r`, overnight
-  `skip_weekdays`), two new experiments (`orb_5min_100k_target`,
-  `overnight_1min_100k_weekday`) and tests. They make every result stale, so they are
-  committed together with the rerun: `scripts/full_rerun.sh` is queued on the VPS (log
-  `data/full_rerun.log`, done marker `data/full_rerun.done`; it waits for the deep-arb dry
-  run, then ~10-12 hours). After it: rsync `results/` back, check fingerprints, refresh the
-  README table, commit code + results, push. If this checkout is lost, the same code is
-  on the VPS in `~/algotrader-work`.
-- Earlier note: `~/algotrader-work` there holds the code as of commit
-  `63456db` (without `factors.py`); rsync the working tree again before the next run.
-- Headline: no strategy clears the luck bar (317 configurations, Sharpe 1.61) or has
-  significant alpha. Most consistent: long-short momentum (alpha t 1.49 core, 1.52
-  broad). See README "Experiments".
+- Everything is committed and pushed (2026-10-17): 35 experiments on the core (27 tickers,
+  `results/`) and broad (107 tickers, `results/broad/`) universes after the batched full
+  rerun (1% commission cap, fee model, ORB 10R target, overnight skip-weekday), all
+  fingerprints current, 207 tests passing.
+- **Running on the VPS:** `scripts/history_queue.sh` stopped at the Tiingo monthly quota.
+  On or after 2026-11-01 run it again for the remaining ~216 symbols, then
+  `python -m algotrader.history check`, `python -m algotrader.longrun` on the VPS,
+  `python -m algotrader.french report --results results/long`, and commit `results/long/`
+  (see ROADMAP "Long-history runner").
+- The deep-arb dry run (`data/long_wiki_provisional/`, not for committing) finished: see
+  ROADMAP S8 (fails with next-open execution).
+- `~/algotrader-work` on the VPS has the code of this commit except an older/different
+  `longrun.py`: rsync the working tree again before the next run.
+- Headline: no strategy clears the luck bar (389 configurations per universe, Sharpe 1.64;
+  778 over both, 1.75) or has significant alpha. Most consistent: long-short momentum
+  (alpha t 1.49 core, 1.52 broad), which is the momentum factor. See README "Experiments".
 
 ## VPS access
 

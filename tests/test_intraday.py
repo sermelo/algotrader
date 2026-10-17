@@ -140,3 +140,20 @@ def test_orb_trend_filter_needs_previous_close_above_its_mean():
     assert not any(t.entry_time.day == 6 for t in filt)       # 95 < mean(100, 100, 100)
     with pytest.raises(ValueError):
         OpeningRangeBreakoutStrategy(trend_days=0)
+
+
+def test_overnight_skip_weekdays_and_orb_target_column():
+    import pandas as pd
+    import pytest
+    from algotrader.intraday import OpeningRangeBreakoutStrategy, OvernightStrategy
+    idx = pd.date_range("2025-07-10 15:58", periods=2, freq="min").append(      # Thu
+        pd.date_range("2025-07-11 15:58", periods=2, freq="min"))               # Fri
+    bars = pd.DataFrame({"open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0, "volume": 1.0}, index=idx)
+    want = OvernightStrategy(atr_period=1).indicators(bars)["want_long"]
+    assert want.tolist() == [True, False, True, False]
+    want = OvernightStrategy(atr_period=1, skip_weekdays=(4,)).indicators(bars)["want_long"]
+    assert want.tolist() == [True, False, False, False]                           # no Friday night
+    with pytest.raises(ValueError):
+        OvernightStrategy(skip_weekdays=(6,))
+    with pytest.raises(ValueError):
+        OpeningRangeBreakoutStrategy(profit_r=0)

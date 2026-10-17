@@ -1,4 +1,5 @@
 import math
+import pytest
 
 from algotrader import CostModel, PositionSizer
 
@@ -42,3 +43,20 @@ class TestPositionSizer:
         assert s.shares(10_000, 10, float("nan")) == 0
         assert s.shares(0, 10, 1) == 0
         assert s.shares(10_000, 0, 1) == 0
+
+
+def test_commission_cap_and_sale_fees():
+    from algotrader.costs import CostModel, ibkr_tiered
+    fixed = CostModel()
+    assert fixed.commission(100) == pytest.approx(1.0)                 # no price: no cap
+    assert fixed.commission(1000, price=0.5) == pytest.approx(5.0)     # 1000*0.005, value 500
+    assert fixed.commission(1000, price=0.05) == pytest.approx(0.5)    # capped at 1% of $50
+    assert fixed.commission(100, price=50, sell=True) == fixed.commission(100, price=50)
+    t = ibkr_tiered()
+    buy = t.commission(66, price=150.0)
+    sell = t.commission(66, price=150.0, sell=True)
+    assert buy == pytest.approx(0.35 + 66 * 0.0032)                    # minimum + fees
+    assert sell == pytest.approx(buy + 0.0000206 * 66 * 150 + 66 * 0.000166)
+    big = t.commission(100_000, price=10.0, sell=True)
+    assert big == pytest.approx(350 + 100_000 * 0.0032 + 0.0000206 * 1e6 + 8.30)  # TAF capped
+    assert t.commission(0, price=10.0) == 0.0
