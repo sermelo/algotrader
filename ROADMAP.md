@@ -79,7 +79,9 @@ Updated 2026-10-17. In order; details in the sections below.
 2. **D1 second batch**: on or after 2026-11-01 rerun `scripts/history_queue.sh` on the VPS
    for the remaining ~216 Tiingo symbols (the 500-symbol monthly quota stops it), then
    `python -m algotrader.history check`.
-3. **Long-history results**: `python -m algotrader.longrun` on the VPS (19 experiments,
+3. **Long-history results** (2026-10-17: 18 of 19 experiments done on the VPS in `data/long_hf` and
+   `data/long_nohf`, not yet committed; `deep_arb_long` and the chart CNN still running):
+   `python -m algotrader.longrun` on the VPS (19 experiments,
    deep_arb_long takes about 12 hours), `python -m algotrader.french report --results
    results/long`, `python -m algotrader.trials`, commit `results/long/` with docs.
 4. ~~**S8 follow-up**: market-on-close variant on the 1-minute data~~ **done 2026-10-17**
@@ -92,6 +94,22 @@ Updated 2026-10-17. In order; details in the sections below.
    buyable by sergio), S11 neural ranking, D5 SIP minute data, Russell 1000 membership.
 8. **Before any live trading**: paper trading per `docs/ibkr-integration.md`, stock-only
    strategies (PRIIPs), the Tiered cost model, PDT and Spanish two-month rule checks.
+9. **Ideas from the 2026-10-17 discussion** (not started; sergio will say what comes next):
+   - *Confidence-aware portfolios*: today every strategy holds the top N at equal weight and uses
+     only the rank of its score. Test weighting by score or probability, trading only when the
+     chart-CNN probability is clearly away from 0.5 (cash otherwise), and a hold band to cut turnover;
+     first check the CNN probabilities are calibrated (reliability curve, Brier score; scores are
+     saved in `data/long_panels/chart_cnn.parquet` on the VPS).
+   - *Chart CNN capacity check*: paper-size network (64/128/256 channels, 740k parameters, measured
+     14 images/s on 2 threads, about 3 h per refit) on 3 of the 14 yearly refits (for example 2016,
+     2020, 2024) against the small network (16/32/64): compare validation loss and score/return
+     rank correlation; full paper size for all refits would take 40-80 h.
+   - *Combined-signal strategy*: blend momentum, profitability, low volatility and 52-week high
+     (equal-weighted z-scores, beta-neutral), tested on the long history.
+   - *SPY trend filter on the long history* (hold the strategy or SPY above its moving average, cash
+     below): it helped on core in 3.3 years but not on broad.
+   - *Cut turnover* of earnings drift (about 1,167% a year) and seasonality (about 1,000%): buffers
+     or lower rebalance frequency.
 
 ## Priority list
 

@@ -17,7 +17,7 @@ from algotrader.stats import alpha_beta, expected_max_sharpe, returns_stats, sha
 OUT, RES = Path(sys.argv[1]), Path(sys.argv[2])
 FAMILY = {"Price and momentum": ("xs_momentum", "xs_reversal", "high52", "low_vol", "seasonality"),
           "Fundamentals": ("value", "profitability", "asset_growth", "op_profitability"),
-          "Earnings news": ("pead",), "Deep learning": ("deep_arb",)}
+          "Earnings news": ("pead",), "Deep learning": ("deep_arb", "chart_cnn")}
 TICKERS = {"hf": 809, "nohf": 741}          # tickers loaded by each run (printed by longrun)
 
 
