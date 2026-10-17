@@ -201,8 +201,9 @@ results show the survivorship gap matters; then prefer an ongoing subscription
 
 ### Long-history runner (2026-10-16)
 
-`longrun.py` runs 16 experiments (momentum, buffered momentum, reversal, low vol, 52-week
-high, value, profitability, asset growth, seasonality, earnings drift; long-only and
+`longrun.py` runs 19 experiments (momentum, buffered momentum, reversal, low vol, 52-week
+high, value, gross and operating profitability, asset growth, seasonality, earnings
+drift, deep statistical arbitrage; long-only and
 long-short) on the point-in-time S&P 500 from 2008, yearly folds from 2012. Smoke test on
 WIKI only (2012 to Mar 2018, no SPY): low vol 1.20, momentum 1.02, not committed.
 **Validation (2026-10-17, WIKI only, 2012 to Mar 2018, gross returns vs Kenneth French
