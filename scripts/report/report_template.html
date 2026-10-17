@@ -84,7 +84,7 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
 <header style="display:grid;gap:14px">
   <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026 · long history 2012 – 2026</div>
   <h1>Algotrader Strategy Scorecard</h1>
-  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
+  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account and section 8 measures how far prices move in minutes and hours against those costs. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
   <div class="tiles" id="tiles"></div>
 </header>
 
@@ -316,8 +316,37 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
   <div class="verdict"><ul class="findings" id="smallPlan"></ul></div>
 </section>
 
+<section id="s-moves">
+  <div class="eyebrow">8 · Price moves</div>
+  <h2>How far do prices move in minutes and hours, against what a trade costs?</h2>
+  <p id="movesIntro"></p>
+  <div class="panel">
+    <div class="controls" style="gap:12px 18px; align-items:end">
+      <label class="f">Cost to beat: break-even (% of the position)<input type="number" id="mv-c" value="0.14" min="0.01" step="0.01"></label>
+      <label class="f">Histogram horizon<select id="mv-h"></select></label>
+    </div>
+    <div class="scroll"><table id="mvTable"></table></div>
+    <p class="muted" id="mvNote"></p>
+  </div>
+  <div class="panel">
+    <h3 id="mvTitle">Distribution of price changes</h3>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--s-core)"></i>within the cost</span>
+      <span><i class="sw" style="background:var(--neg)"></i>beyond the cost</span>
+      <span><i class="sw line" style="border-color:var(--ink)"></i>normal, same standard deviation</span>
+      <span><i class="sw dash" style="border-color:var(--pos)"></i>normal, same interquartile range</span>
+    </div>
+    <div class="scroll"><svg id="mvChart" role="img" aria-label="Histogram of price changes with normal distributions and the cost thresholds"></svg></div>
+  </div>
+  <div class="panel">
+    <h3>Share of windows moving more than 0.14% either way, by year (October of each year)</h3>
+    <div class="scroll"><table id="mvYears"></table></div>
+  </div>
+  <div class="verdict"><ul class="findings" id="mvFindings"></ul></div>
+</section>
+
 <section id="s-all">
-  <div class="eyebrow">8 · Reference</div>
+  <div class="eyebrow">9 · Reference</div>
   <h2>All results</h2>
   <div class="panel">
     <div class="controls" role="group" aria-label="Universe">
@@ -848,5 +877,69 @@ drawAll();
     `<b>Expectation:</b> every earlier intraday test lost to costs. What differs now is one to three trades a day chosen from hundreds of stocks, 90–240 minute holds, cheaper commissions and fourteen years of data. A small edge is plausible; a large one is not.`,
   ];
   $("smallPlan").innerHTML = plan.map(x => `<li>${x}</li>`).join("");
+})();
+// ---------- 8. price moves
+(() => {
+  const MV = D.moves; if (!MV) { document.getElementById("s-moves").hidden = true; return; }
+  const $ = id => document.getElementById(id), HZ = MV.horizons, S = MV.stats, [e0, e1, nb] = MV.edges, bw = (e1 - e0) / nb;
+  const f = (x, d = 2) => isFinite(x) ? x.toFixed(d) : "–", P = (x, d = 0) => isFinite(x) ? (x * 100).toFixed(d) + "%" : "–";
+  const hname = h => h < 60 ? h + " min" : h % 60 === 0 ? h / 60 + " h" : h + " min";
+  const frac = (hist, c, up) => {                                   // share of windows above +c (up) or below -c, from the 0.01% bins
+    let s = 0, tot = 0;
+    for (let i = 0; i < nb; i++) { const a = e0 + i * bw, b = a + bw; tot += hist[i];
+      s += hist[i] * (up ? Math.max(0, Math.min(1, (b - Math.max(a, c)) / bw)) : Math.max(0, Math.min(1, (Math.min(b, -c) - a) / bw))); }
+    return s / tot;
+  };
+  const NM = MV.months.length;
+  $("movesIntro").innerHTML = `A trade only pays if the price moves more than its cost, so the first question is how big price moves are at each holding time. This measures, for S&amp;P 500 members costing at least $${MV.min_price}, the change of the last trade price over 1 minute up to 4 hours, for every start minute between 10:00 and 15:00, in ${NM} Octobers (2008 to 2025, about 50 million windows per horizon). The table uses the cost you enter (the break-even from the calculator above; 0.14% is a 667-euro position on Tiered). Moves are <b>not</b> normally distributed: far more windows barely move and some move a lot (fat tails), so use these measured shares, not a bell-curve formula. Windows overlap, so the numbers describe the distribution, not independent trades.`;
+  const sel = $("mv-h"); HZ.forEach(h => { const o = document.createElement("option"); o.value = h; o.textContent = hname(h); sel.appendChild(o); }); sel.value = 30;
+  const cost = () => Math.max(parseFloat($("mv-c").value) / 100, 1e-5);
+  function table() {
+    const c = cost();
+    let h = `<tr><th>Hold for</th><th>Typical move</th><th>÷ cost</th><th>Up > cost</th><th>Either way > cost</th><th>No change</th><th>Accuracy needed*</th><th>Reading</th></tr>`;
+    for (const m of HZ) { const s = S[m], ratio = s.mean_abs / c, up = frac(MV.hist[m], c, true), dn = frac(MV.hist[m], c, false), need = 0.5 + c / (2 * s.mean_abs);
+      const word = ratio < 1 ? "discard: smaller than the cost" : ratio < 2 ? "marginal" : ratio < 4 ? "possible" : "more forgiving";
+      h += `<tr><td>${hname(m)}</td><td>${f(s.mean_abs * 100, 3)}%</td><td class="${ratio < 1 ? "neg" : ratio >= 4 ? "pos" : ""}">${f(ratio, 1)}×</td><td>${P(up, 1)}</td><td>${P(up + dn, 1)}</td><td>${P(s.zero_share)}</td><td class="${need > 0.6 ? "neg" : need < 0.56 ? "pos" : ""}">${need > 1 ? "never" : P(need)}</td><td>${word}</td></tr>`; }
+    $("mvTable").innerHTML = h;
+    $("mvNote").textContent = `Typical move = mean absolute change. *Share of trades whose direction must be right to break even, if every trade moves the typical amount: 50% + cost / (2 × typical move). A random stock rises by more than the cost in the "up" share of windows; a model has to beat that.`;
+  }
+  function chart() {
+    const h = +sel.value, s = S[h], c = cost(), hist = MV.hist[h], svg = $("mvChart"); svg.innerHTML = "";
+    $("mvTitle").textContent = `Price change over ${hname(h)}: ${P(frac(hist, c, true) + frac(hist, c, false), 0)} of windows move more than ±${f(c * 100, 2)}%`;
+    const W = 900, Hh = 330, Lm = 20, R = 20, T = 14, B = 34, lim = Math.max(4 * s.sd, 1.6 * c, 0.0006);
+    svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "600px"; svg.style.width = "100%"; svg.style.height = "auto";
+    const step = Math.max(1, Math.round(lim * 2 / 0.0001 / 90)), bars = []; let tot = 0; hist.forEach(v => tot += v);
+    for (let i = 0; i + step <= nb; i += step) { const a = e0 + i * bw, b = a + step * bw, mid = (a + b) / 2; if (Math.abs(mid) > lim) continue; let v = 0; for (let k = 0; k < step; k++) v += hist[i + k]; bars.push({ a, b, mid, v, d: v / tot / (step * bw) }); }
+    const nrm = (x, sd) => Math.exp(-x * x / (2 * sd * sd)) / (sd * Math.sqrt(2 * Math.PI));
+    const top = Math.max(...bars.map(b => b.d)) * 1.12, X = v => Lm + (v + lim) / (2 * lim) * (W - Lm - R), Y = d => Hh - B - d / top * (Hh - B - T);
+    el("line", { x1: Lm, x2: W - R, y1: Hh - B, y2: Hh - B, class: "axis0" }, svg);
+    for (const b of bars) { const beyond = Math.abs(b.mid) > c, r = el("rect", { x: X(b.a) + .5, y: Y(b.d), width: Math.max(X(b.b) - X(b.a) - 1, .5), height: Hh - B - Y(b.d), fill: beyond ? css("--neg") : css("--s-core"), "fill-opacity": .6 }, svg);
+      r.addEventListener("mousemove", ev => showTip(ev, `<b>${f(b.a * 100, 2)}% to ${f(b.b * 100, 2)}%</b><br>${P(b.v / tot, 2)} of windows`)); r.addEventListener("mouseleave", hideTip); }
+    const line = (sd, col, dash) => el("path", { d: Array.from({ length: 160 }, (_, i) => { const v = -lim + 2 * lim * i / 159; return (i ? "L" : "M") + X(v).toFixed(1) + "," + Y(nrm(v, sd)).toFixed(1); }).join(""), fill: "none", stroke: col, "stroke-width": 1.6, "stroke-dasharray": dash || "" }, svg);
+    line(s.sd, css("--ink")); line(s.robust_sd, css("--pos"), "5 3");
+    for (const sg of [-1, 1]) el("line", { x1: X(sg * c), x2: X(sg * c), y1: T, y2: Hh - B, stroke: css("--ink"), "stroke-dasharray": "4 3" }, svg);
+    [-lim, -lim / 2, 0, lim / 2, lim].forEach(v => el("text", { x: X(v), y: Hh - 12, "text-anchor": v === -lim ? "start" : v === lim ? "end" : "middle" }, svg).textContent = (v >= 0 ? "+" : "−") + f(Math.abs(v) * 100, 2) + "%");
+  }
+  function years() {
+    const hs = [1, 5, 10, 30, 90, 240].filter(h => HZ.includes(h)); let t = `<tr><th>Year</th>${hs.map(h => `<th>${hname(h)}</th>`).join("")}</tr>`;
+    for (const y of Object.keys(MV.by_year).sort()) t += `<tr><td>${y}</td>${hs.map(h => { const v = MV.by_year[y][h]; return `<td class="${v > .6 ? "cellneg" : v < .2 ? "cellpos" : ""}">${P(v)}</td>`; }).join("")}</tr>`;
+    $("mvYears").innerHTML = t;
+  }
+  function findings() {
+    const c = cost(), small = HZ.filter(h => S[h].mean_abs < c), first = HZ.find(h => S[h].mean_abs >= 2 * c);
+    const yrs = Object.keys(MV.by_year), v10 = yrs.map(y => [y, MV.by_year[y][10]]).sort((a, b) => a[1] - b[1]);
+    const ex = (h, p) => (2 * p - 1) * S[h].mean_abs - c;
+    const L = [
+      small.length ? `<b>Discard ${small.map(hname).join(", ")}.</b> The typical move over those times (${small.map(h => f(S[h].mean_abs * 100, 2) + "%").join(", ")}) is smaller than the ${f(c * 100, 2)}% cost, so even a model that knew the direction would barely pay, and a random stock beats the cost in only ${P(frac(MV.hist[small[small.length - 1]], c, true), 0)} of windows or fewer.` : `At a cost of ${f(c * 100, 2)}% no horizon is smaller than the cost.`,
+      `<b>Short horizons need an unrealistic direction call.</b> At 10 minutes the typical move is only ${f(S[10].mean_abs / c, 1)}× the cost (${f(S[10].mean_abs * 100, 2)}% against ${f(c * 100, 2)}%): the direction would have to be right ${P(0.5 + c / (2 * S[10].mean_abs))} of the time just to break even. At 90 minutes it is ${P(0.5 + c / (2 * S[90].mean_abs))} and at 4 hours ${P(0.5 + c / (2 * S[240].mean_abs))}. A model right 55% of the time would net ${f(ex(10, .55) * 100, 2)}% a trade at 10 minutes, ${f(ex(90, .55) * 100, 2)}% at 90 minutes and ${f(ex(240, .55) * 100, 2)}% at 4 hours, so at this cost it still loses everywhere unless it picks trades whose expected move is well above the average (these figures assume every trade moves the typical amount); ${first ? "from about " + hname(first) + " the typical move is at least twice the cost" : "no horizon reaches twice the cost"}.`,
+      `<b>Moves are not normal.</b> At 1 minute ${P(S[1].zero_share)} of windows do not move at all and the standard deviation (${f(S[1].sd * 100, 3)}%) is nearly twice the robust spread (${f(S[1].robust_sd * 100, 3)}%): a few extreme prints. A normal curve overstates how often a 1 to 10 minute move clears the cost (compare the curves above).`,
+      `<b>The market regime matters a lot.</b> Over 10 minutes the share of windows beyond 0.14% was ${P(v10[0][1])} in ${v10[0][0]} and ${P(v10[v10.length - 1][1])} in ${v10[v10.length - 1][0]}; volatile periods give far more room to cover costs (and more risk).`,
+      `<b>Averages hide the useful part.</b> These are all S&amp;P 500 stocks. A trade-selection model would pick the stocks and moments with the largest expected moves (high volatility, high volume, news), where the typical move is several times the average; measuring the move distribution of the most volatile tenth of stocks is the natural next check.`,
+    ];
+    $("mvFindings").innerHTML = L.map(x => `<li>${x}</li>`).join("");
+  }
+  const all = () => { table(); chart(); findings(); };
+  $("mv-c").addEventListener("input", all); sel.addEventListener("change", chart);
+  all(); years();
 })();
 </script>

@@ -82,14 +82,10 @@ def process(df: pd.DataFrame, members: pd.DataFrame, carry: pd.DataFrame = None)
         return _process(df, members, carry)
 
 
-def _process(df, members, carry):
-    """Features and labels for one stretch of sessions.
-
-    df: minute bars (ticker, t = New York naive start of the bar, open, high, low, close, volume); SPY with
-    all hours, the others regular session. members: bool (days x tickers) membership, rows only for days
-    with bars (forward-filled by the caller). carry: the previous sessions' daily close and volume.
-    Returns (rows, carry_out): one row per member, day and decision minute with `FEATURES` and `LABELS`.
-    """
+def session_arrays(df: pd.DataFrame):
+    """Minute bars as arrays (days x tickers x 390 minutes): returns days, tickers, A (open, high, low, close with NaN
+    where a minute has no trade), vol, has (a trade in that minute), end (the session length of each day: 390, or
+    210 for a 13:00 close found from SPY), close_f (last trade so far, forward-filled) and seen (first trade passed)."""
     spy_all = df[df["ticker"] == MARKET]
     early = early_close_days(spy_all) if len(spy_all) else set()
     minute = df["t"].dt.hour * 60 + df["t"].dt.minute - 570
@@ -114,6 +110,19 @@ def _process(df, members, carry):
         A[k] = np.where(has, A[k], np.nan)
     vol = np.where(has, vol, 0.0)
     close_f, seen = _ffill(A["close"], has)
+    return days, tickers, A, vol, has, end, close_f, seen
+
+
+def _process(df, members, carry):
+    """Features and labels for one stretch of sessions.
+
+    df: minute bars (ticker, t = New York naive start of the bar, open, high, low, close, volume); SPY with
+    all hours, the others regular session. members: bool (days x tickers) membership, rows only for days
+    with bars (forward-filled by the caller). carry: the previous sessions' daily close and volume.
+    Returns (rows, carry_out): one row per member, day and decision minute with `FEATURES` and `LABELS`.
+    """
+    days, tickers, A, vol, has, end, close_f, seen = session_arrays(df)
+    shape = has.shape
     nxt = _next_existing(has)
     open_bf = np.take_along_axis(np.concatenate([A["open"], np.full(shape[:2] + (1,), np.nan, np.float32)], -1), nxt, -1)
     day_close = close_f[:, :, -1]
