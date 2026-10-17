@@ -63,34 +63,34 @@
 | 300 | +0.012% | 0.243% | +0.016% | 0.473% | +0.016% |
 | 330 | +0.005% | 0.252% | +0.004% | 0.397% | +0.004% |
 
-## Which features rank stocks by later return? (114 feature x horizon tests; a |t| above about 3.3 is needed for 5% after testing this many)
+## Which features rank stocks by later return? (138 feature x horizon tests; a |t| above about 3.3 is needed for 5% after testing this many)
 
 IC = average rank correlation between the feature and the forward return across stocks at each decision; t over the days; years positive = calendar years with a positive average IC; excess returns in basis points against the average stock of the same decision (top/bottom tenth, and the single top/bottom stock).
 
 | Feature | Horizon | IC | t | Years positive | Top tenth excess | Top stock excess | Top stock raw return | Bottom stock excess |
 |---|---|---|---|---|---|---|---|---|
-| ret5 | 10 | -0.0275 | -35.6 | 0/19 | -0.8 bp | -2.2 bp | -2.2 bp | +2.7 bp |
-| range_pos | 10 | -0.0207 | -27.3 | 3/19 | -0.7 bp | -1.1 bp | -0.1 bp | +0.9 bp |
-| rel30 | 10 | -0.0207 | -26.7 | 1/19 | -0.6 bp | -2.4 bp | -2.4 bp | +2.4 bp |
-| ret30 | 10 | -0.0207 | -26.6 | 1/19 | -0.6 bp | -2.4 bp | -2.3 bp | +2.5 bp |
-| ret15 | 10 | -0.0211 | -26.5 | 1/19 | -0.5 bp | -2.3 bp | -2.3 bp | +2.2 bp |
-| vwap_dist | 10 | -0.0210 | -25.6 | 2/19 | -0.7 bp | -2.2 bp | -2.1 bp | +1.6 bp |
-| ret5 | 20 | -0.0186 | -25.4 | 0/19 | -0.6 bp | -1.3 bp | -1.2 bp | +2.4 bp |
-| ret60 | 10 | -0.0174 | -24.0 | 2/19 | -0.6 bp | -2.2 bp | -2.1 bp | +1.8 bp |
-| rel30 | _close | -0.0164 | -22.2 | 0/19 | -0.7 bp | -1.9 bp | -0.1 bp | +5.4 bp |
-| ret30 | _close | -0.0163 | -22.2 | 0/19 | -0.7 bp | -1.9 bp | -0.1 bp | +5.7 bp |
-| ret30 | 90 | -0.0157 | -21.6 | 0/19 | -0.6 bp | -2.4 bp | -1.7 bp | +5.0 bp |
-| rel30 | 90 | -0.0157 | -21.6 | 0/19 | -0.6 bp | -2.4 bp | -1.7 bp | +4.9 bp |
-| ret30 | 240 | -0.0157 | -21.4 | 0/19 | -0.6 bp | -1.9 bp | -0.4 bp | +5.4 bp |
-| rel30 | 240 | -0.0157 | -21.4 | 0/19 | -0.6 bp | -1.9 bp | -0.4 bp | +5.1 bp |
-| ret5 | 30 | -0.0147 | -20.4 | 1/19 | -0.5 bp | -1.1 bp | -0.8 bp | +2.2 bp |
-| ret30 | 20 | -0.0150 | -19.8 | 0/19 | -0.5 bp | -2.6 bp | -2.5 bp | +3.1 bp |
-| rel30 | 20 | -0.0150 | -19.7 | 0/19 | -0.5 bp | -2.6 bp | -2.5 bp | +3.0 bp |
-| ret15 | 20 | -0.0151 | -19.2 | 1/19 | -0.5 bp | -2.4 bp | -2.3 bp | +2.0 bp |
-| ret60 | _close | -0.0164 | -19.2 | 0/19 | -0.8 bp | -2.0 bp | -0.3 bp | +5.4 bp |
-| range_pos | _close | -0.0269 | -18.9 | 0/19 | -1.6 bp | -3.4 bp | +7.8 bp | +1.1 bp |
-| ret30 | 30 | -0.0141 | -18.9 | 0/19 | -0.5 bp | -2.9 bp | -2.6 bp | +4.0 bp |
-| rel30 | 30 | -0.0141 | -18.9 | 0/19 | -0.5 bp | -2.9 bp | -2.6 bp | +3.8 bp |
-| ret15 | 90 | -0.0137 | -18.9 | 0/19 | -0.5 bp | -2.6 bp | -1.9 bp | +3.2 bp |
-| ret60 | 240 | -0.0158 | -18.4 | 0/19 | -0.8 bp | -1.8 bp | -0.1 bp | +5.2 bp |
-| ret15 | _close | -0.0134 | -18.2 | 0/19 | -0.4 bp | -2.0 bp | -0.2 bp | +3.8 bp |
+| z5 | 10 | -0.0269 | -43.2 | 0/19 | -0.6 bp | -1.2 bp | -1.2 bp | +1.5 bp |
+| ret5 | 10 | -0.0291 | -42.7 | 0/19 | -0.8 bp | -2.1 bp | -2.1 bp | +2.7 bp |
+| z30 | 10 | -0.0234 | -34.2 | 1/19 | -0.6 bp | -0.9 bp | -0.9 bp | +1.2 bp |
+| range_pos | 10 | -0.0222 | -33.4 | 3/19 | -0.7 bp | -1.2 bp | -0.1 bp | +0.9 bp |
+| ret30 | 10 | -0.0244 | -32.7 | 1/19 | -0.6 bp | -2.4 bp | -2.3 bp | +2.5 bp |
+| rel30 | 10 | -0.0244 | -32.7 | 1/19 | -0.6 bp | -2.4 bp | -2.4 bp | +2.4 bp |
+| ret5 | 20 | -0.0200 | -31.4 | 0/19 | -0.6 bp | -1.3 bp | -1.1 bp | +2.5 bp |
+| ret15 | 10 | -0.0224 | -31.2 | 1/19 | -0.5 bp | -2.3 bp | -2.3 bp | +2.2 bp |
+| z5 | 20 | -0.0179 | -31.1 | 0/19 | -0.5 bp | -0.8 bp | -0.7 bp | +1.2 bp |
+| vwap_dist | 10 | -0.0224 | -30.2 | 2/19 | -0.7 bp | -2.1 bp | -2.1 bp | +1.6 bp |
+| ret60 | 10 | -0.0230 | -29.9 | 2/19 | -0.6 bp | -2.2 bp | -2.1 bp | +1.8 bp |
+| z30 | _close | -0.0181 | -27.6 | 0/19 | -0.9 bp | -1.2 bp | +0.6 bp | +1.8 bp |
+| ret30 | _close | -0.0194 | -27.0 | 0/19 | -0.7 bp | -1.7 bp | +0.0 bp | +5.9 bp |
+| rel30 | _close | -0.0193 | -27.0 | 0/19 | -0.7 bp | -1.7 bp | +0.1 bp | +5.4 bp |
+| ret30 | 90 | -0.0187 | -26.5 | 0/19 | -0.6 bp | -2.3 bp | -1.5 bp | +5.2 bp |
+| rel30 | 90 | -0.0187 | -26.5 | 0/19 | -0.6 bp | -2.2 bp | -1.5 bp | +4.9 bp |
+| z30 | 240 | -0.0172 | -26.3 | 0/19 | -0.7 bp | -0.8 bp | +0.8 bp | +1.6 bp |
+| ret30 | 240 | -0.0187 | -26.0 | 0/19 | -0.7 bp | -1.8 bp | -0.2 bp | +5.7 bp |
+| rel30 | 240 | -0.0186 | -26.0 | 0/19 | -0.6 bp | -1.7 bp | -0.2 bp | +5.2 bp |
+| z30 | 90 | -0.0167 | -25.7 | 0/19 | -0.5 bp | -0.5 bp | +0.2 bp | +0.9 bp |
+| z_open | 10 | -0.0166 | -25.3 | 4/19 | -0.6 bp | -1.6 bp | -1.6 bp | +1.0 bp |
+| ret5 | 30 | -0.0158 | -25.0 | 1/19 | -0.5 bp | -1.0 bp | -0.7 bp | +2.3 bp |
+| z5 | 30 | -0.0140 | -24.6 | 1/19 | -0.4 bp | -0.6 bp | -0.4 bp | +1.0 bp |
+| z30 | 20 | -0.0165 | -24.6 | 0/19 | -0.5 bp | -0.7 bp | -0.6 bp | +1.0 bp |
+| ret30 | 20 | -0.0179 | -24.6 | 0/19 | -0.5 bp | -2.6 bp | -2.4 bp | +3.2 bp |

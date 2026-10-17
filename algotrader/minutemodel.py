@@ -152,3 +152,24 @@ def replay_fills(bars: pd.DataFrame, d: int, hold: int) -> dict:
         e = bars[bars.index >= d + k]
         out[f"delay{k}"] = exit_open / e.iloc[0]["open"] - 1 if len(e) else np.nan
     return out
+
+
+def first_passage(preds: pd.DataFrame, label: str, cost: float, taus=(0.0, 0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.0015, 0.002)) -> pd.DataFrame:
+    """The rule a live trader could follow: go through the day's decisions in time order and take the stock with the highest
+    prediction at the FIRST decision where it is at least `tau`; one trade a day, nothing later. (`best_of_day` picks the best of
+    the whole day, which needs hindsight about which time of day turns out best.) Per threshold: trades a year, gross and net
+    return in basis points, net t-statistic and winning share."""
+    p = preds[["date", "minute", f"pred_{label}", label]].dropna()
+    top = p.loc[p.groupby(["date", "minute"])[f"pred_{label}"].idxmax()].sort_values(["date", "minute"])
+    days = preds["date"].nunique() or 1
+    rows = []
+    for tau in taus:
+        hit = top[top[f"pred_{label}"] >= tau]
+        first = hit.groupby("date").head(1)
+        net = first[label] - cost
+        rows.append({"tau_bp": tau * 1e4, "trades": len(first), "trades_per_year": len(first) / (days / 252),
+                     "mean_minute": float(first["minute"].mean()) if len(first) else np.nan,
+                     "gross_bp": first[label].mean() * 1e4 if len(first) else np.nan, "net_bp": net.mean() * 1e4 if len(first) else np.nan,
+                     "net_t": net.mean() / (net.std() / np.sqrt(len(first))) if len(first) > 2 and net.std() > 0 else np.nan,
+                     "win": float((net > 0).mean()) if len(first) else np.nan})
+    return pd.DataFrame(rows)

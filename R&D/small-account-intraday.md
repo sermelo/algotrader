@@ -110,3 +110,19 @@ journal article; figures marked (check) must be confirmed with IBKR before real 
    score, buy SPY for the same minutes), every horizon counted in the luck bar (`trials.py`).
 5. **Before real money**: IBKR paper account, confirm the cash-account settlement rule and the Tiered rates, the
    first month with a 1-share position to compare real and modelled costs.
+
+
+## 5. Outcome of the tests (2026-10-18)
+
+The plan in section 4 was run; everything is in `results/minute_*`, `algotrader/minutefeat|movestats|minutescan|minutemodel.py` and report
+sections 7-10. **Verdict: stop** (the stopping rule was fixed before the model was run).
+
+- Moves (18 Octobers, 50M windows a horizon): the typical move is 0.05% at 1 minute, 0.16% at 10, 0.28% at 30, 0.47% at 90 and 0.77% at 4 hours;
+  against a 0.14% break-even, 1-5 minute holds are out; volatility concentrates moves (top tenth 5-11x the cost over 30-240 minutes).
+- Signals: the only consistent feature effect is short-term reversal (rank correlation -0.02 to -0.035, 2-6 bp for the best pick); 6,264 simple
+  picking rules: none beats luck after costs.
+- Model (walk-forward gradient boosting, volatile tenth, 2013-2026): skill about +0.02 rank correlation; 0 of 12 pre-registered tests clear the cost.
+- The best-of-day view (+39 bp net, t 11.7) was a hindsight mirage; the first-passage rule a trader could follow gives about 0 net (-3 to +1 bp).
+- Lesson: evaluate the rule a trader could follow; choosing the trade time with hindsight about which decision of the day has the highest
+  prediction selects favourable price paths, because later predictions carry information about what the price did after the entry.
+- Remaining: a faint tail at high thresholds (7-28 trades a year, +38 to +115 bp gross) that only forward paper trading could confirm.

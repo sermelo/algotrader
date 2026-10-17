@@ -84,7 +84,7 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
 <header style="display:grid;gap:14px">
   <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026 · long history 2012 – 2026</div>
   <h1>Algotrader Strategy Scorecard</h1>
-  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account section 8 measures how far prices move in minutes and hours against those costs and section 9 scans 21.7 million intraday decisions for where an edge could be. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
+  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account section 8 measures how far prices move in minutes and hours against those costs section 9 scans 21.7 million intraday decisions for where an edge could be and section 10 tests a model on them, with the verdict. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
   <div class="tiles" id="tiles"></div>
 </header>
 
@@ -376,8 +376,24 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
   <div class="verdict"><ul class="findings" id="focusFindings"></ul></div>
 </section>
 
+<section id="s-model">
+  <div class="eyebrow">10 · The model test</div>
+  <h2>A model for the volatile stocks: some skill, one mirage, and a verdict</h2>
+  <p id="modelIntro"></p>
+  <div class="panel"><h3>1 · Does the model rank stocks better than chance? (rank correlation by year)</h3><div class="scroll"><table id="mdIc"></table></div></div>
+  <div class="panel"><h3>2 · The 12 tests fixed in advance, after costs</h3><div class="scroll"><table id="mdPrimary"></table></div><p class="muted" id="mdPrimaryNote"></p></div>
+  <div class="panel"><h3>3 · The mirage: "the best trade of each day"</h3>
+    <div class="scroll"><table id="mdMirage"></table></div><p class="muted" id="mdMirageNote"></p></div>
+  <div class="panel"><h3>4 · Is it a bug? Placebo and ablation tests</h3><div class="scroll"><table id="mdPlacebo"></table></div></div>
+  <div class="panel"><h3>5 · Could those trades have been filled? Replay on the raw minute bars</h3><p class="muted" id="mdReplayHead"></p><div class="scroll"><table id="mdReplay"></table></div></div>
+  <div class="panel"><h3>6 · The rule a live trader could follow: the first decision where the edge clears a threshold</h3>
+    <div class="scroll"><table id="mdOnline"></table></div>
+    <h3>Threshold chosen only from earlier years</h3><div class="scroll"><table id="mdOnlineWf"></table></div><p class="muted" id="mdOnlineNote"></p></div>
+  <div class="verdict"><ul class="findings" id="modelFindings"></ul></div>
+</section>
+
 <section id="s-all">
-  <div class="eyebrow">10 · Reference</div>
+  <div class="eyebrow">11 · Reference</div>
   <h2>All results</h2>
   <div class="panel">
     <div class="controls" role="group" aria-label="Universe">
@@ -1024,5 +1040,36 @@ drawAll();
   const all = () => { cond(); findings(); };
   $("fc-h").addEventListener("change", cond); if ($("mv-c")) $("mv-c").addEventListener("input", all);
   cond(); tod(); sig(); rules(); findings();
+})();
+// ---------- 10. the model test
+(() => {
+  const M = D.model; if (!M) { document.getElementById("s-model").hidden = true; return; }
+  const $ = id => document.getElementById(id), T = key => { const k = Object.keys(M.tables).find(x => x.startsWith(key)); return k ? M.tables[k] : null; };
+  function render(id, t, opts = {}) {
+    if (!t) return; const rows = opts.maxRows ? t.rows.slice(0, opts.maxRows) : t.rows;
+    $(id).innerHTML = `<tr>${t.header.map(h => `<th>${h}</th>`).join("")}</tr>` + rows.map(r => `<tr>${r.map((c, i) => { const neg = /^-\d|^−/.test(c) && i > 0, pos = /^\+\d/.test(c) && i > 0; const nan = /nan/.test(c); return `<td class="${opts.color && !nan && neg ? "neg" : opts.color && !nan && pos ? "pos" : ""}">${nan ? "–" : c}</td>`; }).join("")}</tr>`).join("");
+  }
+  const pass = M.primary_pass;
+  $("modelIntro").innerHTML = `The question: can a model pick, among the most volatile tenth of S&amp;P 500 stocks at each of 11 decision times a day, the one or three whose return over the next 30 minutes to 4 hours beats the cost of the trade? ${M.head} The design was fixed before any test year was seen (<code>algotrader/minutemodel.py</code>): the universe, the features, the model, the yearly walk-forward (each test year predicted only from earlier years), and 12 primary tests. Everything else is exploratory, and a stopping rule was set: continue only if the primary tests show a net t-statistic above about 3 in most years.`;
+  render("mdIc", T("summary: Rank correlation"), { color: false });
+  render("mdPrimary", T("summary: The 12 pre-registered"), { color: true });
+  $("mdPrimaryNote").innerHTML = `<b>${pass[0]} of ${pass[1]}</b> clear the bar. The model has real skill (the rank correlation above is positive in 13 of 14 years at 90 minutes), but a few basis points of skill do not cover 8 to 14 basis points of costs.`;
+  render("mdMirage", T("summary: Hold 90"), { color: true });
+  $("mdMirageNote").innerHTML = `Looking at the model's results I added one more view: each day, take the single stock with the highest prediction across all 11 decision times (the table: a threshold on how confident the model must be). It looked spectacular: <b>+39 bp net per trade, t = 11.7, 247 trades a year</b>. It is a mirage, and the next three tables show why. It uses hindsight: it needs to know that 14:30 will not offer something better than 10:00.`;
+  render("mdPlacebo", T("placebo:"), { color: true });
+  $("mdReplayHead").textContent = M.replay_head;
+  render("mdReplay", T("replay:"), { color: true });
+  render("mdOnline", T("online: Hold 90: all years"), { color: true });
+  render("mdOnlineWf", T("online: Hold 90: threshold chosen"), { color: true });
+  const tot = M.online_totals.map(x => `hold ${x[0].replace("_close", "to the close")}: ${x[2]} trades, ${x[3]} bp net per trade`).join("; ");
+  $("mdOnlineNote").textContent = `Choosing the threshold from earlier years only, all years together: ${tot}.`;
+  const F = [
+    `<b>The pipeline is not manufacturing the edge.</b> A model trained on shuffled targets and random picks both lose about the cost (−4.6 and −0.2 bp gross); a model that only knows the stock's price and dollar volume gets +2.6 bp; the effect does not depend on price or liquidity, and two independent groups of features (events: gap and volume surge; short-term price moves) each give about +34 bp on the best-of-day view. On the raw minute bars the trades reproduce the dataset's returns exactly and survive 1 to 5 minutes of delay (about −3 bp), so it is not a one-minute quirk, and even a worst-case fill (buy the high, sell the low) leaves +7.5 bp.`,
+    `<b>The flaw is the selection, not the data.</b> The model predicts reversals: after a stock rises, its predicted edge falls. If a stock keeps rising after 10:00, every later decision of the day looks worse, so 10:00 stays the day's best. Picking "the best time of the day" therefore picks the days on which the price path afterwards was favourable: the later predictions carry information about what happened after the entry. A live trader cannot do that.`,
+    `<b>The live version has no edge.</b> Taking the best stock at the first decision of the day whose predicted edge reaches a threshold chosen from earlier years gives about zero: roughly −3 to +1 bp net per trade for every holding time, with a year-to-year scatter of tens of basis points.`,
+    `<b>A faint tail, not yet evidence.</b> At high thresholds (10 to 20 bp predicted) the first-passage rule makes +38 to +115 bp gross, but on only 7 to 28 trades a year, with t-statistics of 2.6 to 3.7 chosen after the fact from 24 tries and not stable from year to year. Only trading it forward on fresh data could tell.`,
+    `<b>Verdict.</b> Under the stopping rule set in advance, small-account intraday trading with these data does not clear its costs, and I recommend not pursuing it as a way to earn money. The research code stays; the cheapest remaining check is to paper-trade the high-threshold rule forward for several months at no risk. The effort is better spent on slower strategies, where costs are a small part of the return (the 14-year daily tests did not beat buying and holding either, so that side needs its own honest look).`,
+  ];
+  $("modelFindings").innerHTML = F.map(x => `<li>${x}</li>`).join("");
 })();
 </script>

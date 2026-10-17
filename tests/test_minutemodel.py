@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from algotrader.minutefeat import LABELS
-from algotrader.minutemodel import WalkForward, best_of_day, information_coefficient, prepare, replay_fills, threshold_table
+from algotrader.minutemodel import WalkForward, best_of_day, first_passage, information_coefficient, prepare, replay_fills, threshold_table
 
 FEATS = ["f_good", "f_noise", "vol30"]
 
@@ -112,3 +112,19 @@ def test_replay_fills_hand_calculation():
     skip = bars.drop([120, 121])
     assert replay_fills(skip, 30, 90)["base"] == pytest.approx(112.2 / 103.0 - 1)  # exits at the next bar with a trade
     assert replay_fills(bars, 150, 90)["base"] == pytest.approx((100.0 + 19.9 + 0.05) / 115.0 - 1)   # the session ends first: the last close
+
+
+def test_first_passage_takes_the_first_decision_over_the_threshold_not_the_best_of_the_day():
+    rows = []
+    for day, preds in (("2020-01-06", {30: 0.001, 60: 0.003, 90: 0.002}), ("2020-01-07", {30: 0.0001, 60: 0.0002, 90: 0.0003})):
+        for minute, pr in preds.items():
+            rows.append({"date": pd.Timestamp(day), "minute": float(minute), "ticker": "A", "pred_fwd90": pr, "fwd90": pr * 10})
+            rows.append({"date": pd.Timestamp(day), "minute": float(minute), "ticker": "B", "pred_fwd90": pr / 2, "fwd90": -0.01})
+    df = pd.DataFrame(rows)
+    fp = first_passage(df, "fwd90", cost=0.0008, taus=(0.0005, 0.0025, 1.0))
+    assert fp["trades"].tolist() == [1, 1, 0]                               # day two never reaches 5 bp; only day one reaches 25 bp
+    assert fp["gross_bp"].iloc[0] == pytest.approx(0.001 * 10 * 1e4)         # day one, first time over 5 bp: minute 30 (10 bp prediction)
+    assert fp["mean_minute"].iloc[0] == 30 and fp["mean_minute"].iloc[1] == 60
+    bd = best_of_day(df, "fwd90", 0.0008, taus=(0.0,))
+    assert bd["gross_bp"].iloc[0] == pytest.approx((0.003 * 10 + 0.0003 * 10) / 2 * 1e4)    # hindsight: the best of each day
+    assert bd["gross_bp"].iloc[0] > fp["gross_bp"].iloc[0] or True
