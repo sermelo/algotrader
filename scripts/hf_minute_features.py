@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from hf_daily import URL, month_range                                          # noqa: E402
 
 from algotrader.history import parse_members                                   # noqa: E402
-from algotrader.minutefeat import MARKET, membership_by_day, process            # noqa: E402
+from algotrader.minutefeat import MARKET, membership_by_day, month_tickers, process            # noqa: E402
 
 COLS = ["timestamp", "ticker", "open", "high", "low", "close", "volume"]
 
@@ -59,8 +59,7 @@ def main(argv=None):
         t0 = time.time()
         start = pd.Period(m, "M").start_time
         end = pd.Period(m, "M").end_time
-        inmonth = members[(members["date"] >= start - pd.Timedelta(days=7)) & (members["date"] <= end)]
-        tickers = set(inmonth["ticker"]) | {MARKET}
+        tickers = month_tickers(members, start, end) | {MARKET}
         prev = out / f"carry_{(pd.Period(m, 'M') - 1).strftime('%Y-%m')}.parquet"
         carry = pd.read_parquet(prev) if prev.exists() else None
         if carry is None and m != args.first:

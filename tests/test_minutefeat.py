@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from algotrader.minutefeat import DECISIONS, FEATURES, HORIZONS, LABELS, early_close_days, membership_by_day, process
+from algotrader.minutefeat import (DECISIONS, FEATURES, HORIZONS, LABELS, early_close_days, membership_by_day,
+                                   month_tickers, process)
 
 DAYS = [pd.Timestamp("2024-03-04"), pd.Timestamp("2024-03-05")]
 
@@ -136,3 +137,12 @@ def test_features_do_not_see_later_bars():
     for f in FEATURES:
         assert a[f] == pytest.approx(b[f], rel=1e-6, nan_ok=True), f
     assert a["fwd10"] != pytest.approx(b["fwd10"])                                                  # labels do look ahead, by design
+
+
+def test_month_tickers_use_the_list_in_force_across_gaps_and_after_the_last_list():
+    long = pd.DataFrame({"date": [pd.Timestamp("2022-06-28")] * 2 + [pd.Timestamp("2022-09-19")] * 3,
+                         "ticker": ["A", "B", "A", "C", "D"]})
+    month = lambda m: month_tickers(long, pd.Period(m, "M").start_time, pd.Period(m, "M").end_time)
+    assert month("2022-08") == {"A", "B"}                       # no list inside the month: the one in force
+    assert month("2022-09") == {"A", "B", "C", "D"}             # the old list at the start and the new one
+    assert month("2023-03") == {"A", "C", "D"}                  # after the last list: carried forward

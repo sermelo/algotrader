@@ -198,3 +198,12 @@ def membership_by_day(members_long: pd.DataFrame, days, tickers) -> pd.DataFrame
     m = m.reindex(columns=tickers, fill_value=False).astype(float)
     m = m.reindex(index=m.index.union(days)).ffill().reindex(days).fillna(0.0) > 0.5
     return m
+
+
+def month_tickers(members_long: pd.DataFrame, start, end) -> set:
+    """Members during a month: the list in force on its first day (the latest on or before it; the lists
+    have gaps of weeks and the last one is carried forward) and every list up to its last day."""
+    dates = members_long["date"]
+    before = dates[dates <= start]
+    first = before.max() if len(before) else dates.min()
+    return set(members_long[(dates >= first) & (dates <= end)]["ticker"])
