@@ -228,7 +228,9 @@ close, filled at the next open. No stop by default.
   list dates); `PointInTime` hides the closes of non-members from the strategy, so it
   can only buy members; held stocks that leave are sold at the next rebalance; a stock
   whose data ends is sold at its last close. Prices: Tiingo if its series did not fail
-  `history check`, else Quandl WIKI (adjusted OHLCV).
+  `history check`, else the adjusted Hugging Face series (`hfdata.build_source`: WIKI's
+  split and dividend events where WIKI has the ticker, splits found from prices and no
+  dividends after WIKI's last day; `--no-hf` skips it), else Quandl WIKI (adjusted OHLCV).
 - Walk-forward: folds start every January from 2012 to the last year of data; at each
   fold start the grid point with the best portfolio Sharpe on all earlier data (and at
   least 3 rebalance days) is chosen and run until the next fold. One full-history run
