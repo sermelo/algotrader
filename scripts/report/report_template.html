@@ -84,7 +84,7 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
 <header style="display:grid;gap:14px">
   <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026 · long history 2012 – 2026</div>
   <h1>Algotrader Strategy Scorecard</h1>
-  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account and section 8 measures how far prices move in minutes and hours against those costs. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
+  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account section 8 measures how far prices move in minutes and hours against those costs and section 9 scans 21.7 million intraday decisions for where an edge could be. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
   <div class="tiles" id="tiles"></div>
 </header>
 
@@ -345,8 +345,39 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
   <div class="verdict"><ul class="findings" id="mvFindings"></ul></div>
 </section>
 
+<section id="s-focus">
+  <div class="eyebrow">9 · Where to focus</div>
+  <h2>Where could an intraday edge be? Four scans of 21.7 million decisions</h2>
+  <p id="focusIntro"></p>
+  <div class="panel">
+    <h3>1 · Where the big moves are</h3>
+    <div class="controls" style="gap:12px 18px; align-items:end">
+      <label class="f">Holding time<select id="fc-h"><option value="fwd30">30 minutes</option><option value="fwd90" selected>90 minutes</option><option value="fwd240">4 hours</option></select></label>
+      <span class="muted">The cost is the box in section 8.</span>
+    </div>
+    <div class="scroll"><table id="fcCond"></table></div>
+    <p class="muted" id="fcCondNote"></p>
+  </div>
+  <div class="panel">
+    <h3>2 · Time of day</h3>
+    <div class="scroll"><table id="fcTod"></table></div>
+  </div>
+  <div class="panel">
+    <h3>3 · Does any feature rank stocks by later return?</h3>
+    <div class="scroll"><table id="fcSig"></table></div>
+    <p class="muted" id="fcSigNote"></p>
+  </div>
+  <div class="panel">
+    <h3>4 · Do simple stock-picking rules beat the cost?</h3>
+    <div class="tiles" id="fcRuleTiles"></div>
+    <div class="scroll"><table id="fcRules"></table></div>
+    <p class="muted" id="fcRuleNote"></p>
+  </div>
+  <div class="verdict"><ul class="findings" id="focusFindings"></ul></div>
+</section>
+
 <section id="s-all">
-  <div class="eyebrow">9 · Reference</div>
+  <div class="eyebrow">10 · Reference</div>
   <h2>All results</h2>
   <div class="panel">
     <div class="controls" role="group" aria-label="Universe">
@@ -941,5 +972,57 @@ drawAll();
   const all = () => { table(); chart(); findings(); };
   $("mv-c").addEventListener("input", all); sel.addEventListener("change", chart);
   all(); years();
+})();
+// ---------- 9. where to focus
+(() => {
+  const SC = D.scans; if (!SC) { document.getElementById("s-focus").hidden = true; return; }
+  const $ = id => document.getElementById(id), f = (x, d = 2) => isFinite(x) ? x.toFixed(d) : "–", P = (x, d = 0) => isFinite(x) ? (x * 100).toFixed(d) + "%" : "–";
+  const NAMES = { vol30: "volatility of the last 30 minutes", range_bp: "recent minute-bar range", dvol20: "daily volatility over 20 days", abs_gap: "size of the opening gap", abs_ret_open: "size of the move since the open", rvol30: "volume surge (last 30 minutes)", price: "stock price", logdv20: "liquidity (dollar volume)" };
+  const cost = () => Math.max(parseFloat($("mv-c") ? $("mv-c").value : "0.14") / 100, 1e-5);
+  const clock = m => { const t = 570 + m; return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); };
+  const hn = l => l === "fwd_close" ? "to the close" : l.slice(3) + " min";
+  $("focusIntro").innerHTML = `The cost table says short holds are out. These scans, on every S&amp;P 500 member at 11 decision times a day from 2008 to March 2026 (21.7 million decisions, <code>algotrader/minutescan.py</code>), ask where a larger move, or a predictable one, could come from: which conditions concentrate big moves, whether the time of day matters, whether any single feature ranks stocks by their later return, and whether simple picking rules beat the cost after counting how many were tried.`;
+  function cond() {
+    const lab = $("fc-h").value, c = cost(), keys = Object.keys(SC.conditional[Object.keys(SC.conditional)[0]][lab].up), kk = keys.reduce((a, b) => Math.abs(+b - c) < Math.abs(+a - c) ? b : a);
+    let h = `<tr><th>Condition</th><th>Lowest tenth</th><th>Middle</th><th>Highest tenth</th><th>Highest tenth is at</th><th>Highest tenth rises more than ${f(+kk * 100, 2)}%</th></tr>`;
+    for (const n of ["vol30", "range_bp", "dvol20", "abs_gap", "abs_ret_open", "rvol30", "price", "logdv20"]) { const d = SC.conditional[n][lab], m = d.mean_abs, k = m.length;
+      h += `<tr><td>${NAMES[n]}</td><td>${f(m[0] / c, 1)}×</td><td>${f(m[Math.floor(k / 2)] / c, 1)}×</td><td class="${m[k - 1] / c > 5 ? "pos" : ""}">${f(m[k - 1] / c, 1)}×</td><td>${n === "price" ? "$" : ""}${f(d.value[k - 1], n === "price" || n === "logdv20" ? 0 : n.startsWith("abs") || n === "dvol20" ? 3 : 1)}${n === "vol30" || n === "range_bp" ? " bp" : ""}</td><td>${P(d.up[kk][k - 1])}</td></tr>`; }
+    $("fcCond").innerHTML = h;
+    $("fcCondNote").textContent = `Each cell: the typical move (mean absolute change over the holding time) as a multiple of the cost, for the stocks in that tenth of the condition. Volatility, recent range, opening gap and move since the open all concentrate large moves in the top tenth, where the typical move is several times the average stock's; liquidity and volume surge matter less; cheap stocks move more.`;
+  }
+  function tod() {
+    const a = SC.time_of_day.fwd30, b = SC.time_of_day.fwd90, e = SC.time_of_day.fwd_close;
+    let h = `<tr><th>Decision at</th><th>Typical move, 30 min</th><th>Typical move, 90 min</th><th>Average return to the close</th></tr>`;
+    a.minute.forEach((m, i) => { h += `<tr><td>${clock(m)}</td><td>${f(a.mean_abs[i] * 100, 3)}%</td><td>${f(b.mean_abs[i] * 100, 3)}%</td><td>${(e.mean[i] >= 0 ? "+" : "−") + f(Math.abs(e.mean[i]) * 100, 3)}%</td></tr>`; });
+    $("fcTod").innerHTML = h;
+  }
+  function sig() {
+    let h = `<tr><th>Feature</th><th>Holding time</th><th>Rank correlation (IC)</th><th>t</th><th>Years positive</th><th>Best-ranked stock vs average</th><th>Worst-ranked stock vs average</th></tr>`;
+    for (const s of SC.signals) h += `<tr><td>${s.feature}</td><td>${hn(s.label)}</td><td>${(s.ic >= 0 ? "+" : "−") + f(Math.abs(s.ic), 4)}</td><td>${f(s.ic_t, 1)}</td><td>${s.years_positive}/${s.years}</td><td>${(s.top1_bp >= 0 ? "+" : "−") + f(Math.abs(s.top1_bp), 1)} bp</td><td>${(s.bot1_bp >= 0 ? "+" : "−") + f(Math.abs(s.bot1_bp), 1)} bp</td></tr>`;
+    $("fcSig").innerHTML = h;
+    $("fcSigNote").textContent = `${SC.n_signal_tests} feature-and-horizon combinations tested (a |t| above about 3.3 is needed after that many tests). The strongest are all negative: stocks that rose over the last 5 to 60 minutes, or sit high in the day's range or above VWAP, do worse than average afterwards, in nearly every one of 19 years (short-term reversal). The effect is tiny: the stock with the lowest recent return beats the average stock by only 2 to 6 basis points (0.02% to 0.06%).`;
+  }
+  function rules() {
+    const R = SC.rules, b = R.best[0];
+    $("fcRuleTiles").innerHTML = [[R.n.toLocaleString("en-GB"), "rules, times and horizons tested"], [R.positive, "gave a positive average result after costs"], [R.net_t_above_null, `beat luck (net t above ${f(R.null_max_t, 1)})`], [R.excess_t_above_null, "show a real picking effect before costs"]].map(([v, k]) => `<div class="tile"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+    const row = x => `<tr><td>${x.pick === "low" ? "lowest" : "highest"} ${x.score}</td><td>${x.filter}</td><td>${x.k}</td><td>${clock(x.minute)}</td><td>${hn(x.label)}</td><td>${f(x.gross_bp, 1)} bp</td><td>${f(x.excess_bp, 1)} bp (t ${f(x.excess_t, 1)})</td><td class="${x.net_bp > 0 ? "pos" : "neg"}">${f(x.net_bp, 1)} bp (t ${f(x.net_t, 1)})</td><td>${P(x.win_net)}</td><td>${x.net_years_positive}/${x.years}</td></tr>`;
+    const head = `<tr><th>Pick</th><th>Stocks considered</th><th>Picks</th><th>Decision at</th><th>Hold</th><th>Gross per trade</th><th>Over the average stock</th><th>After costs</th><th>Winning days</th><th>Years positive</th></tr>`;
+    $("fcRules").innerHTML = head + `<tr class="grouprow"><td colspan="10">Best results after costs</td></tr>` + R.best.map(row).join("") + `<tr class="grouprow"><td colspan="10">Best for each stock group and number of picks</td></tr>` + R.by_filter_k.map(row).join("");
+    $("fcRuleNote").textContent = `One pick costs 0.08% (a whole 2,000-euro position), three picks 0.14% each (three slots). With ${R.n.toLocaleString("en-GB")} tests the best t expected from luck alone is about ${f(R.null_max_t, 1)}; the best result here is ${f(b.net_t, 1)}.`;
+  }
+  function findings() {
+    const lab = "fwd90", c = cost(), d = SC.conditional.vol30[lab].mean_abs, R = SC.rules, b = R.best[0];
+    const L = [
+      `<b>Trade only the volatile stocks.</b> Over 90 minutes the typical move is ${f(d[0] / c, 1)}× the ${f(c * 100, 2)}% cost in the calmest tenth of stocks and ${f(d[d.length - 1] / c, 1)}× in the most volatile tenth (by the last 30 minutes' volatility). Costs are fixed, so volatility is the strongest lever found; the same holds for large opening gaps and large moves since the open.`,
+      `<b>Short-term reversal is real but too small on its own.</b> It shows in nearly every year and at every horizon, yet the best pick beats the average stock by only a few basis points, against a cost of 8 to 14. No single simple feature can pay for the trade.`,
+      `<b>No simple rule beats the cost.</b> Of ${R.n.toLocaleString("en-GB")} tests ${R.positive} were positive after costs, none beat luck, and the best (${b.pick === "low" ? "lowest" : "highest"} ${b.score}, ${b.filter}, ${b.k} pick, ${clock(b.minute)}, ${hn(b.label)}) made ${f(b.net_bp, 1)} bp a trade, positive in only ${b.net_years_positive} of ${b.years} years.`,
+      `<b>Timing helps a little.</b> Moves are largest right after the open and smallest around 13:30, so the same cost is easiest to cover for entries before about 11:00; the average stock drifts up about 0.02% from the morning to the close.`,
+      `<b>Where this points.</b> A trading model has to find an effect several times stronger than any single feature here: with the rank correlation around 0.02 the gross gain of the best pick is about the cost. The sensible next step is still one honest test: a gradient-boosting model on the volatile tenth of stocks, 90-minute to 4-hour holds, entries before 11:00, trained on earlier years and judged only on later ones, counting every configuration tried. If it does not clear the cost with a t-statistic above about 3 in most years, intraday trading with a small account is not worth pursuing, and the effort is better spent on slower strategies where costs matter far less.`,
+    ];
+    $("focusFindings").innerHTML = L.map(x => `<li>${x}</li>`).join("");
+  }
+  const all = () => { cond(); findings(); };
+  $("fc-h").addEventListener("change", cond); if ($("mv-c")) $("mv-c").addEventListener("input", all);
+  cond(); tod(); sig(); rules(); findings();
 })();
 </script>
