@@ -24,3 +24,6 @@ bar (389 configurations) and some text in the template are hard-coded for the
 The long-history section (6) reads `long` from `report_data.json`; rerun `export_long.py` after
 the long runs change (e.g. when `deep_arb_long` finishes: the page hides its "still running" note
 once all 19 experiments are present). Its ticker counts (809 / 741) are set at the top of the script.
+
+Section 7 (small account) is a static page with a cost calculator (no data export); its JS
+`breakeven` mirrors `algotrader.slot.breakeven` (compared on 270 price, size, plan and spread cases).

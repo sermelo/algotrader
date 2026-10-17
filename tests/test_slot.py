@@ -148,3 +148,24 @@ def test_a_stock_is_bought_at_most_once_a_day():
     idx = pd.DatetimeIndex([a.index[5], a.index[40]])
     res = SlotTrader(capital=2000, slots=2, cost=FREE, hold_minutes=10).run({"A": a}, pd.DataFrame({"A": [0.05, 0.05]}, index=idx))
     assert len(res.trades) == 1
+
+
+def test_price_cost_and_invested_filters_skip_stocks_even_with_a_big_edge():
+    bars = {k: day_bars([p] * 60) for k, p in (("CHEAP", 4.0), ("MID", 60.0), ("PRICEY", 400.0))}
+    e = edges_at(bars["MID"], 5, CHEAP=0.2, PRICEY=0.19, MID=0.18)
+    cost = ibkr_tiered(spread_bps=2.0)
+    base = dict(capital=770, cost=cost, hold_minutes=10)
+    assert SlotTrader(**base).run(bars, e).trades["ticker"].iloc[0] == "CHEAP"          # highest edge wins
+    assert SlotTrader(**base, min_price=10.0).run(bars, e).trades["ticker"].iloc[0] == "PRICEY"
+    assert SlotTrader(**base, min_price=10.0, max_price=300.0).run(bars, e).trades["ticker"].iloc[0] == "MID"
+    # a cost ceiling: $4 shares cost about 0.4% in per-share fees on a $770 slot, MID only about 0.15%
+    assert SlotTrader(**base, max_cost=0.0025).run(bars, e).trades["ticker"].iloc[0] == "PRICEY"
+    # one $400 share covers 52% of the slot: needs min_invested above that to be rejected
+    assert SlotTrader(**base, min_price=10.0, min_invested=0.8).run(bars, e).trades["ticker"].iloc[0] == "MID"
+    assert SlotTrader(**base, min_price=10.0, min_invested=0.99).run(bars, e).trades.empty
+
+
+def test_filter_validation():
+    for bad in (dict(min_price=-1), dict(min_price=5, max_price=5), dict(min_invested=1.5), dict(max_cost=0)):
+        with pytest.raises(ValueError):
+            SlotTrader(**bad)

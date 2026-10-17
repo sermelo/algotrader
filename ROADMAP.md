@@ -100,7 +100,7 @@ Updated 2026-10-17. In order; details in the sections below.
 8. **Before any live trading**: paper trading per `docs/ibkr-integration.md`, stock-only
    strategies (PRIIPs), the Tiered cost model, PDT and Spanish two-month rule checks.
 10. **S14 Intraday for a small account (one to three stocks at a time, 1,000-2,000 euros)** (sergio, 2026-10-17; research in
-    `R&D/small-account-intraday.md`): engine and break-even helper done (`algotrader/slot.py`, `SlotTrader` with 1-3 slots,
+    `R&D/small-account-intraday.md`): engine and break-even helper done (`algotrader/slot.py`, `SlotTrader` with 1-3 slots and price/cost filters,
     `tests/test_slot.py`); next, in order: minute-feature extraction from the Hugging Face minute bars on the
     VPS, walk-forward model per horizon (10, 20, 30, 90, 240 minutes) with calibrated edges, evaluation with
     `SlotTrader` and Tiered costs. Awaiting sergio's go for the data extraction and the model.

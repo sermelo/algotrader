@@ -60,6 +60,9 @@ svg .axis0 { stroke: var(--ink-3); stroke-width: 1; }
 .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 select, button.seg { font: 14px var(--f-body); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 10px; }
 button.seg { cursor: pointer; }
+input[type=number] { font: 14px var(--f-body); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; width: 100px; }
+label.f { display: grid; gap: 3px; font-size: 12px; color: var(--ink-2); }
+input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button.seg[aria-pressed="true"] { background: var(--accent); color: var(--surface); border-color: var(--accent); }
 select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 table { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; width: 100%; }
@@ -81,7 +84,7 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
 <header style="display:grid;gap:14px">
   <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026 · long history 2012 – 2026</div>
   <h1>Algotrader Strategy Scorecard</h1>
-  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
+  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker; section 6 repeats the test over 14.8 years (2012 – 2026) on S&amp;P 500 members; section 7 is a cost calculator for a 1,000 – 2,000-euro intraday account. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
   <div class="tiles" id="tiles"></div>
 </header>
 
@@ -278,8 +281,43 @@ td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg)
   <div class="verdict"><ul class="findings" id="longFindings"></ul></div>
 </section>
 
+<section id="s-small">
+  <div class="eyebrow">7 · Small account</div>
+  <h2>Intraday with 1,000 – 2,000 euros: what the costs allow</h2>
+  <p id="smallIntro"></p>
+  <div class="panel">
+    <h3>Cost calculator</h3>
+    <div class="controls" style="gap:12px 18px; align-items:end">
+      <label class="f">Account (euros)<input type="number" id="in-eur" value="2000" min="100" step="100"></label>
+      <label class="f">Dollars per euro<input type="number" id="in-fx" value="1.15" min="0.5" max="2" step="0.01"></label>
+      <label class="f">Positions at once<select id="in-slots"><option>1</option><option>2</option><option selected>3</option></select></label>
+      <label class="f">Stock price ($)<input type="number" id="in-price" value="125" min="1" step="1"></label>
+      <label class="f">IBKR plan<select id="in-plan"><option value="tiered" selected>Pro Tiered</option><option value="fixed">Pro Fixed</option></select></label>
+      <label class="f">Half-spread (bp a side)<input type="number" id="in-spread" value="2" min="0" step="0.5"></label>
+      <label class="f">Other cost per round trip (bp)<input type="number" id="in-extra" value="0" min="0" step="1"></label>
+      <label class="f">Stock's daily volatility (%)<input type="number" id="in-vol" value="1.5" min="0.3" step="0.1"></label>
+    </div>
+    <div class="tiles" id="smallTiles"></div>
+    <div class="legend">
+      <span><i class="sw line" style="border-color:var(--s-core)"></i>Pro Tiered</span>
+      <span><i class="sw line" style="border-color:var(--s-broad)"></i>Pro Fixed</span>
+      <span><i class="sw" style="background:var(--ink)"></i>the stock entered above</span>
+      <span><i class="sw" style="background:var(--pos-bg);border:1px solid var(--pos)"></i>cheapest price range (within 0.03 points of the best)</span>
+    </div>
+    <div class="scroll"><svg id="smallChart" role="img" aria-label="Break-even move against stock price for the chosen position size"></svg></div>
+    <h3>What the horizon needs</h3>
+    <div class="scroll"><table id="smallHorizons"></table></div>
+    <p class="muted" id="smallNote"></p>
+  </div>
+  <div class="panel">
+    <h3>Rules that shape the design</h3>
+    <ul class="findings" id="smallRules"></ul>
+  </div>
+  <div class="verdict"><ul class="findings" id="smallPlan"></ul></div>
+</section>
+
 <section id="s-all">
-  <div class="eyebrow">7 · Reference</div>
+  <div class="eyebrow">8 · Reference</div>
   <h2>All results</h2>
   <div class="panel">
     <div class="controls" role="group" aria-label="Universe">
@@ -722,5 +760,93 @@ drawAll();
   const pend = LN.length < 19 ? `<li>Still running: <code>deep_arb_long</code> (the deep-learning statistical arbitrage model, about 12 hours or more per run). It lost heavily in an earlier test on WIKI data alone (Sharpe −5.5).</li>` : "";
   document.getElementById("longFindings").innerHTML = f.map(x => `<li>${x}</li>`).join("") + pend;
   drawTable(); drawYears(); drawCurve();
+})();
+// ---------- 7. small account
+(() => {
+  const PLANS = {
+    fixed: { cps: 0.005, min: 1.0, cap: 0.01, fee: 0, saleRate: 0, taf: 0, tafCap: 0 },
+    tiered: { cps: 0.0035, min: 0.35, cap: 0.01, fee: 0.0032, saleRate: 0.0000206, taf: 0.000166, tafCap: 8.30 },
+  };
+  const commission = (p, shares, price, sell) => {
+    if (shares <= 0) return 0;
+    let c = Math.max(shares * p.cps, p.min); c = Math.min(c, p.cap * shares * price);
+    let f = shares * p.fee;
+    if (sell) { f += p.saleRate * shares * price; const t = shares * p.taf; f += p.tafCap > 0 ? Math.min(t, p.tafCap) : t; }
+    return c + f;
+  };
+  // same arithmetic as algotrader.slot.breakeven (checked against it for a grid of prices and sizes)
+  const breakeven = (plan, price, value, spreadBp, extraBp) => {
+    const p = PLANS[plan], shares = Math.floor(value / price);
+    if (shares < 1 || price <= 0) return NaN;
+    const pos = shares * price, s = spreadBp / 1e4;
+    const spread = shares * (price * (1 + s) - price) + shares * (price - price * (1 - s));
+    return (commission(p, shares, price, false) + commission(p, shares, price, true) + spread) / pos + extraBp / 1e4;
+  };
+  window.__breakeven = breakeven;                                    // for the check against Python
+  const $ = id => document.getElementById(id);
+  const val = id => parseFloat($(id).value);
+  const f2 = (x, d = 2) => isFinite(x) ? x.toFixed(d) : "–";
+  document.getElementById("smallIntro").innerHTML = `The first live account would be small, so a trade has to cover its own costs before it can earn anything. With 1,000 to 2,000 euros there is room for one to three positions, so an intraday strategy has to <b>pick the one to three most promising stocks</b> and trade only when the expected move clears that trade's <b>break-even</b>: the commission, fees and spread of buying and selling, as a share of the position. This page's calculator uses the same cost arithmetic as the backtester (<code>algotrader.slot.breakeven</code>, checked against it in the browser). Every number is a model assumption: the commission rates come from a summary of IBKR's pricing and need checking, and the spread is an input.`;
+  function draw() {
+    const eur = val("in-eur"), fx = val("in-fx"), slots = +$("in-slots").value, price = val("in-price"), plan = $("in-plan").value,
+      sp = val("in-spread"), ex = val("in-extra"), vol = val("in-vol") / 100, value = eur * fx / slots;
+    const shares = Math.floor(value / price), be = breakeven(plan, price, value, sp, ex), pos = shares * price;
+    const rt = shares < 1 ? NaN : commission(PLANS[plan], shares, price, false) + commission(PLANS[plan], shares, price, true);
+    const tiles = [[`$${f2(value, 0)}`, `one position (${f2(eur, 0)} euros / ${slots} × ${f2(fx)})`],
+      [shares < 1 ? "0" : shares + " shares", shares < 1 ? "price above the position size" : `$${f2(pos, 0)}, ${f2(pos / value * 100, 0)}% of the position invested`],
+      [isFinite(rt) ? `$${f2(rt)}` : "–", "commission and fees, buy plus sell"],
+      [isFinite(be) ? f2(be * 100, 3) + "%" : "–", "break-even: the price must rise this much"]];
+    $("smallTiles").innerHTML = tiles.map(([v, k]) => `<div class="tile"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+    // chart
+    const svg = $("smallChart"); svg.innerHTML = "";
+    const W = 900, Hh = 330, Lm = 54, R = 22, T = 16, B = 34, x0 = Math.log(3), x1 = Math.log(1000), ymax = 0.8;
+    svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "600px"; svg.style.width = "100%"; svg.style.height = "auto";
+    const X = p => Lm + (Math.log(p) - x0) / (x1 - x0) * (W - Lm - R), Y = v => T + (1 - Math.min(v, ymax) / ymax) * (Hh - T - B);
+    for (let v = 0; v <= ymax + 1e-9; v += 0.1) { el("line", { x1: Lm, x2: W - R, y1: Y(v), y2: Y(v), class: v === 0 ? "axis0" : "gridl" }, svg); el("text", { x: Lm - 6, y: Y(v) + 4, "text-anchor": "end" }, svg).textContent = v.toFixed(1) + "%"; }
+    [5, 10, 20, 50, 100, 200, 500, 1000].forEach(p => { el("line", { x1: X(p), x2: X(p), y1: T, y2: Hh - B, class: "gridl" }, svg); el("text", { x: X(p), y: Hh - 12, "text-anchor": "middle" }, svg).textContent = "$" + p; });
+    const prices = []; for (let i = 0; i <= 240; i++) prices.push(Math.exp(x0 + (x1 - x0) * i / 240));
+    const curve = pl => prices.map(p => [p, breakeven(pl, p, value, sp, ex)]);
+    const ct = curve("tiered"), cf = curve("fixed"), cur = curve(plan);
+    const best = Math.min(...cur.filter(q => isFinite(q[1])).map(q => q[1])), good = cur.filter(q => isFinite(q[1]) && q[1] <= best + 0.0003);
+    let lo = null, hi = null;
+    if (good.length) { lo = Math.min(...good.map(q => q[0])); hi = Math.max(...good.map(q => q[0]));
+      el("rect", { x: X(lo), y: T, width: X(hi) - X(lo), height: Hh - T - B, fill: css("--pos-bg"), "fill-opacity": .8, stroke: css("--pos"), "stroke-opacity": .5 }, svg); }
+    const path = (c, col) => { let d = "", pen = false; for (const [p, v] of c) { if (!isFinite(v)) { pen = false; continue; } d += (pen ? "L" : "M") + X(p).toFixed(1) + "," + Y(v * 100).toFixed(1); pen = true; } el("path", { d, fill: "none", stroke: col, "stroke-width": 2 }, svg); };
+    path(cf, css("--s-broad")); path(ct, css("--s-core"));
+    if (isFinite(be)) el("circle", { cx: X(price), cy: Y(be * 100), r: 5, fill: css("--ink"), stroke: css("--surface"), "stroke-width": 2 }, svg);
+    const cross = el("line", { y1: T, y2: Hh - B, stroke: css("--ink-3"), "stroke-width": 1, visibility: "hidden" }, svg);
+    const hit = el("rect", { x: Lm, y: T, width: W - Lm - R, height: Hh - T - B, fill: "transparent" }, svg);
+    hit.addEventListener("mousemove", ev => { const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width * W, p = Math.exp(x0 + (px - Lm) / (W - Lm - R) * (x1 - x0));
+      cross.setAttribute("x1", X(p)); cross.setAttribute("x2", X(p)); cross.setAttribute("visibility", "visible");
+      const t = breakeven("tiered", p, value, sp, ex), f = breakeven("fixed", p, value, sp, ex);
+      showTip(ev, `<b>$${f2(p)} stock</b>, $${f2(value, 0)} position<br>Tiered: ${isFinite(t) ? f2(t * 100, 3) + "%" : "no whole share"}<br>Fixed: ${isFinite(f) ? f2(f * 100, 3) + "%" : "no whole share"}`); });
+    hit.addEventListener("mouseleave", () => { hideTip(); cross.setAttribute("visibility", "hidden"); });
+    // horizons
+    const HZ = [10, 20, 30, 90, 240];
+    let h = `<tr><th>Hold for</th><th>Typical move</th><th>Direction right more than</th><th>Reading</th></tr>`;
+    for (const m of HZ) { const mv = vol * Math.sqrt(m / 390) * Math.sqrt(2 / Math.PI), acc = isFinite(be) ? 0.5 + be / (2 * mv) : NaN;
+      const word = !isFinite(acc) ? "–" : acc > 0.6 ? "very hard" : acc > 0.55 ? "hard" : acc > 0.52 ? "possible" : "more forgiving";
+      h += `<tr><td>${m} minutes</td><td>${f2(mv * 100)}%</td><td class="${acc > 0.55 ? "neg" : acc < 0.53 ? "pos" : ""}">${isFinite(acc) ? f2(Math.min(acc, 1) * 100, 0) + "% of trades" : "–"}</td><td>${word}</td></tr>`; }
+    $("smallHorizons").innerHTML = h;
+    $("smallNote").textContent = `Typical move = daily volatility × √(minutes / 390) × 0.8 (the average absolute move of a normal distribution); accuracy needed = 50% + break-even / (2 × typical move), assuming wins and losses of equal size and no drift. Illustrative, not measured. The session has 390 minutes, so a 500-minute hold does not fit in one day.` +
+      (lo ? ` For ${f2(value, 0)}-dollar positions on ${plan === "tiered" ? "Tiered" : "Fixed"}, prices from about $${f2(lo, 0)} to $${f2(hi, 0)} are within 0.03 points of the cheapest.` : "");
+  }
+  ["in-eur", "in-fx", "in-slots", "in-price", "in-plan", "in-spread", "in-extra", "in-vol"].forEach(id => $(id).addEventListener("input", draw));
+  draw();
+  const rules = [
+    `<b>Account type.</b> The SEC approved FINRA's new day-trading margin rules on 14 April 2026 (the $25,000 pattern-day-trader minimum and the label go; brokers may switch until 20 October 2027; a margin account is reported to need $2,000) <a href="https://www.finra.org/compliance-tools/weekly-archive/04152026">FINRA</a>. About 1,750 euros is where that threshold sits; below it the account is likely a cash account. Which rule IBKR applies must be checked with IBKR.`,
+    `<b>Cash account: one round trip per slot a day.</b> US stocks settle the next day (T+1), and buying with unsettled money then selling before it settles is a free-riding violation, which puts the account on 90 days of settled-cash-only trading <a href="https://ibkb.interactivebrokers.com/de/node/3101">IBKR</a>. The backtest engine therefore allows one trade per slot a day.`,
+    `<b>Commission minimum per order.</b> Tiered charges at least $0.35 an order (Fixed $1). Splitting 2,000 euros into three positions makes each trade smaller, so the same minimum is a bigger share: about 0.14–0.18% against about 0.08% for one position of all 2,000 euros (try slots 1 and 3 above). Three slots buy diversification, not cheaper trading.`,
+    `<b>Currency.</b> A euro account needs dollars for US stocks. Manual conversion costs 0.002% with a $2 minimum (0.17% on 1,000 euros), automatic conversion about 0.03% each way <a href="https://thepoorswiss.com/interactive-brokers-review/comment-page-4/">The Poor Swiss</a>. Convert once and keep the dollars; use the "other cost" box to see the effect of converting each trade.`,
+    `<b>Price filter.</b> Per-share fees make cheap stocks expensive (a $5 stock costs about 0.31% round trip on Tiered at any size) and a high price leaves money uninvested (one $400 share in a $770 slot invests 52%). The trading engine therefore skips stocks outside a price window, above a maximum break-even (<code>max_cost</code>) or investing too little of the slot (<code>min_invested</code>), and also requires the predicted gain to clear the stock's own break-even. The green band in the chart is the cheapest range for the numbers entered.`,
+    `<b>Tax.</b> Results are before tax. The Spanish two-month rule defers a loss if the same stock is bought again within two months, which matters for frequent trading of the same stocks.`,
+  ];
+  $("smallRules").innerHTML = rules.map(x => `<li>${x}</li>`).join("");
+  const plan = [
+    `<b>Done:</b> the break-even calculation and a trading engine for one to three positions (<code>algotrader/slot.py</code>, 15 tests): it buys the highest predicted gains that clear their own cost, sells after the holding time or at the close, one trade per slot a day, and has the price filters above.`,
+    `<b>Next:</b> (1) extract minute features and forward returns from the Hugging Face minute bars (consolidated tape, 2008–2026, S&amp;P 500 members) on the VPS; (2) a gradient-boosting model per horizon (10, 20, 30, 90, 240 minutes), calibrated on a later untouched year because the top of hundreds of noisy predictions is overstated; (3) evaluate with the engine, with random-stock and SPY baselines, counting every horizon in the luck bar. About 4,600 trading days allow detecting a net edge of a few hundredths of a percent a trade.`,
+    `<b>Expectation:</b> every earlier intraday test lost to costs. What differs now is one to three trades a day chosen from hundreds of stocks, 90–240 minute holds, cheaper commissions and fourteen years of data. A small edge is plausible; a large one is not.`,
+  ];
+  $("smallPlan").innerHTML = plan.map(x => `<li>${x}</li>`).join("");
 })();
 </script>

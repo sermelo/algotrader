@@ -4,7 +4,7 @@ With 1,000 to 2,000 euros there is room for one to three positions (`slots`, eac
 `1 / slots` share of the account), so the strategy has to choose: at each decision minute a
 model gives every stock an `edge` (its expected return over the next `hold_minutes`, before
 costs); the engine buys the stocks with the highest edges that also clear their own cost
-hurdle (`breakeven`) while a slot is free, and sells each after `hold_minutes` or at the
+hurdle (`breakeven`) while a slot is free (optionally only stocks inside a price window, below a maximum round-trip cost, and invested to at least a minimum share of the slot), and sells each after `hold_minutes` or at the
 close of the session, whichever comes first. At most `max_trades_per_day` trades a day
 (default: one per slot: in a cash account the proceeds of a sale only settle the next day,
 T+1, and buying again with unsettled money before then is a free-riding violation, so each
@@ -66,8 +66,15 @@ class SlotTrader:
     min_margin: float = 0.0                 # the edge must beat the hurdle by this fraction
     max_trades_per_day: int = None          # default: one per slot
     extra_bps: float = 0.0                  # other costs per round trip (e.g. currency conversion)
+    min_price: float = 0.0                  # price filters, applied to the decision bar's close
+    max_price: float = float("inf")
+    max_cost: float = None                  # reject a stock whose round-trip cost exceeds this fraction
+    min_invested: float = 0.0               # whole shares must cover at least this share of the slot
 
     def __post_init__(self):
+        if self.min_price < 0 or self.max_price <= self.min_price or not 0 <= self.min_invested <= 1 \
+                or (self.max_cost is not None and self.max_cost <= 0):
+            raise ValueError("require 0 <= min_price < max_price, 0 <= min_invested <= 1, max_cost > 0")
         if (self.capital <= 0 or self.slots < 1 or self.hold_minutes < 1 or self.min_margin < 0
                 or (self.max_trades_per_day is not None and self.max_trades_per_day < 1)):
             raise ValueError("require capital > 0, slots >= 1, hold_minutes >= 1, max_trades_per_day >= 1, min_margin >= 0")
@@ -105,8 +112,15 @@ class SlotTrader:
             i = b.index.get_loc(ts)
             if i + 1 >= len(b) or b.index[i + 1].normalize() != ts.normalize():
                 continue
-            hurdle = breakeven(self.cost, float(b["close"].iloc[i]), equity, self.extra_bps)
+            price = float(b["close"].iloc[i])
+            if not self.min_price <= price <= self.max_price:
+                continue
+            hurdle = breakeven(self.cost, price, equity, self.extra_bps)
             if not np.isfinite(hurdle) or edge < hurdle + self.min_margin:
+                continue
+            if self.max_cost is not None and hurdle > self.max_cost:
+                continue
+            if int(equity // price) * price < self.min_invested * equity:
                 continue
             entry = b.index[i + 1]
             if sum(1 for r in today if r["entry"] <= entry < r["exit"]) >= self.slots:

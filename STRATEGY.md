@@ -282,7 +282,9 @@ price, value, extra_bps)` is the round-trip cost as a fraction of the position: 
 buy and one sale of whole shares plus the half-spread paid on each side, plus `extra_bps` for other costs
 (e.g. currency conversion). `SlotTrader` splits the account into `slots` equal positions (each the
 start-of-day equity / `slots`); at each decision minute, while a slot is free, it buys at the next bar's open
-the stock with the highest edge that is at least its own `breakeven` (for the slot's value) plus `min_margin`;
+the stock with the highest edge that is at least its own `breakeven` (for the slot's value) plus `min_margin`
+and that passes the price filters on the decision bar's close (`min_price`, `max_price`, `max_cost`: a ceiling on
+the round-trip cost, `min_invested`: whole shares must cover at least that share of the slot);
 shares = the slot's money / the fill price, reduced until the commission fits; each exit is the open of the
 first bar at or after entry + `hold_minutes`, or the last bar's close if the session ends first. At most
 `max_trades_per_day` trades a day (default one per slot: in a cash account the proceeds of a sale settle the
