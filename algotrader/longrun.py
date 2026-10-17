@@ -178,7 +178,12 @@ def deep_arb_panels(frames: dict, members=None, k: int = 5, epochs=None) -> dict
         daily = m.reindex(index=closes.index.union(m.index)).ffill().reindex(closes.index).fillna(0.0) > 0.5
     eps, load = pca_residuals(rets, daily, k=k)
     model = DeepArbModel(k=k, epochs=epochs or DEEP_EPOCHS)
-    _PANELS[key] = {"panels": {f"deep_arb_k{k}": model.weights_panel(rets, eps, load)}}
+    w = model.weights_panel(rets, eps, load)
+    Path("data/long_panels").mkdir(parents=True, exist_ok=True)       # for diagnostics
+    w.to_parquet(f"data/long_panels/deep_arb_k{k}.parquet")
+    pd.DataFrame(model.log, columns=["fit_end", "epoch", "train_sharpe"]).to_csv(
+        f"data/long_panels/deep_arb_k{k}_training.csv", index=False)
+    _PANELS[key] = {"panels": {f"deep_arb_k{k}": w}}
     return _PANELS[key]
 
 
