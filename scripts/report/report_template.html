@@ -1,0 +1,574 @@
+<title>Algotrader Strategy Scorecard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (max 980px) of numbered findings; charts sit full column width, wide tables scroll in their own box. */
+:root {
+  --bg: #f7f8f8; --surface: #ffffff; --ink: #14181c; --ink-2: #4a5259; --ink-3: #737b82;
+  --rule: #dde1e4; --grid: #eceff1; --accent: #1f5f8b;
+  --s-core: #2a78d6; --s-broad: #eb6834; --s-hold: #8a9196;
+  --pos: #1a7f4b; --neg: #c23b3a; --pos-bg: #e3f2ea; --neg-bg: #f8e4e3;
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121517; --surface: #1a1e21; --ink: #eef0f1; --ink-2: #b9c0c5; --ink-3: #8b939a;
+  --rule: #2e3438; --grid: #252a2e; --accent: #7db4dc;
+  --s-core: #3987e5; --s-broad: #d95926; --s-hold: #8f979c;
+  --pos: #5cc48d; --neg: #ec7a78; --pos-bg: #183327; --neg-bg: #3a1f1f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121517; --surface: #1a1e21; --ink: #eef0f1; --ink-2: #b9c0c5; --ink-3: #8b939a;
+  --rule: #2e3438; --grid: #252a2e; --accent: #7db4dc;
+  --s-core: #3987e5; --s-broad: #d95926; --s-hold: #8f979c;
+  --pos: #5cc48d; --neg: #ec7a78; --pos-bg: #183327; --neg-bg: #3a1f1f; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--f-body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(30px, 5vw, 44px); }
+h2 { font-size: 26px; }
+h3 { font-size: 18px; font-family: var(--f-body); }
+p { margin: 0; max-width: 68ch; }
+section { display: grid; gap: 18px; min-width: 0; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: 17px; color: var(--ink-2); }
+.muted { color: var(--ink-3); font-size: 13px; }
+code, .mono { font-family: var(--f-mono); font-size: .9em; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.tile .v { font: 500 28px/1.1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.tile .k { font-size: 13px; color: var(--ink-2); }
+.verdict { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; display: grid; gap: 8px; }
+ul.findings { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 72ch; }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; min-width: 0; display: grid; gap: 12px; align-content: start; }
+.scroll { overflow-x: auto; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.sw.line { width: 18px; height: 0; border-radius: 0; border-top: 2px solid; }
+.sw.dash { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed; }
+svg text { font-family: var(--f-mono); font-size: 11px; fill: var(--ink-2); }
+svg .lbl { font-family: var(--f-mono); font-size: 11.5px; fill: var(--ink); }
+svg .grp { font-family: var(--f-body); font-size: 12px; font-weight: 600; fill: var(--ink); }
+svg text.val { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+svg .gridl { stroke: var(--grid); stroke-width: 1; }
+svg .axis0 { stroke: var(--ink-3); stroke-width: 1; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+select, button.seg { font: 14px var(--f-body); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 10px; }
+button.seg { cursor: pointer; }
+button.seg[aria-pressed="true"] { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+table { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; width: 100%; }
+th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-weight: 600; color: var(--ink-2); font-size: 12px; background: var(--surface); position: sticky; top: 0; }
+td:first-child, th:first-child { text-align: left; font-family: var(--f-mono); font-size: 12px; }
+tr.hold td { font-weight: 600; background: var(--grid); }
+tr.grouprow td { font-family: var(--f-body); font-weight: 600; font-size: 12px; color: var(--accent); background: transparent; padding-top: 14px; }
+.pos { color: var(--pos); } .neg { color: var(--neg); }
+td.cellpos { background: var(--pos-bg); } td.cellneg { background: var(--neg-bg); }
+.tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font: 12px/1.45 var(--f-mono); box-shadow: 0 4px 16px rgb(0 0 0 / .12); z-index: 20; max-width: 300px; }
+.tip b { font-family: var(--f-body); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.note { font-size: 13px; color: var(--ink-2); background: var(--surface); border: 1px dashed var(--rule); border-radius: 6px; padding: 12px 14px; }
+@media (prefers-reduced-motion: no-preference) { .panel svg path.eq { transition: d .2s; } }
+</style>
+
+<div class="wrap">
+<header style="display:grid;gap:14px">
+  <div class="eyebrow">algotrader · walk-forward evaluation · Jul 2023 – Oct 2026</div>
+  <h1>Algotrader Strategy Scorecard</h1>
+  <p class="lede">All 35 implemented strategies, each tested out of sample over 3.3 years on two universes of US stocks and ETFs: <b>core</b> (27 well-known large caps and index ETFs) and <b>broad</b> (107 tickers: core plus sector ETFs and a random sample, including names that later stopped trading). Section 0 lists every ticker. The test period is 3 July 2023 to 15 October 2026: 826 trading days, 3.3 years. Returns are given per day, week, month and year as compound averages over that period (a trading week is 5 days, a month 21, a year 252). Every number on this page comes from the committed results (<code>results/</code>, commit <code>328abef</code>) or from a tuning check run on 2026-10-17.</p>
+  <div class="tiles" id="tiles"></div>
+</header>
+
+<section>
+  <div class="eyebrow">Verdict</div>
+  <h2>Many strategies make money; none clearly beats holding the market</h2>
+  <div class="verdict">
+    <ul class="findings" id="verdict"></ul>
+  </div>
+</section>
+
+<section id="s-setup">
+  <div class="eyebrow">0 · What was tested</div>
+  <h2>Universes, dates and the benchmark</h2>
+  <p>Every strategy runs on the same tickers over the same dates, and is compared with simply buying all of those tickers and holding them.</p>
+
+  <div class="panel">
+    <h3>Timeline</h3>
+    <p class="muted">Data: 1-minute bars from 7 March 2022 to 15 October 2026 (HF Data Library, built from IEX trades). The first 16 months are only used for tuning and indicator warm-up. Results come from six test periods of six months each, joined end to end. At each test start, a strategy's settings are chosen using only the data before that date, so every result on this page is out of sample.</p>
+    <div class="scroll"><svg id="timeline" role="img" aria-label="Timeline of tuning and test periods, March 2022 to October 2026"></svg></div>
+  </div>
+
+  <div class="two">
+    <div class="panel">
+      <h3>Core universe: 27 tickers</h3>
+      <p class="muted">Today's well-known large caps, chosen in 2026, so it has survivorship bias (these are companies we already know survived and did well). That is why strategies are compared with buy and hold of the same tickers, not with zero.</p>
+      <div id="coreList"></div>
+    </div>
+    <div class="panel">
+      <h3>Broad universe: 107 tickers</h3>
+      <p class="muted">Core, plus 11 sector, bond and gold ETFs, plus 69 tickers drawn at random (fixed seed) from the provider's ~1,250 symbols. The random draw was filtered using March 2022 data only: trading by April 2022, price at least $5, at least 100 traded minutes a day. It includes losers and 7 names that stopped trading (acquired or renamed), which leave the portfolio at their last price. It is closer to what a strategy would face without hindsight.</p>
+      <div id="broadList"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Buy and hold: the benchmark</h3>
+    <p id="holdText"></p>
+    <div class="tiles" id="holdTiles"></div>
+    <div class="controls">
+      <span role="group" aria-label="Universe" style="display:inline-flex;gap:6px">
+        <button class="seg" id="tu-core" aria-pressed="true">Core</button>
+        <button class="seg" id="tu-broad" aria-pressed="false">Broad</button>
+      </span>
+      <label for="tickSort" class="muted">Sort by</label>
+      <select id="tickSort"><option value="ret">Return, high to low</option><option value="retAsc">Return, low to high</option><option value="name">Ticker</option><option value="group">Group</option></select>
+    </div>
+    <div class="scroll" style="max-height:560px"><table id="tickTable"></table></div>
+    <p class="muted">Each ticker's return from the first open (3 Jul 2023) to the last close (15 Oct 2026), or to its last trade if it stopped trading. Prices are split-adjusted; dividends are not included (for strategies or buy and hold).</p>
+  </div>
+
+  <div class="panel">
+    <h3>The luck bar: how good a result must be before it means anything</h3>
+    <p>If you try many strategies that have <b>no real edge</b>, some will still look good over a short test just by chance, and the more you try the better the best one looks. The luck bar is the Sharpe ratio that the <b>best</b> of N zero-edge strategies is expected to reach over this test length. A result below it is what luck alone would produce.</p>
+    <p>Formula (Bailey &amp; López de Prado, 2014, "The deflated Sharpe ratio"):</p>
+    <p class="mono" style="background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;max-width:none;overflow-x:auto;white-space:nowrap">luck bar = SE × [ (1 − γ) · z(1 − 1/N) + γ · z(1 − 1/(N·e)) ]</p>
+    <ul class="findings" id="luckList"></ul>
+    <div class="scroll"><svg id="luckChart" role="img" aria-label="Luck bar as a function of the number of configurations tried"></svg></div>
+  </div>
+</section>
+
+<section id="s-sharpe">
+  <div class="eyebrow">1 · Every strategy</div>
+  <h2>Risk-adjusted return (Sharpe), out of sample</h2>
+  <p>Each dot is the walk-forward Sharpe after costs (IBKR commission plus a 2 bp half-spread per side); the whisker is its 90% bootstrap interval. A strategy needs to sit right of buy and hold to add value, and right of the luck bar (1.64) before it counts as evidence of an edge after the 389 configurations tried per universe.</p>
+  <div class="panel">
+    <div class="legend">
+      <span><i class="sw" style="background:var(--s-core)"></i>Core universe</span>
+      <span><i class="sw" style="background:var(--s-broad)"></i>Broad universe</span>
+      <span><i class="sw dash" style="border-color:var(--s-core)"></i>Buy &amp; hold core 1.29</span>
+      <span><i class="sw dash" style="border-color:var(--s-broad)"></i>Buy &amp; hold broad 1.10</span>
+      <span><i class="sw dash" style="border-color:var(--ink)"></i>Luck bar 1.64</span>
+    </div>
+    <div class="scroll"><svg id="sharpeChart" role="img" aria-label="Walk-forward Sharpe ratio per strategy, core and broad universes"></svg></div>
+    <p class="muted">The 1-minute decision tree (Sharpe −16.6 core, −27.1 broad) is drawn at the left edge. Sector momentum has no core result (sector ETFs are only in broad).</p>
+  </div>
+</section>
+
+<section id="s-daily">
+  <div class="eyebrow">2 · Profitable strategies</div>
+  <h2>Returns per day, week, month and year</h2>
+  <p id="dailyIntro"></p>
+  <div class="panel">
+    <div class="controls" role="group" aria-label="Universe">
+      <button class="seg" id="du-core" aria-pressed="true">Core</button>
+      <button class="seg" id="du-broad" aria-pressed="false">Broad</button>
+    </div>
+    <div class="legend">
+      <span><i class="sw" id="dailySw" style="background:var(--s-core);border-radius:2px"></i>Average return per trading day (compound, 3 Jul 2023 – 15 Oct 2026)</span>
+      <span><i class="sw dash" style="border-color:var(--s-hold)"></i>Buy &amp; hold, same tickers and period</span>
+    </div>
+    <div class="scroll"><svg id="dailyChart" role="img" aria-label="Mean daily return per profitable strategy"></svg></div>
+  </div>
+  <div class="panel">
+    <h3>Daily return profile</h3>
+    <p class="muted">Compound averages over 3 Jul 2023 – 15 Oct 2026 (826 trading days). Per week = 5 trading days, per month = 21, per year = 252. $ figures are on a $10,000 account. Up days count only days with a non-zero return. Sorted by Sharpe.</p>
+    <div class="scroll" style="max-height:640px"><table id="dailyTable"></table></div>
+  </div>
+</section>
+
+<section id="s-curves">
+  <div class="eyebrow">3 · Growth of $1</div>
+  <h2>Equity curves against buy and hold</h2>
+  <div class="panel">
+    <div class="controls">
+      <label for="curveSel" class="muted">Strategy</label>
+      <select id="curveSel"></select>
+      <span role="group" aria-label="Universe" style="display:inline-flex;gap:6px">
+        <button class="seg" id="cu-core" aria-pressed="true">Core</button>
+        <button class="seg" id="cu-broad" aria-pressed="false">Broad</button>
+      </span>
+    </div>
+    <div class="legend">
+      <span><i class="sw line" style="border-color:var(--s-core)"></i><span id="curveName">Strategy</span></span>
+      <span><i class="sw dash" style="border-color:var(--s-hold)"></i>Buy &amp; hold, same tickers</span>
+    </div>
+    <div class="scroll"><svg id="curveChart" role="img" aria-label="Cumulative value of $1, strategy against buy and hold"></svg></div>
+    <p class="muted" id="curveNote"></p>
+  </div>
+</section>
+
+<section id="s-years">
+  <div class="eyebrow">4 · Consistency</div>
+  <h2>Return by calendar year</h2>
+  <p>Return in each calendar year. 2023 covers 3 July to 29 December and 2026 covers 2 January to 15 October, so those two are part-years. A strategy with a real edge would beat buy and hold in most years; the profitable ones mostly trail it in the strong years and lose less in the weak ones.</p>
+  <div class="panel">
+    <div class="controls" role="group" aria-label="Universe">
+      <button class="seg" id="yu-core" aria-pressed="true">Core</button>
+      <button class="seg" id="yu-broad" aria-pressed="false">Broad</button>
+    </div>
+    <div class="scroll"><table id="yearTable"></table></div>
+    <p class="muted">Green: at or above buy and hold that year. Red: below it (the return itself can still be positive).</p>
+  </div>
+</section>
+
+<section id="s-tuning">
+  <div class="eyebrow">5 · Tuning</div>
+  <h2>Does choosing parameters help?</h2>
+  <p>The walk-forward picks parameters at each fold from earlier data only. To see what that choice is worth, every grid point of the 19 rule-based daily strategies was run out of sample through the same six folds, held fixed. If tuning worked, the walk-forward dot would sit near the right end of the grid's range, and the in-sample ranking of grid points would predict their out-of-sample ranking.</p>
+  <div class="panel">
+    <div class="legend">
+      <span><i class="sw" style="background:var(--ink-3);border-radius:1px;width:3px;height:12px"></i>One grid point, held fixed (out of sample)</span>
+      <span><i class="sw" style="background:var(--s-core)"></i>Walk-forward choice, core</span>
+      <span><i class="sw" style="background:var(--s-broad)"></i>Walk-forward choice, broad</span>
+    </div>
+    <div class="scroll"><svg id="tuneChart" role="img" aria-label="Out-of-sample Sharpe of every fixed grid point against the walk-forward choice"></svg></div>
+  </div>
+  <div class="panel">
+    <h3>Tuning statistics</h3>
+    <p class="muted">"WF beats" is the share of fixed grid points the walk-forward choice beat out of sample. "Rank corr" is the mean Spearman correlation, across the six folds, between a grid point's in-sample score (used to choose) and its out-of-sample Sharpe: 1 means the in-sample ranking predicts perfectly, 0 means it carries no information.</p>
+    <div class="scroll"><table id="tuneTable"></table></div>
+  </div>
+  <div class="verdict"><ul class="findings" id="tuneFindings"></ul></div>
+</section>
+
+<section id="s-all">
+  <div class="eyebrow">6 · Reference</div>
+  <h2>All results</h2>
+  <div class="panel">
+    <div class="controls" role="group" aria-label="Universe">
+      <button class="seg" id="au-core" aria-pressed="true">Core</button>
+      <button class="seg" id="au-broad" aria-pressed="false">Broad</button>
+    </div>
+    <div class="scroll" style="max-height:720px"><table id="allTable"></table></div>
+    <p class="muted">Alpha and beta come from regressing daily returns on equal-weight buy and hold of the same tickers (t-statistic in brackets). Gross is without any costs, stress uses a 5 bp half-spread. Folds + counts test periods (of 6) with a positive Sharpe.</p>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Method</div>
+  <h2>How these numbers were made</h2>
+  <div class="note">
+    <p>Data: 1-minute IEX bars from the HF Data Library, March 2022 to October 2026. Six walk-forward folds start every six months from July 2023; parameters are chosen at each fold start using only earlier data, and the six test periods are joined into one 3.3-year out-of-sample record. Signals use the bar close and fill at the next open. Single-ticker strategies start each ticker with $10,000 ($100,000 for the <code>_100k</code> variants) and report the equal-weight portfolio; portfolio strategies run one $100,000 book, and shorts pay 50 bp a year. The luck bar is the Sharpe that the best of 389 zero-edge configurations would reach by chance over this length (Bailey &amp; López de Prado 2014). Results are pre-tax and not investment advice. Several strategies trade US ETFs, which EU retail accounts cannot buy (PRIIPs).</p>
+  </div>
+</section>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const E = D.experiments, H = D.hold;
+const NS = "http://www.w3.org/2000/svg";
+const tip = document.getElementById("tip");
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const pct = (x, d = 1) => x == null ? "–" : (x >= 0 ? "+" : "−") + Math.abs(x * 100).toFixed(d) + "%";
+const num = (x, d = 2) => x == null ? "–" : (x < 0 ? "−" : "") + Math.abs(x).toFixed(d);
+const DAYS = 826, PERIOD = "3 Jul 2023 – 15 Oct 2026";
+const rate = (ret, n) => Math.pow(1 + ret, n / DAYS) - 1;            // compound return per n trading days
+const bp = x => x == null ? "–" : (x < 0 ? "−" : "") + Math.abs(x * 1e4).toFixed(1) + " bp";
+const sgn = x => x == null ? "" : x > 0 ? "pos" : x < 0 ? "neg" : "";
+const groups = ["Daily, per ticker", "Portfolio (cross-sectional)", "Machine learning", "Intraday"];
+const names = Object.keys(E);
+function showTip(ev, html) { tip.innerHTML = html; tip.hidden = false; moveTip(ev); }
+function moveTip(ev) { const w = tip.offsetWidth, h = tip.offsetHeight; let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + w > innerWidth - 8) x = ev.clientX - w - 14; if (y + h > innerHeight - 8) y = ev.clientY - h - 14; tip.style.left = x + "px"; tip.style.top = y + "px"; }
+function hideTip() { tip.hidden = true; }
+function seg(prefix, cb) { const b = { core: document.getElementById(prefix + "-core"), broad: document.getElementById(prefix + "-broad") };
+  for (const u of ["core", "broad"]) b[u].addEventListener("click", () => { b.core.setAttribute("aria-pressed", u === "core"); b.broad.setAttribute("aria-pressed", u === "broad"); cb(u); }); }
+const sh = (n, u) => E[n][u] ? E[n][u].sharpe : null;
+const profitable = names.filter(n => E[n].core && E[n].broad && E[n].core.ret > 0 && E[n].broad.ret > 0);
+
+// ---------- tiles + verdict
+(() => {
+  const both = profitable.length;
+  const beatHold = names.filter(n => (sh(n, "core") ?? -9) > H.core.sharpe && (sh(n, "broad") ?? -9) > H.broad.sharpe).length;
+  const best = names.reduce((a, n) => Math.max(a, sh(n, "core") ?? -9, sh(n, "broad") ?? -9), -9);
+  const maxT = names.reduce((a, n) => Math.max(a, ...["core", "broad"].map(u => E[n][u] && n !== "tree_1min" ? E[n][u].alpha_t : -99)), -99);
+  const tiles = [
+    [names.length, "strategies tested on each universe"],
+    [both, "made money after costs on both universes"],
+    [beatHold, "beat buy and hold's Sharpe on both"],
+    [num(best), "best Sharpe, against a luck bar of 1.64"],
+    [num(maxT), "largest positive alpha t-statistic (about 2 needed)"],
+  ];
+  document.getElementById("tiles").innerHTML = tiles.map(([v, k]) => `<div class="tile"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+  const v = [
+    `<b>${both} of ${names.length}</b> strategies have a positive net return on both universes, but <b>${beatHold}</b> beat buy and hold's risk-adjusted return on both. Buy and hold of the same tickers made ${pct(H.core.ret)} on core and ${pct(H.broad.ret)} on broad over ${PERIOD} (${pct(rate(H.core.ret, 252))} and ${pct(rate(H.broad.ret, 252))} a year; Sharpe ${num(H.core.sharpe)} and ${num(H.broad.sharpe)}).`,
+    `The best results (SMA and RSI(2) with the SPY regime filter, 1.42 and 1.35 on core) drop to 0.91 and 0.79 on broad, and nothing reaches the luck bar of 1.64. No alpha against buy and hold is statistically significant.`,
+    `<b>Daily trend rules</b> (SMA, RSI(2), time-series momentum) keep much of the market's Sharpe while invested a third to half as much: lower return and lower drawdown, but no alpha. <b>Momentum portfolios</b> earn the most per day, with beta above 1 and alpha that the Fama-French momentum factor explains.`,
+    `<b>Every intraday strategy loses to costs.</b> Overnight holding has a gross Sharpe of 1.7 to 2.0 that a 2 bp half-spread wipes out; the 1-minute decision tree loses everything.`,
+    `<b>Tuning adds little.</b> In-sample rankings of parameter settings barely predict out-of-sample rankings; most strategies would have done about as well with a fixed, reasonable setting (section 5).`,
+  ];
+  document.getElementById("verdict").innerHTML = v.map(x => `<li>${x}</li>`).join("");
+})();
+
+// ---------- 0. setup
+(() => {
+  const U = D.universe, TK = U.tickers, LK = U.luck;
+  // timeline
+  const svg = document.getElementById("timeline");
+  const W = 900, Hh = 120, L = 10, R = 10;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "640px"; svg.style.width = "100%"; svg.style.height = "auto";
+  const t0 = +new Date("2022-03-07"), t1 = +new Date("2026-10-15"), x = d => L + (+new Date(d) - t0) / (t1 - t0) * (W - L - R);
+  const folds = ["2023-07-01", "2024-01-01", "2024-07-01", "2025-01-01", "2025-07-01", "2026-01-01", "2026-10-15"];
+  el("rect", { x: x("2022-03-07"), y: 34, width: x("2023-07-01") - x("2022-03-07"), height: 26, fill: css("--grid"), stroke: css("--rule") }, svg);
+  el("text", { x: (x("2022-03-07") + x("2023-07-01")) / 2, y: 51, "text-anchor": "middle", class: "lbl" }, svg).textContent = "tuning / warm-up only";
+  for (let i = 0; i < 6; i++) { const a = x(folds[i]), b = x(folds[i + 1]);
+    el("rect", { x: a + 1, y: 34, width: b - a - 2, height: 26, fill: css("--s-core"), "fill-opacity": i % 2 ? .55 : .8, rx: 2 }, svg);
+    el("text", { x: (a + b) / 2, y: 51, "text-anchor": "middle", class: "val", style: "fill:var(--surface);stroke:none" }, svg).textContent = "test " + (i + 1); }
+  [["2022-03-07", "Mar 2022"], ["2023-07-01", "Jul 2023"], ["2024-07-01", "Jul 2024"], ["2025-07-01", "Jul 2025"], ["2026-10-15", "Oct 2026"]].forEach(([d, s], i, arr) =>
+    el("text", { x: x(d), y: 80, "text-anchor": i === 0 ? "start" : i === arr.length - 1 ? "end" : "middle" }, svg).textContent = s);
+  el("path", { d: `M${x("2023-07-01")},${96} H${x("2026-10-15")}`, stroke: css("--ink-3"), "stroke-width": 1, fill: "none" }, svg);
+  el("text", { x: (x("2023-07-01") + x("2026-10-15")) / 2, y: 112, "text-anchor": "middle", class: "lbl" }, svg).textContent = "results: 3 Jul 2023 – 15 Oct 2026, 826 trading days (3.3 years)";
+  el("text", { x: x("2023-07-01"), y: 24, class: "lbl", "text-anchor": "middle" }, svg).textContent = "▼ settings re-chosen at each test start";
+
+  // ticker lists
+  const groupsOrder = ["index ETF", "large cap", "original 3", "sector/bond/gold ETF", "random sample"];
+  const label = { "index ETF": "Index ETFs", "large cap": "Large caps", "original 3": "Original 3 tickers", "sector/bond/gold ETF": "Sector, bond and gold ETFs", "random sample": "Random sample" };
+  const chips = list => groupsOrder.filter(g => list.some(t => TK[t].group === g)).map(g =>
+    `<p style="margin:6px 0 2px"><b style="font-size:13px">${label[g]}</b> <span class="muted">(${list.filter(t => TK[t].group === g).length})</span></p><p class="mono" style="font-size:12.5px;color:var(--ink-2);max-width:none">${list.filter(t => TK[t].group === g).map(t => TK[t].ends_early ? t + "*" : t).join(" ")}</p>`).join("");
+  document.getElementById("coreList").innerHTML = chips(U.core);
+  document.getElementById("broadList").innerHTML = "<p class='muted'>Core's 27, plus:</p>" + chips(U.broad.filter(t => !U.core.includes(t))) + "<p class='muted'>* stopped trading (acquired or renamed).</p>";
+
+  // buy and hold
+  const r = (ret) => pct(rate(ret, 252));
+  document.getElementById("holdText").innerHTML = `Buy and hold puts an <b>equal amount in every ticker of the universe</b> on 3 July 2023 and holds to 15 October 2026, rebalanced to equal weights each day (as the strategies' portfolios are). A ticker that stops trading keeps its last value as cash. Over the 3.3 years the core basket made <b>${pct(H.core.ret)}</b>, which is <b>${r(H.core.ret)} a year</b>; the broad basket made <b>${pct(H.broad.ret)}</b>, <b>${r(H.broad.ret)} a year</b>. For comparison, SPY (the S&amp;P 500 ETF) alone made ${pct(TK.SPY.ret)} (${r(TK.SPY.ret)} a year) and QQQ (Nasdaq-100) ${pct(TK.QQQ.ret)} (${r(TK.QQQ.ret)} a year). It was a strong period for US stocks, led by semiconductors and AI (NVDA ${pct(TK.NVDA.ret, 0)}, TSM ${pct(TK.TSM.ret, 0)}). Broad is lower because its random sample includes heavy losers (SEDG ${pct(TK.SEDG.ret, 0)}, WHR ${pct(TK.WHR.ret, 0)}, TLRY ${pct(TK.TLRY.ret, 0)}) and an inverse ETF (SDS ${pct(TK.SDS.ret, 0)}).`;
+  const tiles = [[pct(H.core.ret), "core basket, 3 Jul 2023 – 15 Oct 2026"], [r(H.core.ret), "core, per year"], [pct(H.broad.ret), "broad basket, same period"], [r(H.broad.ret), "broad, per year"], [pct(TK.SPY.ret), "SPY alone, same period (" + r(TK.SPY.ret) + "/yr)"]];
+  document.getElementById("holdTiles").innerHTML = tiles.map(([v, k]) => `<div class="tile"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+  let tu = "core";
+  const sortSel = document.getElementById("tickSort");
+  function drawTicks() {
+    let list = (tu === "core" ? U.core : U.broad).slice();
+    const s = sortSel.value, rv = t => TK[t].ret ?? -9;
+    list.sort(s === "ret" ? (a, b) => rv(b) - rv(a) : s === "retAsc" ? (a, b) => rv(a) - rv(b) : s === "name" ? (a, b) => a.localeCompare(b) : (a, b) => groupsOrder.indexOf(TK[a].group) - groupsOrder.indexOf(TK[b].group) || rv(b) - rv(a));
+    const max = Math.min(4.2, Math.max(...list.map(t => Math.abs(TK[t].ret ?? 0))));
+    const bar = v => { if (v == null) return ""; const w = Math.min(120, Math.abs(v) / max * 120); return `<span style="display:inline-block;width:240px;position:relative;height:10px;vertical-align:middle"><span style="position:absolute;top:0;height:10px;border-radius:2px;${v >= 0 ? "left:120px" : `left:${120 - w}px`};width:${Math.max(1, w)}px;background:var(${v >= 0 ? "--pos" : "--neg"})"></span><span style="position:absolute;left:120px;top:-2px;height:14px;border-left:1px solid var(--ink-3)"></span></span>`; };
+    let html = `<tr><th>Ticker</th><th style="text-align:left">Group</th><th>Total, 3 Jul 2023 – 15 Oct 2026</th><th>Per year</th><th style="text-align:center">−${(max * 100).toFixed(0)}% … +${(max * 100).toFixed(0)}%${max >= 4.2 ? " (capped)" : ""}</th><th style="text-align:left">Note</th></tr>`;
+    for (const t of list) { const k = TK[t];
+      const note = k.ret == null ? `stopped trading ${k.last}, before the test` : k.ends_early ? `stopped trading ${k.last}` : "";
+      html += `<tr><td>${t}</td><td style="text-align:left">${k.group}</td><td class="${sgn(k.ret)}">${k.ret == null ? "–" : pct(k.ret)}</td><td>${k.ret == null ? "–" : k.ends_early ? "–" : r(k.ret)}</td><td style="text-align:center">${bar(k.ret)}</td><td style="text-align:left" class="muted">${note}</td></tr>`; }
+    document.getElementById("tickTable").innerHTML = html;
+  }
+  sortSel.addEventListener("change", drawTicks);
+  seg("tu", u => { tu = u; drawTicks(); });
+  drawTicks();
+
+  // luck bar
+  const best = names.reduce((a, n) => Math.max(a, sh(n, "core") ?? -9, sh(n, "broad") ?? -9), -9);
+  document.getElementById("luckList").innerHTML = [
+    `<b>N</b> = number of configurations tried: every parameter setting of every strategy counts. Here N = ${LK.n_uni} per universe (35 strategies, most with a grid of settings), ${LK.n_both} over both.`,
+    `<b>SE</b> = the uncertainty of a Sharpe ratio measured over T years: about 1/√T. With T = ${LK.years.toFixed(2)} years, SE = ${LK.se.toFixed(2)}. So a measured Sharpe of 1.0 could easily be a true 0.5 or 1.5.`,
+    `<b>z</b> = the standard normal quantile, <b>γ</b> = 0.5772 (Euler's constant), <b>e</b> = 2.718.`,
+    `Result: <b>${LK.bar_uni.toFixed(2)}</b> for ${LK.n_uni} configurations, <b>${LK.bar_both.toFixed(2)}</b> for ${LK.n_both}. The best Sharpe of any strategy here is ${num(best)}, below both. Buy and hold (Sharpe ${num(H.core.sharpe)} core) is not a tried configuration, so it is not held to this bar.`,
+    `What would change it: a longer test (SE falls with √T: over 15 years the bar for ${LK.n_uni} tries drops to about ${(LK.bar_uni * Math.sqrt(LK.years / 15)).toFixed(2)}) or fewer tries. This is why the long 2008-onwards history matters more than adding strategies.`,
+  ].map(x => `<li>${x}</li>`).join("");
+  const c = document.getElementById("luckChart");
+  const CW = 900, CH = 240, CL = 50, CR = 20, CT = 16, CB = 40;
+  c.setAttribute("viewBox", `0 0 ${CW} ${CH}`); c.setAttribute("width", CW); c.style.minWidth = "560px"; c.style.width = "100%"; c.style.height = "auto";
+  const xs = n => CL + Math.log10(n) / Math.log10(1000) * (CW - CL - CR), ys = v => CT + (2 - v) / 2 * (CH - CT - CB);
+  for (const v of [0, 0.5, 1, 1.5, 2]) { el("line", { x1: CL, x2: CW - CR, y1: ys(v), y2: ys(v), class: v ? "gridl" : "axis0" }, c); el("text", { x: CL - 6, y: ys(v) + 4, "text-anchor": "end" }, c).textContent = v.toFixed(1); }
+  for (const n of [1, 10, 100, 1000]) { el("line", { x1: xs(n), x2: xs(n), y1: CT, y2: CH - CB, class: "gridl" }, c); el("text", { x: xs(n), y: CH - CB + 16, "text-anchor": "middle" }, c).textContent = n; }
+  el("text", { x: (CW + CL) / 2, y: CH - 6, "text-anchor": "middle", class: "lbl" }, c).textContent = "configurations tried (N, log scale)";
+  // curve from the formula
+  const zinv = p => { // Acklam's inverse normal approximation
+    const a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924], b = [-54.4760987982241, 161.585836858041, -155.698979859887, 66.8013118877197, -13.2806815528857], cc = [-0.00778489400243029, -0.322396458041136, -2.40075827716184, -2.54973253934373, 4.37466414146497, 2.93816398269878], d = [0.00778469570904146, 0.32246712907004, 2.445134137143, 3.75440866190742];
+    const pl = 0.02425; let q, r2;
+    if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((cc[0] * q + cc[1]) * q + cc[2]) * q + cc[3]) * q + cc[4]) * q + cc[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    if (p > 1 - pl) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((cc[0] * q + cc[1]) * q + cc[2]) * q + cc[3]) * q + cc[4]) * q + cc[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    q = p - 0.5; r2 = q * q; return (((((a[0] * r2 + a[1]) * r2 + a[2]) * r2 + a[3]) * r2 + a[4]) * r2 + a[5]) * q / (((((b[0] * r2 + b[1]) * r2 + b[2]) * r2 + b[3]) * r2 + b[4]) * r2 + 1); };
+  const G = 0.5772156649, bar = n => LK.se * ((1 - G) * zinv(1 - 1 / n) + G * zinv(1 - 1 / (n * Math.E)));
+  let d = ""; for (let i = 0; i <= 120; i++) { const n = Math.pow(10, 0.3 + i / 120 * (3 - 0.3)); d += (i ? "L" : "M") + xs(n).toFixed(1) + "," + ys(bar(n)).toFixed(1); }
+  el("path", { d, fill: "none", stroke: css("--accent"), "stroke-width": 2 }, c);
+  el("line", { x1: CL, x2: CW - CR, y1: ys(best), y2: ys(best), stroke: css("--s-core"), "stroke-width": 1.5, "stroke-dasharray": "5 3" }, c);
+  el("text", { x: CL + 6, y: ys(best) - 6, class: "lbl" }, c).textContent = `best strategy here: ${num(best)}`;
+  [[LK.n_uni, LK.bar_uni, "389 per universe"], [LK.n_both, LK.bar_both, "778, both"]].forEach(([n, v, s], i) => {
+    el("circle", { cx: xs(n), cy: ys(v), r: 5, fill: css("--accent"), stroke: css("--surface"), "stroke-width": 2 }, c);
+    el("text", { x: xs(n) - 8, y: ys(v) + (i ? 30 : -10), "text-anchor": "end", class: "lbl val" }, c).textContent = `${s}: ${v.toFixed(2)}`; });
+})();
+
+// ---------- 1. Sharpe dot plot
+(() => {
+  const svg = document.getElementById("sharpeChart");
+  const rows = [];
+  for (const g of groups) { const ns = names.filter(n => E[n].group === g).sort((a, b) => (sh(b, "core") ?? sh(b, "broad") ?? -99) - (sh(a, "core") ?? sh(a, "broad") ?? -99)); if (!ns.length) continue; rows.push({ g }); ns.forEach(n => rows.push({ n })); }
+  const W = 900, L = 230, R = 24, top = 30, rh = 22;
+  const Hh = top + rows.length * rh + 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "720px"; svg.style.width = "100%"; svg.style.height = "auto";
+  const lo = -5, hi = 2.6, x = v => L + (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (W - L - R);
+  for (let t = -5; t <= 2.5; t += 0.5) { el("line", { x1: x(t), x2: x(t), y1: top - 6, y2: Hh - 26, class: Number.isInteger(t) ? "gridl" : "gridl", "stroke-opacity": Number.isInteger(t) ? 1 : 0.5 }, svg); if (Number.isInteger(t)) el("text", { x: x(t), y: Hh - 10, "text-anchor": "middle" }, svg).textContent = num(t, 0); }
+  el("line", { x1: x(0), x2: x(0), y1: top - 6, y2: Hh - 26, class: "axis0" }, svg);
+  const ref = (v, color, label, dy) => { el("line", { x1: x(v), x2: x(v), y1: top - 6, y2: Hh - 26, stroke: color, "stroke-width": 1.5, "stroke-dasharray": "4 3" }, svg); };
+  ref(H.core.sharpe, css("--s-core")); ref(H.broad.sharpe, css("--s-broad")); ref(D.luck.per_universe, css("--ink"));
+  el("text", { x: x(D.luck.per_universe) + 4, y: top - 12, class: "lbl" }, svg).textContent = "luck bar";
+  rows.forEach((r, i) => {
+    const y = top + i * rh + rh / 2;
+    if (r.g) { el("text", { x: 0, y: y + 4, class: "grp" }, svg).textContent = r.g; return; }
+    const n = r.n;
+    const gR = el("g", {}, svg);
+    el("rect", { x: 0, y: y - rh / 2, width: W, height: rh, fill: "transparent" }, gR);
+    el("text", { x: 10, y: y + 4, class: "lbl" }, gR).textContent = n;
+    [["core", -4, "--s-core"], ["broad", 4, "--s-broad"]].forEach(([u, dy, c]) => {
+      const s = E[n][u]; if (!s) return;
+      const col = css(c);
+      el("line", { x1: x(s.ci[0]), x2: x(s.ci[1]), y1: y + dy, y2: y + dy, stroke: col, "stroke-width": 1.5, "stroke-opacity": .45 }, gR);
+      el("circle", { cx: x(s.sharpe), cy: y + dy, r: 4.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, gR);
+      if (s.sharpe < lo && u === "core") el("text", { x: x(lo) + 10, y: y + 4, class: "lbl" }, gR).textContent = "◀ " + num(s.sharpe, 1) + " core, " + num(E[n].broad.sharpe, 1) + " broad";
+    });
+    gR.addEventListener("mousemove", ev => { const c = E[n].core, b = E[n].broad;
+      const line = (u, s) => s ? `${u}: Sharpe ${num(s.sharpe)} [${num(s.ci[0])}, ${num(s.ci[1])}]<br>&nbsp; ${pct(rate(s.ret, 252))} a year (${pct(s.ret)} over the period), alpha t ${num(s.alpha_t)}, gross ${num(s.gross)}` : `${u}: no trades`;
+      showTip(ev, `<b>${n}</b><br><span class="muted">${E[n].description}</span><br>${line("core", c)}<br>${line("broad", b)}`); });
+    gR.addEventListener("mouseleave", hideTip);
+  });
+})();
+
+// ---------- 2. returns per day
+let dailyU = "core";
+function drawDaily() {
+  const u = dailyU, svg = document.getElementById("dailyChart"); svg.innerHTML = "";
+  document.getElementById("dailySw").style.background = `var(--s-${u})`;
+  const dbp = s => rate(s.ret, 1) * 1e4;
+  const ns = profitable.slice().sort((a, b) => dbp(E[b][u]) - dbp(E[a][u]));
+  const W = 900, L = 230, R = 150, top = 10, rh = 22, Hh = top + ns.length * rh + 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "640px"; svg.style.width = "100%"; svg.style.height = "auto";
+  const hi = Math.ceil(Math.max(...ns.map(n => dbp(E[n][u])), dbp(H[u])) / 2) * 2, x = v => L + v / hi * (W - L - R);
+  for (let t = 0; t <= hi; t += 2) { el("line", { x1: x(t), x2: x(t), y1: top, y2: Hh - 26, class: t ? "gridl" : "axis0" }, svg); el("text", { x: x(t), y: Hh - 10, "text-anchor": "middle" }, svg).textContent = t + " bp"; }
+  const col = css("--s-" + u);
+  el("line", { x1: x(dbp(H[u])), x2: x(dbp(H[u])), y1: top, y2: Hh - 26, stroke: css("--s-hold"), "stroke-width": 2, "stroke-dasharray": "5 3" }, svg);
+  ns.forEach((n, i) => { const s = E[n][u], y = top + i * rh;
+    const g = el("g", {}, svg);
+    el("rect", { x: 0, y, width: W, height: rh, fill: "transparent" }, g);
+    el("text", { x: 0, y: y + rh / 2 + 4, class: "lbl" }, g).textContent = n;
+    const w = Math.max(1, x(dbp(s)) - x(0));
+    el("path", { d: `M${x(0)},${y + 4} h${w - 4} a4,4 0 0 1 4,4 v${rh - 16} a4,4 0 0 1 -4,4 h${-(w - 4)} z`, fill: col }, g);
+    el("text", { x: x(dbp(s)) + 6, y: y + rh / 2 + 4, class: "val" }, g).textContent = `${num(dbp(s), 1)} bp/day · ${pct(rate(s.ret, 252))}/yr`;
+    g.addEventListener("mousemove", ev => showTip(ev, `<b>${n}</b> (${u})<br>per day ${bp(rate(s.ret, 1))} ($${(rate(s.ret, 1) * 1e4).toFixed(2)} on $10k)<br>per week ${pct(rate(s.ret, 5), 2)}, per month ${pct(rate(s.ret, 21), 2)}, per year ${pct(rate(s.ret, 252))}<br>total ${pct(s.ret)} over ${PERIOD}<br>Sharpe ${num(s.sharpe)}`));
+    g.addEventListener("mouseleave", hideTip); });
+  el("text", { x: x(dbp(H[u])) + 4, y: Hh - 26, class: "lbl" }, svg).textContent = `buy & hold ${num(dbp(H[u]), 1)} bp/day · ${pct(rate(H[u].ret, 252))}/yr`;
+  drawDailyTable();
+}
+function drawDailyTable() {
+  const u = dailyU, ns = profitable.slice().sort((a, b) => E[b][u].sharpe - E[a][u].sharpe);
+  const head = `<tr><th>Strategy</th><th>Per day</th><th>Per week</th><th>Per month</th><th>Per year</th><th>Total, ${PERIOD}</th><th>$ per day on $10k</th><th>$ per month on $10k</th><th>Up days</th><th>Best day</th><th>Worst day</th><th>Max drawdown</th><th>Sharpe</th></tr>`;
+  const row = (n, s, cls = "") => `<tr class="${cls}"><td>${n}</td><td class="${sgn(s.ret)}">${bp(rate(s.ret, 1))}</td><td>${pct(rate(s.ret, 5), 2)}</td><td>${pct(rate(s.ret, 21), 2)}</td><td>${pct(rate(s.ret, 252))}</td><td>${pct(s.ret)}</td><td>$${(rate(s.ret, 1) * 1e4).toFixed(2)}</td><td>$${(rate(s.ret, 21) * 1e4).toFixed(0)}</td><td>${s.up_days_nz != null ? pct(s.up_days_nz, 0).replace("+", "") : "–"}</td><td class="pos">${pct(s.best, 2)}</td><td class="neg">${pct(s.worst, 2)}</td><td>${pct(s.mdd)}</td><td>${num(s.sharpe)}</td></tr>`;
+  const prep = s => ({ ...s, up_days_nz: s.up_days / Math.max(1e-9, 1 - s.flat_days) });
+  document.getElementById("dailyTable").innerHTML = head + row("buy & hold", prep(H[u]), "hold") + ns.map(n => row(n, prep(E[n][u]))).join("");
+}
+document.getElementById("dailyIntro").innerHTML = `${profitable.length} strategies made a positive net return on both universes over ${PERIOD}. A <b>basis point (bp)</b> is 0.01%: on a $10,000 account 1 bp is $1. Buy and hold of the same tickers over the same period made ${bp(rate(H.core.ret, 1))} a day, ${pct(rate(H.core.ret, 21), 2)} a month and ${pct(rate(H.core.ret, 252))} a year on core (${bp(rate(H.broad.ret, 1))}, ${pct(rate(H.broad.ret, 21), 2)} and ${pct(rate(H.broad.ret, 252))} on broad), more than most of these.`;
+seg("du", u => { dailyU = u; drawDaily(); });
+drawDaily();
+
+// ---------- 3. equity curves
+let curveU = "core";
+const curveSel = document.getElementById("curveSel");
+(() => { for (const g of groups) { const og = document.createElement("optgroup"); og.label = g;
+  names.filter(n => E[n].group === g && (E[n].core || E[n].broad) && n !== "tree_1min").sort((a, b) => (sh(b, "core") ?? -9) - (sh(a, "core") ?? -9)).forEach(n => { const o = document.createElement("option"); o.value = o.textContent = n; og.appendChild(o); });
+  curveSel.appendChild(og); } curveSel.value = "sma_daily_overlays"; })();
+function drawCurve() {
+  const n = curveSel.value, u = curveU, svg = document.getElementById("curveChart"); svg.innerHTML = "";
+  document.querySelector("#s-curves .sw.line").style.borderColor = `var(--s-${u})`;
+  document.getElementById("curveName").textContent = n;
+  const s = E[n][u], hold = H[u].curve;
+  const W = 900, Hh = 340, L = 50, R = 20, T = 14, B = 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "560px"; svg.style.width = "100%"; svg.style.height = "auto";
+  if (!s) { el("text", { x: W / 2, y: Hh / 2, "text-anchor": "middle", class: "lbl" }, svg).textContent = "No trades on this universe"; document.getElementById("curveNote").textContent = ""; return; }
+  const pts = s.curve, dates = hold.map(p => +new Date(p[0]));
+  const t0 = dates[0], t1 = dates[dates.length - 1];
+  const vals = pts.map(p => p[1]).concat(hold.map(p => p[1]), [1]);
+  let lo = Math.min(...vals), hi = Math.max(...vals); const pad = (hi - lo) * .06; lo -= pad; hi += pad;
+  const x = t => L + (t - t0) / (t1 - t0) * (W - L - R), y = v => T + (hi - v) / (hi - lo) * (Hh - T - B);
+  const step = (hi - lo) > 1.2 ? 0.5 : (hi - lo) > .5 ? 0.2 : 0.1;
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) { el("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), class: Math.abs(v - 1) < 1e-9 ? "axis0" : "gridl" }, svg); el("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }, svg).textContent = "$" + v.toFixed(step < .5 ? 1 : 1); }
+  for (let yr = 2024; yr <= 2026; yr++) { const t = +new Date(yr + "-01-01"); el("line", { x1: x(t), x2: x(t), y1: T, y2: Hh - B, class: "gridl" }, svg); el("text", { x: x(t), y: Hh - 10, "text-anchor": "middle" }, svg).textContent = yr; }
+  const path = (p) => p.map((q, i) => (i ? "L" : "M") + x(+new Date(q[0])).toFixed(1) + "," + y(q[1]).toFixed(1)).join("");
+  el("path", { d: path(hold), fill: "none", stroke: css("--s-hold"), "stroke-width": 2, "stroke-dasharray": "5 3" }, svg);
+  el("path", { d: path(pts), fill: "none", stroke: css("--s-" + u), "stroke-width": 2, class: "eq" }, svg);
+  const last = pts[pts.length - 1], lastH = hold[hold.length - 1];
+  el("circle", { cx: x(+new Date(last[0])), cy: y(last[1]), r: 4, fill: css("--s-" + u), stroke: css("--surface"), "stroke-width": 2 }, svg);
+  const cross = el("line", { y1: T, y2: Hh - B, stroke: css("--ink-3"), "stroke-width": 1, visibility: "hidden" }, svg);
+  const hit = el("rect", { x: L, y: T, width: W - L - R, height: Hh - T - B, fill: "transparent" }, svg);
+  const sMap = new Map(pts.map(p => [p[0], p[1]]));
+  hit.addEventListener("mousemove", ev => { const r = svg.getBoundingClientRect(); const px = (ev.clientX - r.left) / r.width * W;
+    const t = t0 + (px - L) / (W - L - R) * (t1 - t0); let k = 0; while (k < hold.length - 1 && dates[k] < t) k++;
+    const d = hold[k][0]; cross.setAttribute("x1", x(dates[k])); cross.setAttribute("x2", x(dates[k])); cross.setAttribute("visibility", "visible");
+    const sv = sMap.get(d); showTip(ev, `<b>week of ${d}</b><br>${n}: ${sv != null ? "$" + sv.toFixed(3) : "–"}<br>buy &amp; hold: $${hold[k][1].toFixed(3)}`); });
+  hit.addEventListener("mouseleave", () => { hideTip(); cross.setAttribute("visibility", "hidden"); });
+  document.getElementById("curveNote").textContent = `Over ${PERIOD}, ${n} (${u}): $1 → $${last[1].toFixed(2)} (${pct(s.ret)} total, ${pct(rate(s.ret, 252))} a year, ${pct(rate(s.ret, 21), 2)} a month; max drawdown ${pct(s.mdd)}). Buy and hold of the same tickers: $1 → $${lastH[1].toFixed(2)} (${pct(H[u].ret)} total, ${pct(rate(H[u].ret, 252))} a year, ${pct(rate(H[u].ret, 21), 2)} a month; max drawdown ${pct(H[u].mdd)}). Beta ${num(s.beta)}: the strategy carries about ${Math.round(s.beta * 100)}% of the market's daily moves.`;
+}
+curveSel.addEventListener("change", drawCurve);
+seg("cu", u => { curveU = u; drawCurve(); });
+drawCurve();
+
+// ---------- 4. yearly table
+let yearU = "core";
+function drawYears() {
+  const u = yearU, years = Object.keys(H[u].yearly);
+  const ns = profitable.slice().sort((a, b) => E[b][u].sharpe - E[a][u].sharpe);
+  const cell = (v, h) => { const cls = v == null ? "" : v >= h ? "cellpos" : "cellneg"; return `<td class="${cls}">${pct(v)}</td>`; };
+  let html = `<tr><th>Strategy</th>${years.map(y => `<th>${y}${y === "2023" ? " (H2)" : y === "2026" ? " (to Oct)" : ""}</th>`).join("")}<th>Years ≥ buy &amp; hold</th></tr>`;
+  html += `<tr class="hold"><td>buy &amp; hold</td>${years.map(y => `<td>${pct(H[u].yearly[y])}</td>`).join("")}<td></td></tr>`;
+  for (const n of ns) { const yv = E[n][u].yearly; const beat = years.filter(y => yv[y] >= H[u].yearly[y]).length;
+    html += `<tr><td>${n}</td>${years.map(y => cell(yv[y], H[u].yearly[y])).join("")}<td>${beat} of ${years.length}</td></tr>`; }
+  document.getElementById("yearTable").innerHTML = html;
+}
+seg("yu", u => { yearU = u; drawYears(); });
+drawYears();
+
+// ---------- 5. tuning
+(() => {
+  const T = D.tuning, ns = Object.keys(T).filter(n => (T[n].core && T[n].core.wf != null) || (T[n].broad && T[n].broad.wf != null));
+  ns.sort((a, b) => ((T[b].core?.wf ?? -9) - (T[a].core?.wf ?? -9)));
+  const svg = document.getElementById("tuneChart");
+  const W = 900, L = 230, R = 24, top = 14, rh = 30, Hh = top + ns.length * rh + 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.style.minWidth = "680px"; svg.style.width = "100%"; svg.style.height = "auto";
+  const lo = -1, hi = 2, x = v => L + (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (W - L - R);
+  for (let t = -1; t <= 2; t += 0.5) { el("line", { x1: x(t), x2: x(t), y1: top, y2: Hh - 26, class: t === 0 ? "axis0" : "gridl" }, svg); el("text", { x: x(t), y: Hh - 10, "text-anchor": "middle" }, svg).textContent = num(t, 1); }
+  ns.forEach((n, i) => { const y0 = top + i * rh; const g = el("g", {}, svg);
+    el("rect", { x: 0, y: y0, width: W, height: rh, fill: "transparent" }, g);
+    el("text", { x: 0, y: y0 + rh / 2 + 4, class: "lbl" }, g).textContent = n;
+    [["core", 9, "--s-core"], ["broad", 21, "--s-broad"]].forEach(([u, dy, c]) => { const t = T[n][u]; if (!t || t.wf == null) return; const y = y0 + dy;
+      el("line", { x1: x(t.min), x2: x(t.max), y1: y, y2: y, stroke: css("--rule"), "stroke-width": 6, "stroke-linecap": "round" }, g);
+      t.points.forEach(p => p != null && el("line", { x1: x(p), x2: x(p), y1: y - 5, y2: y + 5, stroke: css("--ink-3"), "stroke-width": 1.2 }, g));
+      el("circle", { cx: x(t.wf), cy: y, r: 5, fill: css(c), stroke: css("--surface"), "stroke-width": 2 }, g); });
+    g.addEventListener("mousemove", ev => { const f = u => { const t = T[n][u]; return t && t.wf != null ? `${u}: walk-forward ${num(t.wf)}; ${t.n} fixed settings ${num(t.min)} to ${num(t.max)} (median ${num(t.median)}); beats ${pct(t.beats, 0).replace("+", "")}; rank corr ${num(t.rho)}` : `${u}: –`; };
+      showTip(ev, `<b>${n}</b><br>${f("core")}<br>${f("broad")}`); });
+    g.addEventListener("mouseleave", hideTip); });
+  let html = `<tr><th>Strategy</th><th>Grid points</th><th>Core WF</th><th>Core fixed median [range]</th><th>Core WF beats</th><th>Core rank corr</th><th>Broad WF</th><th>Broad fixed median [range]</th><th>Broad WF beats</th><th>Broad rank corr</th></tr>`;
+  const part = t => t && t.wf != null ? `<td>${num(t.wf)}</td><td>${num(t.median)} [${num(t.min)}, ${num(t.max)}]</td><td>${pct(t.beats, 0).replace("+", "")}</td><td class="${t.rho > .3 ? "pos" : t.rho < 0 ? "neg" : ""}">${num(t.rho)}</td>` : `<td colspan="4" style="text-align:center">–</td>`;
+  for (const n of ns) html += `<tr><td>${n}</td><td>${T[n].core?.n ?? T[n].broad?.n}</td>${part(T[n].core)}${part(T[n].broad)}</tr>`;
+  document.getElementById("tuneTable").innerHTML = html;
+  if (!ns.some(n => T[n].broad)) document.getElementById("tuneTable").insertAdjacentHTML("beforebegin", '<p class="note" style="margin-bottom:10px">Broad-universe tuning is still running; this section shows core only for now.</p>');
+  const all = ns.flatMap(n => ["core", "broad"].map(u => T[n][u]).filter(t => t && t.wf != null && t.rho != null));
+  const rho = all.reduce((a, t) => a + t.rho, 0) / all.length;
+  const beats = all.reduce((a, t) => a + t.beats, 0) / all.length;
+  const above = all.filter(t => t.wf > t.median).length;
+  document.getElementById("tuneFindings").innerHTML = [
+    `Across ${all.length} strategy-universe pairs, the in-sample ranking of settings correlates <b>${num(rho)}</b> on average with their out-of-sample ranking: weak. Choosing the in-sample best is only a little better than picking at random.`,
+    `The walk-forward choice beat <b>${pct(beats, 0).replace("+", "")}</b> of fixed settings on average and landed above the grid median in ${above} of ${all.length} cases: about what a coin flip would give, with a small tilt in favour.`,
+    `The spread between settings is often as large as the gap to buy and hold, and the best fixed setting differs between core and broad (for example, the 52-week-high lookback is best at 252 days on core in hindsight but was chosen at 126; the walk-forward picks a 5-day RSI(2) exit on core and a 10-day one on broad). The data cannot tell settings apart.`,
+    `<b>What tuning can still do:</b> (1) rerun these grids on the long point-in-time S&amp;P 500 history (2008 on, waiting for the November data), where 15+ years of folds give the selection real information; (2) prefer a broad, stable region of the grid (average the neighbours' scores) over the single best point; (3) do not widen grids on the 3.3-year data, since every extra setting raises the luck bar (1.64 now) without making the choice more reliable.`,
+  ].map(x => `<li>${x}</li>`).join("");
+})();
+
+// ---------- 6. all results
+let allU = "core";
+function drawAll() {
+  const u = allU;
+  let html = `<tr><th>Strategy</th><th>Bars</th><th>Sharpe</th><th>90% CI</th><th>Total, ${PERIOD}</th><th>Per year</th><th>Per month</th><th>Per day</th><th>Max DD</th><th>Alpha per year (t)</th><th>Beta</th><th>Gross</th><th>Stress</th><th>Folds +</th></tr>`;
+  html += `<tr class="hold"><td>buy &amp; hold</td><td>1D</td><td>${num(H[u].sharpe)}</td><td></td><td>${pct(H[u].ret)}</td><td>${pct(rate(H[u].ret, 252))}</td><td>${pct(rate(H[u].ret, 21), 2)}</td><td>${bp(rate(H[u].ret, 1))}</td><td>${pct(H[u].mdd)}</td><td></td><td>1.00</td><td></td><td></td><td></td></tr>`;
+  for (const g of groups) { const ns = names.filter(n => E[n].group === g).sort((a, b) => (sh(b, u) ?? -99) - (sh(a, u) ?? -99));
+    html += `<tr class="grouprow"><td colspan="15">${g}</td></tr>`;
+    for (const n of ns) { const s = E[n][u];
+      html += s ? `<tr><td title="${E[n].description}">${n}</td><td>${E[n].timeframe}</td><td class="${sgn(s.sharpe)}">${num(s.sharpe)}</td><td>[${num(s.ci[0])}, ${num(s.ci[1])}]</td><td class="${sgn(s.ret)}">${pct(s.ret)}</td><td>${pct(rate(s.ret, 252))}</td><td>${pct(rate(s.ret, 21), 2)}</td><td>${bp(rate(s.ret, 1))}</td><td>${pct(s.mdd)}</td><td>${n === "tree_1min" ? "–" : pct(s.alpha) + " (" + num(s.alpha_t) + ")"}</td><td>${num(s.beta)}</td><td>${num(s.gross)}</td><td>${num(s.stress)}</td><td>${s.folds_pos}/6</td></tr>`
+        : `<tr><td>${n}</td><td>${E[n].timeframe}</td><td colspan="13" style="text-align:left">no trades on this universe</td></tr>`; } }
+  document.getElementById("allTable").innerHTML = html;
+}
+seg("au", u => { allU = u; drawAll(); });
+drawAll();
+</script>
