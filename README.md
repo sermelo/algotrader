@@ -347,6 +347,31 @@ Reading:
 - The broad universe is harder: buy and hold and most strategies are lower, and pairs
   trading turns negative (-0.73) where it was 0.64 on core.
 
+## Long history (2008 to Oct 2026, S&P 500 members)
+
+`python -m algotrader.longrun` (and `longrun_chart`) walk forward over 14.8 years (yearly folds from
+2012; chart CNN from 2014; deep arbitrage from 2013) on the point-in-time S&P 500 universe, $1M, the
+same costs, adjusted prices from Tiingo, else the adjusted Hugging Face daily series, else WIKI. Full
+tables: [`results/long/summary.md`](results/long/summary.md), factor regressions
+[`results/long/factor_alpha.md`](results/long/factor_alpha.md); the same run without the Hugging Face
+series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharpe 0.93, +15.0% a year.
+
+- **Long-only strategies match the market, they do not beat it.** Sharpe 0.5 to 0.9 (operating
+  profitability 0.86, high 52-week 0.81, profitability 0.81, pead 0.79, momentum 0.79, low volatility
+  0.78, asset growth 0.77, value 0.63), all with beta about 1 (low volatility 0.61) and alpha against
+  SPY between -5.7% and +1.3% a year, none significant (largest |t| 1.79). Against the Fama-French five
+  factors plus momentum no strategy has a positive alpha t-statistic above 0.76 (a long-short asset-growth sort).
+- **Long-short portfolios earn nothing** after costs (Sharpe -0.35 to +0.11): momentum 0.03 (it
+  loads 0.61 on the momentum factor, alpha -2.3% a year, t -1.07), value -0.01, profitability -0.18.
+- **Price-chart CNN** (small network): long 0.54 (alpha -3.4%, t -1.40), long-short -0.01; turnover
+  about 1,100% a year.
+- **Deep arbitrage fails with next-open execution**: Sharpe -5.37 (-4.79 without the Hugging Face
+  series), 0 of 14 folds positive, turnover 2,677% a year. Gross Sharpe is -0.15, so even before costs
+  there is nothing (see ROADMAP S8: the paper trades at the close).
+- **Luck bar:** 889 configurations in all (111 here); the best zero-edge one would reach a Sharpe of about
+  0.84 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
+- The Hugging Face series changes a Sharpe by a median 0.06 (largest 0.58, `deep_arb_long`).
+
 ## Earlier exploration (3 tickers)
 
 Default strategy (SMA 20/50, 1% risk, 2x ATR stop, 10% max position, IBKR

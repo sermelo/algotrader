@@ -1,0 +1,97 @@
+{
+  "asset_growth_long": {
+    "code_sha256": "85ab2736cd858ec8215c7e497bbf28329520df861a188970367f7b4aaa43fac8",
+    "configurations": 3,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "asset_growth_ls_long": {
+    "code_sha256": "2c298d90e40e664fc90b269f9997fa369f689dea01b3b221f375ca68feeb5975",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "deep_arb_long": {
+    "code_sha256": "5d76cb1d99d872cbb1450333e092f3960901d71df64316e97c9f89e64f4c6119",
+    "configurations": 1,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "high52_long": {
+    "code_sha256": "29b075bf5bca7b9f15aeff0be120e91d5d80bd3dea35a09310fc99de02e5d01c",
+    "configurations": 6,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "low_vol_long": {
+    "code_sha256": "e8f93b2f3b659816e93143a6b8177e939cdaafc09890dfabc9db4cc056d93d82",
+    "configurations": 6,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "op_profitability_long": {
+    "code_sha256": "0f580a196240b5454bd321ae4235fdcc5ebc1a11e3ab4eba67acdc04cf2b25d8",
+    "configurations": 3,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "op_profitability_ls_long": {
+    "code_sha256": "4667de3e3462dd549778ed573a6b821cd78fec848023bf5daf9db0619966f208",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "pead_long": {
+    "code_sha256": "3c16f199dddfc78d01716b25254106ab5652d95c273fdd9e97d88512d09d86c8",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "pead_ls_long": {
+    "code_sha256": "7d8855f8ede3dccd13c2b847b2347eecd3e1e6f4a35e0f5e0fb819e3583a034f",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "profitability_long": {
+    "code_sha256": "51202ecf74b569a0de6001fce6b23f7b9bb686ab6ed5f343b2e44d32d961788a",
+    "configurations": 3,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "profitability_ls_long": {
+    "code_sha256": "a6a2ff50398ae4ab65085514e4817c85d648c7722ecd6194a7de1a835ce08e26",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "seasonality_long": {
+    "code_sha256": "3efa2ea0fd865c2cb7f017c170c07357abce24f474216f9c559d82cf8417b8b4",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "seasonality_ls_long": {
+    "code_sha256": "b02aa8a8e26504f593f5dd11102cec83a0c2736ebf4aa7c0525c32fd0bbb7fd5",
+    "configurations": 8,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "value_long": {
+    "code_sha256": "c00fbb03a4a598a90273fa10c90262c9faba6094b358eda8a4aa115f7d2433bc",
+    "configurations": 3,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "value_ls_long": {
+    "code_sha256": "b20a3c6d9c7e6de18ca0bf3f9bbd35f8bd619cff9ab7e1e06794ef3c1c352f09",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "xs_momentum_buffer_long": {
+    "code_sha256": "288ea629656c1125fe7602b76f8be5e6f6ad8ec3e04ab9100ff772cff06888f3",
+    "configurations": 12,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "xs_momentum_long": {
+    "code_sha256": "37b0f6eba86eff708516fe7786e2037ddccf398cf9224dd7d78d6e08de445a37",
+    "configurations": 8,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "xs_momentum_ls_long": {
+    "code_sha256": "99b2d29bb41ad96e975470b69ade54a25ec761d2c9e4781985e1bde34a4fa3fb",
+    "configurations": 16,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "xs_reversal_long": {
+    "code_sha256": "16808a333b3767ce2ee699c71fa7b6deed0f6cc87aba21360070d9060f83b3be",
+    "configurations": 8,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  }
+}

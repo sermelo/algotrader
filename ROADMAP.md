@@ -256,7 +256,7 @@ plan. **Decision (sergio, 2026-10-16): wait for the free quota to reset in Novem
 2026-11-01 rerun `scripts/history_queue.sh` on the VPS (it resumes, skipping saved
 symbols) for the remaining ~216. Then:
 `python -m algotrader.history check`, `python -m algotrader.longrun` on the VPS,
-`python -m algotrader.french report --results results/long`, commit `results/long/`.
+`python -m algotrader.french report --results results/long`, commit `results/long/`. **Done 2026-10-18** (19 long experiments + 2 chart CNN committed, see README "Long history").
 
 ### Changes to batch into one full rerun
 
