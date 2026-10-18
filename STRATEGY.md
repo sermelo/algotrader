@@ -314,7 +314,12 @@ month, mean of 3 months, price >= $5, at least 10 trading days, SEC fund tickers
 S&P 500 members (about 1,040 names). Prices: adjusted Hugging Face daily series (no dividends after March 2018,
 none for tickers WIKI lacks). A series is cut where trading stops for more than 30 calendar days, or for more
 than 5 days with the open more than 2x or under 0.5x the last close; pieces are separate names with the
-parent's membership. Same walk-forward and engine as the long history; half-spread 5 bp (base), 10 bp (stress).
+parent's membership. A move of more than 5x (or under 0.2x) from one close or open to the next always cuts the
+series (that return is never used); days with an adjusted close below $1 are dropped (heavy
+reverse splits leave absurd adjusted prices, down to 1e-36), series with a non-positive price and exchange test
+symbols are dropped
+(data fix added after the first run crashed on them; that run had printed only `xs_momentum_mid` Sharpe 0.26,
+the strategies and the success rule are unchanged). Same walk-forward and engine as the long history; half-spread 5 bp (base), 10 bp (stress).
 Pre-registered: momentum (long, long-short), short-term reversal, low volatility, 52-week high, seasonality
 (long, long-short), combined price signal, with the long-history grids. Success criterion: Fama-French alpha
 t >= 2 at base costs, Sharpe above the equal-weight universe, positive at stress costs.

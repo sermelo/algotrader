@@ -20,7 +20,8 @@ def test_segments_cut_long_gaps_and_gapped_jumps_only():
     assert [len(p) for p in segments(frame(d2, [10] * 10 + [40] * 10))] == [10, 10]   # 2-week halt, price x4
     assert len(segments(frame(d2, [10] * 10 + [11] * 10))) == 1    # same halt, small move: same company
     d3 = pd.bdate_range("2020-01-01", periods=20)
-    assert len(segments(frame(d3, [10] * 10 + [40] * 10))) == 1    # jump without a halt: kept (real news)
+    assert len(segments(frame(d3, [10] * 10 + [25] * 10))) == 1    # x2.5 without a halt: kept (real news)
+    assert [len(p) for p in segments(frame(d3, [10] * 10 + [60] * 10))] == [10, 10]   # x6 in a day: never a return
 
 
 def test_load_names_pieces_and_copies_membership(tmp_path):
@@ -29,9 +30,12 @@ def test_load_names_pieces_and_copies_membership(tmp_path):
     d = list(pd.bdate_range("2012-01-02", periods=80)) + list(pd.bdate_range("2013-01-02", periods=80))
     frame(d, [10] * 160).to_parquet(prices / "AB_C.parquet")
     frame(pd.bdate_range("2012-01-02", periods=30), [5] * 30).to_parquet(prices / "SHORT.parquet")
-    (tmp_path / "m.csv").write_text('date,tickers\n2012-01-31,"AB.C,SHORT,NOFILE"\n2013-01-31,"AB.C"\n')
+    frame(pd.bdate_range("2012-01-02", periods=80), [5] * 79 + [-1]).to_parquet(prices / "NEG.parquet")
+    frame(pd.bdate_range("2012-01-02", periods=80), [5] * 80).to_parquet(prices / "ZVZZT.parquet")
+    frame(pd.bdate_range("2012-01-02", periods=80), [0.5] * 80).to_parquet(prices / "PENNY.parquet")
+    (tmp_path / "m.csv").write_text('date,tickers\n2012-01-31,"AB.C,SHORT,NOFILE,NEG,ZVZZT,PENNY"\n2013-01-31,"AB.C"\n')
     frames, members = load(tmp_path / "m.csv", prices, tmp_path / "none.parquet", start="2008-01-01")
-    assert sorted(frames) == ["AB.C", "AB.C~2"]                    # SHORT has too few days, NOFILE no file
+    assert sorted(frames) == ["AB.C", "AB.C~2"]                    # too few days, no file, negative price, test symbol, adjusted pennies
     assert sorted(members["ticker"].unique()) == ["AB.C", "AB.C~2"] and len(members) == 4
 
 

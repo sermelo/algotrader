@@ -24,6 +24,7 @@ and the result still positive at stress costs; otherwise the factor search stops
 import argparse
 import hashlib
 import json
+import re
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -45,14 +46,23 @@ BASE = ("xs_momentum_long", "xs_momentum_ls_long", "xs_reversal_long", "low_vol_
         "seasonality_long", "seasonality_ls_long", "combo_price_long")
 
 
-def segments(df: pd.DataFrame, max_gap: int = 30, jump_gap: int = 5, max_jump: float = 2.0) -> list:
-    """Split a daily frame where the ticker probably changed hands (see module doc)."""
+MIN_PRICE = 1.0                                   # adjusted close below this: day dropped
+TEST_SYMBOL = re.compile(r"^Z[A-Z]ZZ")          # exchange test symbols (ZVZZT, ZWZZT, ZXZZT ...)
+
+
+def segments(df: pd.DataFrame, max_gap: int = 30, jump_gap: int = 5, max_jump: float = 2.0,
+             bad_jump: float = 5.0) -> list:
+    """Split a daily frame where the ticker probably changed hands (see module doc), or where the
+    price moves more than `bad_jump` times from one day to the next (a split the adjustment missed or
+    invented, or a different company); such a move is never used as a return."""
     if len(df) < 2:
         return [df]
     gap = df.index.to_series().diff().dt.days
     ratio = (df["open"] / df["close"].shift()).abs()
+    day = (df["close"] / df["close"].shift()).abs()
     jump = (ratio > max_jump) | (ratio < 1 / max_jump)
-    cut = (gap > max_gap) | ((gap > jump_gap) & jump)
+    bad = (ratio > bad_jump) | (ratio < 1 / bad_jump) | (day > bad_jump) | (day < 1 / bad_jump)
+    cut = (gap > max_gap) | ((gap > jump_gap) & jump) | bad
     starts = [0] + list(np.flatnonzero(cut.to_numpy()))
     ends = starts[1:] + [len(df)]
     return [df.iloc[a:b] for a, b in zip(starts, ends)]
@@ -64,11 +74,14 @@ def load(members_file=MEMBERS, prices=PRICES, spy=SPY_FILE, start=longrun.START,
     frames, names = {}, {}
     for t in sorted(members["ticker"].unique()):
         p = Path(prices) / f"{wiki_symbol(t)}.parquet"
-        if not p.exists():
+        if not p.exists() or TEST_SYMBOL.match(t):
             continue
         df = pd.read_parquet(p)
         df = df[[c for c in ("open", "high", "low", "close", "volume", "raw_close") if c in df]]
         df = df[df.index >= pd.Timestamp(start)].dropna(subset=["open", "close"])
+        if (df[["open", "high", "low", "close"]] <= 0).any().any():
+            continue                                   # a broken adjustment (negative prices)
+        df = df[df["close"] >= MIN_PRICE]              # adjusted pennies (heavy reverse splits): untradeable
         pieces = [s for s in segments(df) if len(s) >= min_days]
         names[t] = []
         for i, s in enumerate(pieces):
