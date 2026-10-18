@@ -19,6 +19,26 @@
     "configurations": 4,
     "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
   },
+  "combo_long": {
+    "code_sha256": "703a84d8c904e01b2b2e25c17eb1274266e67457483a7f0c763d4eb0af1269e8",
+    "configurations": 2,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "combo_ls_long": {
+    "code_sha256": "3e2f1aa8d32591d4a4b937df684a90be3b439b5ae8aa08d0f4b52276662f7de3",
+    "configurations": 4,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "combo_price_long": {
+    "code_sha256": "4410f52f1ea87c2888ed170591d9695e7e977526d123bf1e5b2000cad56f228b",
+    "configurations": 2,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "combo_trend_long": {
+    "code_sha256": "c1cd31bc967a1aaa5f09451c42b2f210bb9db0d0b6400709f691b3db4ce565a1",
+    "configurations": 2,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
   "deep_arb_long": {
     "code_sha256": "5d76cb1d99d872cbb1450333e092f3960901d71df64316e97c9f89e64f4c6119",
     "configurations": 1,
@@ -97,6 +117,11 @@
   "xs_momentum_ls_long": {
     "code_sha256": "99b2d29bb41ad96e975470b69ade54a25ec761d2c9e4781985e1bde34a4fa3fb",
     "configurations": 16,
+    "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
+  },
+  "xs_momentum_trend_long": {
+    "code_sha256": "b5a0c3f105828d0902cb44d0ae7329decd94e47accf56c71029dce6fefe198ad",
+    "configurations": 8,
     "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
   },
   "xs_reversal_long": {

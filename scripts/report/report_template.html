@@ -730,7 +730,7 @@ drawAll();
 (() => {
   const L = D.long; if (!L) { document.getElementById("s-long").hidden = true; return; }
   const LE = L.experiments, LH = L.hold, LN = Object.keys(LE);
-  const fams = ["Price and momentum", "Fundamentals", "Earnings news", "Deep learning"];
+  const fams = ["Price and momentum", "Fundamentals", "Earnings news", "Combined", "Deep learning"];
   const fmt = s => new Date(s).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
   const PER = fmt(LH.first) + " – " + fmt(LH.last), YRS = LH.days / 252;
   const lrate = (ret, n) => Math.pow(1 + ret, n / LH.days) - 1;

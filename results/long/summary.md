@@ -6,8 +6,8 @@ were S&P 500 members on each day; walk-forward with folds starting each January 
 portfolio; costs IBKR + 2 bp half-spread (base), none (gross), 5 bp (stress); shorts
 pay 50 bp a year. Alpha/beta against SPY buy and hold
 (Sharpe 0.93, CAGR +15.0% over the same days).
-Turnover: one-sided, per year. 111 configurations tried here; the best of that many
-zero-edge strategies would show a Sharpe of about 0.67
+Turnover: one-sided, per year. 129 configurations tried here; the best of that many
+zero-edge strategies would show a Sharpe of about 0.68
 by luck over 14.8 years.
 
 | Experiment | Sharpe [90% CI] | CAGR | Max DD | Alpha/yr (t) | Beta | Gross Sharpe | Stress Sharpe | Turnover | Folds > 0 |
@@ -16,6 +16,10 @@ by luck over 14.8 years.
 | `asset_growth_ls_long` | 0.11 [-0.32, 0.55] | +0.5% | -20.5% | +1.5% (0.88) | -0.05 | 0.17 | 0.10 | 158% | 7/15 |
 | `chart_cnn_long` | 0.54 [0.09, 1.03] | +8.3% | -40.2% | -3.4% (-1.40) | 0.91 | 0.58 | 0.50 | 1079% | 9/13 |
 | `chart_cnn_ls_long` | -0.01 [-0.47, 0.43] | -0.2% | -22.0% | -0.1% (-0.06) | 0.00 | 0.16 | -0.13 | 1132% | 8/13 |
+| `combo_long` | 0.69 [0.30, 1.12] | +9.5% | -32.8% | -1.3% (-0.60) | 0.75 | 0.71 | 0.68 | 341% | 13/15 |
+| `combo_ls_long` | -0.24 [-0.64, 0.16] | -4.9% | -57.9% | +0.7% (0.17) | -0.29 | -0.20 | -0.26 | 339% | 5/15 |
+| `combo_price_long` | 0.75 [0.36, 1.19] | +11.0% | -34.6% | -0.1% (-0.04) | 0.76 | 0.77 | 0.74 | 399% | 14/15 |
+| `combo_trend_long` | 0.71 [0.31, 1.12] | +7.6% | -18.1% | +1.9% (0.80) | 0.39 | 0.73 | 0.68 | 505% | 12/15 |
 | `deep_arb_long` | -5.37 [-6.58, -4.56] | -23.0% | -97.2% | -26.4% (-20.35) | 0.03 | -0.15 | -5.75 | 2677% | 0/14 |
 | `high52_long` | 0.81 [0.41, 1.26] | +11.1% | -30.9% | -0.0% (-0.01) | 0.75 | 0.83 | 0.78 | 571% | 13/15 |
 | `low_vol_long` | 0.78 [0.36, 1.27] | +10.1% | -34.9% | +1.2% (0.51) | 0.61 | 0.78 | 0.77 | 131% | 13/15 |
@@ -32,4 +36,5 @@ by luck over 14.8 years.
 | `xs_momentum_buffer_long` | 0.79 [0.42, 1.19] | +14.3% | -32.5% | -0.3% (-0.12) | 1.01 | 0.80 | 0.79 | 192% | 14/15 |
 | `xs_momentum_long` | 0.79 [0.43, 1.19] | +15.9% | -32.9% | +1.3% (0.38) | 1.03 | 0.80 | 0.78 | 365% | 14/15 |
 | `xs_momentum_ls_long` | 0.03 [-0.34, 0.40] | -0.5% | -29.9% | +0.5% (0.16) | -0.01 | 0.08 | 0.00 | 523% | 7/15 |
+| `xs_momentum_trend_long` | 0.56 [0.15, 0.98] | +8.0% | -26.4% | +0.3% (0.09) | 0.57 | 0.59 | 0.53 | 635% | 13/15 |
 | `xs_reversal_long` | 0.53 [0.09, 0.99] | +9.8% | -54.0% | -5.7% (-1.79) | 1.15 | 0.60 | 0.47 | 2047% | 12/15 |

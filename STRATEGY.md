@@ -305,7 +305,7 @@ monthly. `trend_days` > 0: all weights are zeroed on days SPY's close is not abo
 last `trend_days` closes (known at that close, traded at the next open). `TrendMomentum` is the
 same for plain momentum. Five pre-registered experiments (`longrun_combo.py`): `combo_long`,
 `combo_ls_long`, `combo_price_long` (no SEC data), `combo_trend_long`, `xs_momentum_trend_long`.
-Not run yet (waits for the VPS).
+Results in `results/long/` (README, "Long history").
 
 ## Factor regressions (`algotrader/french.py`)
 

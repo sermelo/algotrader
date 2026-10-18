@@ -352,7 +352,7 @@ Reading:
 `python -m algotrader.longrun` (and `longrun_chart`) walk forward over 14.8 years (yearly folds from
 2012; chart CNN from 2014; deep arbitrage from 2013) on the point-in-time S&P 500 universe, $1M, the
 same costs, adjusted prices from Tiingo, else the adjusted Hugging Face daily series, else WIKI. Full
-tables: [`results/long/summary.md`](results/long/summary.md), factor regressions
+tables (26 experiments): [`results/long/summary.md`](results/long/summary.md), factor regressions
 [`results/long/factor_alpha.md`](results/long/factor_alpha.md); the same run without the Hugging Face
 series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharpe 0.93, +15.0% a year.
 
@@ -370,6 +370,12 @@ series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharp
   there is nothing (see ROADMAP S8: the paper trades at the close).
 - **Luck bar:** 889 configurations in all (111 here); the best zero-edge one would reach a Sharpe of about
   0.84 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
+- **Combined signal and trend filter** (`combo.py`, 5 more experiments): blending momentum, low
+  volatility, 52-week high and profitability gives long-only 0.69 (price signals only 0.75), alpha
+  -1.3% a year (t -0.60) and long-short -0.24: blending does not create an edge. Holding the
+  combined signal only while SPY is above its 200-day mean gives Sharpe 0.71 and CAGR +7.6% with a
+  maximum drawdown of -18.1% (-32.8% without the filter), beta 0.39: it lowers risk by holding less of
+  the market, alpha +1.9% a year (t 0.80, not significant). Filtered momentum 0.56 (drawdown -26.4%).
 - The Hugging Face series changes a Sharpe by a median 0.06 (largest 0.58, `deep_arb_long`).
 
 ## Earlier exploration (3 tickers)
