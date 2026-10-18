@@ -119,6 +119,12 @@ Updated 2026-10-17. In order; details in the sections below.
    - *Cut turnover* of earnings drift (about 1,167% a year) and seasonality (about 1,000%): buffers
      or lower rebalance frequency.
 
+**Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
+(`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names
+a month 2008-2026, built on the VPS (`data/history/size_members.csv`). Next: adjusted HF price series for those tickers
+(`hfdata.build_source`), SEC facts for them, then the long runner with this membership file, costs of 5-10 bp half-spread,
+pre-registered: stop if no strategy has significant alpha after costs. ADRs and some trusts remain in the list.
+
 ## Priority list
 
 ### P1. Data (unblocks everything else)
