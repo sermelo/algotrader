@@ -84,15 +84,10 @@ Updated 2026-10-17. In order; details in the sections below.
 2. **D1 second batch**: on or after 2026-11-01 rerun `scripts/history_queue.sh` on the VPS
    for the remaining ~216 Tiingo symbols (the 500-symbol monthly quota stops it), then
    `python -m algotrader.history check`.
-3. **Long-history results** (2026-10-17: 18 of 19 experiments done on the VPS in `data/long_hf` and
-   `data/long_nohf`, not yet committed; `deep_arb_long` and the chart CNN still running):
-   `python -m algotrader.longrun` on the VPS (19 experiments,
-   deep_arb_long takes about 12 hours), `python -m algotrader.french report --results
-   results/long`, `python -m algotrader.trials`, commit `results/long/` with docs.
+3. ~~**Long-history results**~~ **done 2026-10-18**: 26 experiments in `results/long/` (with and without the Hugging Face series), factor alphas, luck bars, README section.
 4. ~~**S8 follow-up**: market-on-close variant on the 1-minute data~~ **done 2026-10-17**
    (`scripts/moc_residual_check.py`): MOC does not rescue it (see S8).
-5. **S9 price-chart CNN** (Jiang, Kelly & Xiu): implemented 2026-10-17; full run
-   (`python -m algotrader.longrun_chart`, about 4-6 hours with 2 threads) in progress on the VPS.
+5. ~~**S9 price-chart CNN**~~ **done 2026-10-18**: long 0.54, long-short -0.01 (small network); paper-size capacity check still optional.
 6. **S13 leftovers** (next shared-code rerun): "stocks in play" ranking for ORB, overnight
    earnings-gap filter (earnings dates from D3).
 7. **Low priority**: S10 deep momentum networks on ETFs (note PRIIPs: US ETFs are not
