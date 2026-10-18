@@ -378,6 +378,12 @@ series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharp
   combined signal only while SPY is above its 200-day mean gives Sharpe 0.71 and CAGR +7.6% with a
   maximum drawdown of -18.1% (-32.8% without the filter), beta 0.39: it lowers risk by holding less of
   the market, alpha +1.9% a year (t 0.80, not significant). Filtered momentum 0.56 (drawdown -26.4%).
+- **Blending the strategies** (`scripts/strategy_blend.py`, `results/long/blend.md`, 25 strategies, 2014 to 2026, SPY Sharpe 0.83
+  over those days): equal-weight long-only 0.71, inverse-volatility 0.70, all long-short about -0.13, long-only plus
+  long-short 0.70 with max drawdown -24% (SPY -34%) and beta 0.53, inverse-vol of everything 0.67 with drawdown -14% and
+  beta 0.32. Long-only strategies are 0.73 correlated, so they diversify little; the long-short ones are uncorrelated
+  with everything (0.02 to -0.04) but each earns about zero, so averaging them adds up to zero. Blends lower the
+  risk by holding less of the market, not by adding return: alpha stays near zero (all |t| < 1).
 - The Hugging Face series changes a Sharpe by a median 0.06 (largest 0.58, `deep_arb_long`).
 
 ## Earlier exploration (3 tickers)
