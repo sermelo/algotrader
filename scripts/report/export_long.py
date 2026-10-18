@@ -11,9 +11,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from algotrader import longrun_chart
 from algotrader.longrun import BY_NAME
 from algotrader.stats import alpha_beta, expected_max_sharpe, returns_stats, sharpe_interval
 
+BY_NAME = dict(BY_NAME) | {e.name: e for e in longrun_chart.EXPERIMENTS}      # the CNN experiments live in their own module
 OUT, RES = Path(sys.argv[1]), Path(sys.argv[2])
 FAMILY = {"Price and momentum": ("xs_momentum", "xs_reversal", "high52", "low_vol", "seasonality"),
           "Fundamentals": ("value", "profitability", "asset_growth", "op_profitability"),
