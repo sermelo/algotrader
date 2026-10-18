@@ -324,6 +324,20 @@ Pre-registered: momentum (long, long-short), short-term reversal, low volatility
 (long, long-short), combined price signal, with the long-history grids. Success criterion: Fama-French alpha
 t >= 2 at base costs, Sharpe above the equal-weight universe, positive at stress costs.
 
+## Stop-loss test (`algotrader/stoploss.py`, long history)
+
+`with_stop(cls)` adds `stop` and `trail` to a monthly strategy. Each holding has a reference price: the
+close on the day it was chosen (decision day), or with `trail` the highest close since then. When a close is
+at or below reference x (1 - `stop`), the holding is sold at the next open and its money stays in cash until
+the next rebalance day; there the strategy's own choice applies again (a stock still in its top N is bought
+back with a new reference; one kept from the previous month keeps its reference). On a stop day the other
+holdings get their drifted weights (value since the rebalance / portfolio value), so they are not traded
+back to equal weight. `longrun_stop.py`: momentum 12-1 top 20, low volatility 252 days top 50, 52-week high
+top 100 and the combined price signal top 50 (the parameters their walk-forward chose most often), each with
+stop off or 10, 15, 20, 25, 30% fixed or trailing (11 configurations); the walk-forward chooses the stop each
+January on all earlier data. Each level is also reported over the whole test period, with the stops' moves
+from the stop to the next rebalance's close times their weight: the losses avoided and the gains given up.
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each

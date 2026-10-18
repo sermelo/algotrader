@@ -1,7 +1,8 @@
 """Project-wide count of configurations tried, for one honest luck bar (roadmap M2).
 
 Every grid point of every experiment on every universe is a try: core and broad
-(`experiments.py`) and the long history (`longrun.py`). Bailey & Lopez de Prado's
+(`experiments.py`), the long history (`longrun.py`, with the stop-loss test in
+`results/long_stop`) and the mid-cap test (`results/mid`). Bailey & Lopez de Prado's
 expected maximum Sharpe of that many zero-edge tries is reported for each test length.
 Writes `results/trials.md`.
 
@@ -15,8 +16,8 @@ from pathlib import Path
 from .stats import expected_max_sharpe
 
 SOURCES = {"core": "results/manifest.json", "broad": "results/broad/manifest.json",
-           "long": "results/long/manifest.json"}
-YEARS = {"core": 3.3, "broad": 3.3, "long": None}
+           "long": "results/long/manifest.json", "long_stop": "results/long_stop/manifest.json",
+           "mid": "results/mid/manifest.json"}
 
 
 def count(sources=SOURCES) -> dict:
@@ -28,7 +29,7 @@ def count(sources=SOURCES) -> dict:
         if not p.exists():
             continue
         man = json.loads(p.read_text())
-        if name == "long":
+        if name.startswith("long") or name == "mid":      # manifests that store their grid size
             n = sum(v["configurations"] for v in man.values())
         else:
             n = sum(len(experiments.BY_NAME[k].combos()) for k in man if k in experiments.BY_NAME)

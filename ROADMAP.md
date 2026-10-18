@@ -118,6 +118,16 @@ Updated 2026-10-17. In order; details in the sections below.
      below): it helped on core in 3.3 years but not on broad.
    - *Cut turnover* of earnings drift (about 1,167% a year) and seasonality (about 1,000%): buffers
      or lower rebalance frequency.
+12. **Fixed stop-loss test done 2026-10-18** (`results/long_stop/`): every fixed or trailing stop of 10-30% gives up more gain
+    than the loss it avoids (60-87% of stopped stocks recover by the next rebalance); stops cut the maximum drawdown (low volatility
+    -35% to -19% with a 15% trailing stop) at about the same CAGR on the slow strategies, hurt momentum; no edge.
+    **Learned stop-loss** (sergio, 2026-10-18; do NOT implement yet, later): instead of one fixed stop level
+    (`stoploss.py` / `longrun_stop.py` test fixed and trailing 10-30%), train a model that sets the stop for
+    each holding from its situation (its volatility, drop so far, market trend, days left to the rebalance,
+    signal rank, sector, earnings nearby), or predicts whether a fallen holding recovers by the next rebalance
+    (the `after` column of `stop_events` is the label). Walk-forward, trained on earlier years only, judged
+    against the best fixed stop and no stop on later years, every configuration counted. Worth it only if the
+    fixed-stop test shows the losses avoided and gains given up are close or vary a lot by situation.
 
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names
