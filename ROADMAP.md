@@ -117,9 +117,9 @@ Updated 2026-10-17. In order; details in the sections below.
      14 images/s on 2 threads, about 3 h per refit) on 3 of the 14 yearly refits (for example 2016,
      2020, 2024) against the small network (16/32/64): compare validation loss and score/return
      rank correlation; full paper size for all refits would take 40-80 h.
-   - *Combined-signal strategy*: blend momentum, profitability, low volatility and 52-week high
+   - *Combined-signal strategy* (code done 2026-10-18, `combo.py` / `longrun_combo.py`, 5 experiments, not run yet): blend momentum, profitability, low volatility and 52-week high
      (equal-weighted z-scores, beta-neutral), tested on the long history.
-   - *SPY trend filter on the long history* (hold the strategy or SPY above its moving average, cash
+   - *SPY trend filter on the long history* (code done, in `longrun_combo.py`; hold the strategy or SPY above its moving average, cash
      below): it helped on core in 3.3 years but not on broad.
    - *Cut turnover* of earnings drift (about 1,167% a year) and seasonality (about 1,000%): buffers
      or lower rebalance frequency.

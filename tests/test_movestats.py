@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from algotrader.movestats import Accumulator, normal_tail, window_changes
-from tests.test_minutefeat import DAYS, frame, members
+from test_minutefeat import DAYS, frame, members
 
 
 def test_window_changes_count_and_values_for_a_straight_line():

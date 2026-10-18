@@ -294,6 +294,19 @@ later edges do not change an earlier trade). The cost model is passed in; `ibkr_
 for a small account. Splitting a small account raises the hurdle: the $0.35 minimum is per order, so a
 $770 position needs about 0.14% to 0.20% against 0.08% for the whole 2,000 euros in one stock.
 
+## Combined signal and trend filter (`algotrader/combo.py`, long history)
+
+`CombinedSignal`: at each date, the z-score across stocks (clipped to +-3) of each ingredient:
+12-1 month return (`lookback` 252, `skip` 21), minus the volatility of daily returns over
+`vol_lookback` 252, close / highest close of `high_lookback` 252 days, and gross profitability (the
+SEC panel of `fundamentals.py`); the score is the mean of the ingredients a stock has, and a stock
+needs at least `min_components` (3). Top `top_n` held (and bottom `short_n` shorted), equal weight,
+monthly. `trend_days` > 0: all weights are zeroed on days SPY's close is not above its mean of the
+last `trend_days` closes (known at that close, traded at the next open). `TrendMomentum` is the
+same for plain momentum. Five pre-registered experiments (`longrun_combo.py`): `combo_long`,
+`combo_ls_long`, `combo_price_long` (no SEC data), `combo_trend_long`, `xs_momentum_trend_long`.
+Not run yet (waits for the VPS).
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each
