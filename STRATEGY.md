@@ -307,6 +307,18 @@ same for plain momentum. Five pre-registered experiments (`longrun_combo.py`): `
 `combo_ls_long`, `combo_price_long` (no SEC data), `combo_trend_long`, `xs_momentum_trend_long`.
 Results in `results/long/` (README, "Long history").
 
+## Mid-cap test (`algotrader/midcap.py`)
+
+Universe: each month-end, stocks ranked 1-1,500 by trailing dollar volume (raw close x volume, median per
+month, mean of 3 months, price >= $5, at least 10 trading days, SEC fund tickers excluded), minus that day's
+S&P 500 members (about 1,040 names). Prices: adjusted Hugging Face daily series (no dividends after March 2018,
+none for tickers WIKI lacks). A series is cut where trading stops for more than 30 calendar days, or for more
+than 5 days with the open more than 2x or under 0.5x the last close; pieces are separate names with the
+parent's membership. Same walk-forward and engine as the long history; half-spread 5 bp (base), 10 bp (stress).
+Pre-registered: momentum (long, long-short), short-term reversal, low volatility, 52-week high, seasonality
+(long, long-short), combined price signal, with the long-history grids. Success criterion: Fama-French alpha
+t >= 2 at base costs, Sharpe above the equal-weight universe, positive at stress costs.
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each
