@@ -134,6 +134,10 @@ Updated 2026-10-17. In order; details in the sections below.
 a month 2008-2026, built on the VPS (`data/history/size_members.csv`). Next: adjusted HF price series for those tickers
 (`hfdata.build_source`), SEC facts for them, then the long runner with this membership file, costs of 5-10 bp half-spread,
 pre-registered: stop if no strategy has significant alpha after costs. ADRs and some trusts remain in the list.
+**Done 2026-10-18, verdict: fail** (`results/mid/`): best Fama-French alpha momentum +4.2%/yr, t 1.13; momentum and the
+combined signal beat the equal-weight universe (t 2.4 / 2.3) only through momentum and size exposure. Per the agreed plan the
+edge search stops here; recommendation: a UCITS global index fund (optionally a 200-day trend filter on it). Items 8-12 stay
+as optional research, not a route to live trading.
 
 ## Priority list
 

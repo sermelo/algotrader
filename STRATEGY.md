@@ -322,7 +322,9 @@ symbols are dropped
 the strategies and the success rule are unchanged). Same walk-forward and engine as the long history; half-spread 5 bp (base), 10 bp (stress).
 Pre-registered: momentum (long, long-short), short-term reversal, low volatility, 52-week high, seasonality
 (long, long-short), combined price signal, with the long-history grids. Success criterion: Fama-French alpha
-t >= 2 at base costs, Sharpe above the equal-weight universe, positive at stress costs.
+t >= 2 at base costs, Sharpe above the equal-weight universe, positive at stress costs. **Result (2026-10-18): fail**; best
+Fama-French alpha momentum +4.2% a year, t 1.13 (README, "Mid-cap test"). With the cleaned data momentum's Sharpe is
+0.78 instead of the crashed run's 0.26: the bad series had wrecked its returns.
 
 ## Stop-loss test (`algotrader/stoploss.py`, long history)
 

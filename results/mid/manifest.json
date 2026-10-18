@@ -1,0 +1,42 @@
+{
+  "combo_price_mid": {
+    "code_sha256": "0d734d516dc0e8560fdcc61b804fa57071d036dd3907fe91abe5b99fa9e4a356",
+    "configurations": 2,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "high52_mid": {
+    "code_sha256": "d8bd441bd8f8f65bbd1e207d3f62b3b8141e33699bb76266014155194b48f42a",
+    "configurations": 6,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "low_vol_mid": {
+    "code_sha256": "d66d3a26b5ceb296129c725c0b7a5ee8724c2251a4c83f1d1a81cc164b21f203",
+    "configurations": 6,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "seasonality_ls_mid": {
+    "code_sha256": "4033f930589a6dff54124ae1b8918a5bd8c8f1bb5f2975deff9dac8ba47671f1",
+    "configurations": 8,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "seasonality_mid": {
+    "code_sha256": "2bb9d0ab39b5b4b973d83e664aeb6f4d8d430a4bd7c56e6b8053f1adf2dc9802",
+    "configurations": 4,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "xs_momentum_ls_mid": {
+    "code_sha256": "719a1c1e9a6e829558eb696bc1c3f3eeec4b7fd43b22726cf2019e74fd363dca",
+    "configurations": 16,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "xs_momentum_mid": {
+    "code_sha256": "8f09fdbd91eb41ce92ff3e5e853074a076ccc4eeca90d2cb64360ef3569f3526",
+    "configurations": 8,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  },
+  "xs_reversal_mid": {
+    "code_sha256": "c9d841b43670669d694acf478215af70b802bddfa7bec369c7d85e19dc59fbeb",
+    "configurations": 8,
+    "data_sha256": "21ce7ac7794abf4485b1b28c129f66517b69097a2aca0d4a8b2bf1949e371e72"
+  }
+}

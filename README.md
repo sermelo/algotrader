@@ -374,8 +374,8 @@ series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharp
 - **Deep arbitrage fails with next-open execution**: Sharpe -5.37 (-4.79 without the Hugging Face
   series), 0 of 14 folds positive, turnover 2,677% a year. Gross Sharpe is -0.15, so even before costs
   there is nothing (see ROADMAP S8: the paper trades at the close).
-- **Luck bar:** 951 configurations in all (129 here, 44 in the stop-loss test); the best zero-edge one would reach a Sharpe of about
-  0.84 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
+- **Luck bar:** 1,009 configurations in all (129 here, 44 in the stop-loss test, 58 in the mid-cap test); the best zero-edge one would reach a Sharpe of about
+  0.85 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
 - **Combined signal and trend filter** (`combo.py`, 5 more experiments): blending momentum, low
   volatility, 52-week high and profitability gives long-only 0.69 (price signals only 0.75), alpha
   -1.3% a year (t -0.60) and long-short -0.24: blending does not create an edge. Holding the
@@ -399,6 +399,27 @@ series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharp
   chose no stop or 30% in 13 of 15 years. The Sharpe gains (0.05-0.12) are well inside the noise; like the trend filter, a stop
   trades return-free risk reduction, not an edge.
 - The Hugging Face series changes a Sharpe by a median 0.06 (largest 0.58, `deep_arb_long`).
+
+## Mid-cap test (2008 to Oct 2026, ex-S&P 500)
+
+`python -m algotrader.midcap` runs eight pre-registered price-based strategies on the stocks ranked 1-1,500 by dollar volume
+minus the S&P 500 (about 1,040 names a month, `sizeuniverse.py`), adjusted Hugging Face prices, 5 bp half-spread (10 bp stress).
+Rule fixed before the run: **a Fama-French alpha with t >= 2 at base costs, a Sharpe above the equal-weight universe and still
+positive at stress costs.** Full tables: [`results/mid/summary.md`](results/mid/summary.md),
+[`results/mid/factor_alpha.md`](results/mid/factor_alpha.md). Over the same 14.8 years SPY had Sharpe 0.93 (+15.0% a year) and
+the equal-weight universe 0.50 (+8.7%, no dividends after 2018).
+
+- **Verdict: fail.** No strategy has a Fama-French alpha with t >= 2; the best is momentum, +4.2% a year (t 1.13).
+- Momentum (Sharpe 0.78, +19.7% a year, max drawdown -37%) and the combined price signal (0.76, +15.0%) beat the equal-weight
+  universe (alpha +10.9% and +8.6% a year, t 2.37 and 2.25) and stay positive at 10 bp, but that alpha is exposure to known
+  factors: momentum loads 0.58 on the momentum factor and 0.75 on small size, and against the factors its alpha drops to +4.2%
+  (t 1.13), the combined signal's to +0.8% (t 0.27). Neither beats SPY's Sharpe.
+- 52-week high 0.64, low volatility 0.49, seasonality 0.39, momentum long-short 0.31, reversal 0.13 and seasonality
+  long-short -0.44; low volatility and both seasonality strategies have significantly negative factor alpha (t -2.4 to -2.5).
+- The backtests lack dividends after March 2018 (about 1-2% a year for mid-caps) while the factors include them, so the
+  alphas are understated by about that much; momentum's would still be about t 1.5.
+- The first run crashed on bad data (exchange test symbols, negative and near-zero adjusted prices) after printing momentum's
+  Sharpe as 0.26; the fixed data gives 0.78 with the same strategies and rule (see STRATEGY.md).
 
 ## Earlier exploration (3 tickers)
 
