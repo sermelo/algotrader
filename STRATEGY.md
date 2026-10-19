@@ -340,6 +340,19 @@ stop off or 10, 15, 20, 25, 30% fixed or trailing (11 configurations); the walk-
 January on all earlier data. Each level is also reported over the whole test period, with the stops' moves
 from the stop to the next rebalance's close times their weight: the losses avoided and the gains given up.
 
+## Concentration test (`algotrader/concentration.py`, long history)
+
+Eleven long-only strategies (momentum 12-1, low volatility, 52-week high, combined price signal, combined signal,
+earnings drift 21 days, seasonality, value, gross profitability, asset growth, operating profitability) at the
+parameters their walk-forward chose most often, each held at N = 3, 5, 10, 20, 50 (equal weight, monthly, $1M, base and
+stress costs, from 2008, reported from 2012). `RankBand(lo, hi)`: equal weight in ranks lo..hi, from the strategy's
+top-hi and top-(lo-1) portfolios. `BufferBand(n, k)`: hold n names, sell a name only when it leaves the top k, fill free
+places with the best-ranked names not held (3/10, 5/20, 20/50). Multi-strategy portfolios average the parts' daily
+returns: all eleven at top 5 or 20, and the five (or one) with the best Sharpe on all earlier days, chosen every January.
+Pre-registered rule: concentration is better for a strategy if top 3 or top 5 minus top 50 has a Fama-French alpha
+t >= 2 at base costs; better in general only if that holds for most strategies. **Result (2026-10-19): not better in
+general**, 2 of 11 pass (momentum top 3, asset growth top 5); README, "Long history".
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each

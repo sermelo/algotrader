@@ -128,6 +128,11 @@ Updated 2026-10-17. In order; details in the sections below.
     (the `after` column of `stop_events` is the label). Walk-forward, trained on earlier years only, judged
     against the best fixed stop and no stop on later years, every configuration counted. Worth it only if the
     fixed-stop test shows the losses avoided and gains given up are close or vary a lot by situation.
+13. **Concentration test done 2026-10-19** (`results/long_conc/`): holding 3 or 5 stocks instead of 50 does not pay in general
+    (2 of 11 strategies pass the pre-registered rule, about chance; mean Sharpe 0.55 at top 3 vs 0.74 at top 50, same CAGR, more
+    risk); a top 5 / keep-in-top-20 buffer halves turnover without raising Sharpe; the best strategy chosen each January at top 5
+    reached Sharpe 1.04 (FF alpha t 1.73), not significant. Possible follow-up: test operating profitability / asset growth
+    top 5 alone on a period it was not chosen on (none available here).
 
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names
