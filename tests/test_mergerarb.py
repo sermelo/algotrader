@@ -127,3 +127,17 @@ def test_engine_buys_next_open_and_cashes_out_at_last_close():
 
 def test_runner_experiments_are_counted_once_each():
     assert list(ma.SLOTS) == ["merger_arb", "merger_arb_10", "merger_arb_40"]
+
+
+def test_summary_applies_the_preregistered_rule(tmp_path):
+    idx = pd.bdate_range("2020-01-01", periods=300)
+    r = pd.Series(0.0004, index=idx)
+    row = {"experiment": "merger_arb", "base_cagr": 0.1, "base_excess_yr": 0.05, "base_sharpe_excess": 1.0,
+           "sharpe_lo": 0.5, "sharpe_hi": 1.5, "ff_alpha": 0.05, "ff_alpha_t": 2.1, "ff_beta": 0.1,
+           "max_drawdown": -0.05, "gross_excess_yr": 0.06, "stress_excess_yr": 0.01, "deals": 10,
+           "deal_mean": 0.02, "deal_median": 0.01, "deals_lost_10pct": 0.1, "turnover": 3.0}
+    deals = pd.DataFrame({"day": [idx[0], idx[-1]]})
+    res = {"base": r, "spy": r}
+    assert "Verdict: pass" in ma.write_summary(tmp_path, [row], res, deals)
+    assert "Verdict: fail" in ma.write_summary(tmp_path, [row | {"ff_alpha_t": 1.9}], res, deals)
+    assert "Verdict: fail" in ma.write_summary(tmp_path, [row | {"stress_excess_yr": -0.01}], res, deals)
