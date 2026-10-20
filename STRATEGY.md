@@ -353,6 +353,15 @@ Pre-registered rule: concentration is better for a strategy if top 3 or top 5 mi
 t >= 2 at base costs; better in general only if that holds for most strategies. **Result (2026-10-19): not better in
 general**, 2 of 11 pass (momentum top 3, asset growth top 5); README, "Long history".
 
+## Weekly versus monthly rebalancing (`algotrader/rebalance.py`, long history)
+
+The concentration test's strategies except seasonality (its signal is the coming calendar month), at top 5, top 20 and
+top 5 kept while in the top 20, with the ranking checked at each month's last trading day or each week's; weights change
+(and orders go out at the next open) only when the chosen names change. Gross, base and stress costs. Pre-registered rule:
+weekly is better for a strategy if weekly minus monthly (base costs) at top 5 or top 20 has a Fama-French alpha t >= 2;
+better in general only if that holds for most strategies. **Result (2026-10-20): not better**, 0 of 10 pass (README,
+"Long history").
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each

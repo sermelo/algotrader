@@ -133,6 +133,12 @@ Updated 2026-10-17. In order; details in the sections below.
     risk); a top 5 / keep-in-top-20 buffer halves turnover without raising Sharpe; the best strategy chosen each January at top 5
     reached Sharpe 1.04 (FF alpha t 1.73), not significant. Possible follow-up: test operating profitability / asset growth
     top 5 alone on a period it was not chosen on (none available here).
+14. **Weekly rebalancing test done 2026-10-20** (`results/long_rebal/`): 0 of 10 strategies better weekly; turnover doubles, Sharpe
+    same or lower, nothing gained even before costs. **Engine fix pending:** `PortfolioBacktester.run` iterates the `pending` set,
+    so the order of buys (and which one is cut when cash is short) depends on PYTHONHASHSEED; results are not bit-reproducible
+    (momentum top 5 Sharpe 0.83 vs 0.77 in two runs of identical code and data). Fix: process tickers in column order and scale
+    all buys down proportionally when cash is short; then rerun every portfolio experiment (core, broad, long, long_stop,
+    long_conc, long_rebal, mid), since `portfolio.py` is in all their fingerprints.
 
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names
