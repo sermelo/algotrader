@@ -145,6 +145,16 @@ Updated 2026-10-17. In order; details in the sections below.
     (index of deal filings, done), `python -m algotrader.mergerarb fetch` (VPS, ~19,500 filings), `deals`, `run`; commit
     `results/merger/`, README section, trials count. Volatility selling (options) would need options price data: not free.
 
+16. **Alpaca data (todo, sergio 2026-10-20; needs a free Alpaca account from him)**: PyBroker (github.com/edtechre/pybroker,
+    reviewed 2026-10-20: nothing to switch to; its bootstrap drawdown bound is now `drawdown.py`) has an Alpaca adapter, but it
+    only fetches bars; use `alpaca-py` directly. What Alpaca could add: (a) split- and dividend-adjusted bars from 2016, to fill
+    the missing dividends after 2018 for tickers outside WIKI/Tiingo (mid-cap and merger tests understate returns by about
+    1-2% a year), if it keeps delisted symbols (unverified); (b) historical quotes, to measure real bid-ask spreads instead of
+    the assumed 2 / 5 bp half-spreads, if the free plan includes them (unverified); (c) consolidated minute bars after Mar 2026
+    (minor). Our Hugging Face minute bars already cover 1992 to Mar 2026, so no older history is gained.
+17. **Drawdown bounds done 2026-10-20** (`drawdown.py`, `results/*/drawdown.md`): block-bootstrap bounds on the maximum
+    drawdown; rerun `python -m algotrader.drawdown` after any results change.
+
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names
 a month 2008-2026, built on the VPS (`data/history/size_members.csv`). Next: adjusted HF price series for those tickers
