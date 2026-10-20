@@ -140,6 +140,11 @@ Updated 2026-10-17. In order; details in the sections below.
     all buys down proportionally when cash is short; then rerun every portfolio experiment (core, broad, long, long_stop,
     long_conc, long_rebal, mid), since `portfolio.py` is in all their fingerprints.
 
+15. **Merger arbitrage (S15, sergio, 2026-10-20)**: after asking what professional traders do that we have not tested, the
+    one accessible gap is risk premia; merger arbitrage is testable with free SEC filings. Steps: `scripts/deal_forms.py`
+    (index of deal filings, done), `python -m algotrader.mergerarb fetch` (VPS, ~19,500 filings), `deals`, `run`; commit
+    `results/merger/`, README section, trials count. Volatility selling (options) would need options price data: not free.
+
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names
 a month 2008-2026, built on the VPS (`data/history/size_members.csv`). Next: adjusted HF price series for those tickers
@@ -180,6 +185,7 @@ as optional research, not a route to live trading.
 | S12 | Market intraday momentum (Gao et al. 2018; Baltussen et al., *JFE* 2021, 60+ futures, explained by gamma hedging) | Peer-reviewed but on futures; **ours:** last-half-hour SPY-style rule loses to costs on stocks (-3.8 Sharpe) | Shorting in the single-ticker engine; could test on SPY/QQQ only | **not doing** (2026-10-17): low evidence and our long-only version loses even before costs (gross -0.41) |
 | S13 | Small items left from the first plan: ORB 10R target and "stocks in play", overnight day-of-week/earnings filters, ~~pre-holiday effect~~ (done 2026-10-17: Sharpe 0.17 / 0.07, no alpha) | ORB papers are SSRN working papers; **ours:** ORB and overnight already fail after costs (gross edges too small) | Minute data we have; earnings filter needs D3 | ORB 10R target and overnight skip-weekday **code done** (`orb_5min_100k_target`, `overnight_1min_100k_weekday`); results: ORB target 0.10 core / -0.19 broad, overnight skipping Monday nights 0.42 / 0.47 (alpha t -0.22 / -0.13), no edge. Not done: "stocks in play" ranking, overnight earnings-gap filter |
 | S14 | Pretrained time-series models (Chronos, TimesFM); LSTM next-day direction | Evidence against: lose to CatBoost zero-shot (Rahimikia et al. 2025); LSTM direction has no profit after costs since 2010 (Fischer & Krauss, *EJOR* 2018) | | skip |
+| S15 | **Merger arbitrage on announced cash takeovers** (a risk premium, not a price pattern) | Mitchell & Pulvino, *JF* 2001 (1963-1998, about 4%/yr over cash after costs, beta near 0 except in market crashes, like selling a put); Baker & Savasoglu, *JFE* 2002; returns lower since the 2000s as arbitrage capital grew | SEC filings (free) + raw HF daily prices; no paid data | **pre-registered 2026-10-20** (`mergerarb.py`, STRATEGY.md): deals from proxy and tender filings, 20 slots, pass = FF5+Mom alpha t >= 2 at base costs and positive at stress; filings downloading on the VPS |
 
 ### P3. Method improvements (cheap, do alongside)
 

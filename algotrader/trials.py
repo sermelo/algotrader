@@ -2,7 +2,7 @@
 
 Every grid point of every experiment on every universe is a try: core and broad
 (`experiments.py`), the long history (`longrun.py`, with the stop-loss test in
-`results/long_stop`) and the mid-cap test (`results/mid`). Bailey & Lopez de Prado's
+`results/long_stop`), the mid-cap test (`results/mid`) and merger arbitrage (`results/merger`). Bailey & Lopez de Prado's
 expected maximum Sharpe of that many zero-edge tries is reported for each test length.
 Writes `results/trials.md`.
 
@@ -18,7 +18,7 @@ from .stats import expected_max_sharpe
 SOURCES = {"core": "results/manifest.json", "broad": "results/broad/manifest.json",
            "long": "results/long/manifest.json", "long_stop": "results/long_stop/manifest.json",
            "long_conc": "results/long_conc/manifest.json", "long_rebal": "results/long_rebal/manifest.json",
-           "mid": "results/mid/manifest.json"}
+           "mid": "results/mid/manifest.json", "merger": "results/merger/manifest.json"}
 
 
 def count(sources=SOURCES) -> dict:
@@ -30,7 +30,7 @@ def count(sources=SOURCES) -> dict:
         if not p.exists():
             continue
         man = json.loads(p.read_text())
-        if name.startswith("long") or name == "mid":      # manifests that store their grid size
+        if name.startswith("long") or name in ("mid", "merger"):      # manifests that store their grid size
             n = sum(v["configurations"] for v in man.values())
         else:
             n = sum(len(experiments.BY_NAME[k].combos()) for k in man if k in experiments.BY_NAME)

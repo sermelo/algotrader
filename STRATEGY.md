@@ -362,6 +362,28 @@ weekly is better for a strategy if weekly minus monthly (base costs) at top 5 or
 better in general only if that holds for most strategies. **Result (2026-10-20): not better**, 0 of 10 pass (README,
 "Long history").
 
+## Merger arbitrage (`algotrader/mergerarb.py`, 2008 to Mar 2026)
+
+A risk premium (Mitchell & Pulvino 2001), not a price signal. **Deals** from SEC filings only: the target's merger proxy or
+information statement (PREM14A, DEFM14A, PREM14C, DEFM14C) or a tender-offer filing (SC TO-T, SC TO-C, SC 14D9, SC14D9C),
+2008 on. From each filing's full text (first 4 MB): ticker candidates ("Nasdaq: ABCD", 'under the symbol "ABCD"') and the
+cash price per share named most often ("$12.50 in cash", "$12.50 per Share, net to the seller in cash"). Decision day = the
+first trading day the market could react (accepted at or after 16:00 New York: next day). A filing makes a deal if exactly
+one candidate ticker, on the decision day's close (raw Hugging Face daily bars), is below the offer by more than 0% and at
+most 25% (offer / close - 1), costs at least $2 and has a 20-day median dollar volume of at least $1M; blank-check
+companies (SIC 6770) are skipped; a ticker gets no new deal within 365 days of its previous one. No later information
+(completion, delisting) is used to select deals. **Holding:** buy at the next open; sell at the last close of the price series
+(the deal closed), at the next open after the deal company's 8-K with item 1.02 (termination of a material agreement) and
+without items 2.01 / 3.01 (completion, delisting), or after 540 calendar days. At most `slots` deals at once, 1/`slots` of
+equity each, first come (a deal arriving while all slots are full is skipped); a ticker's price series is cut where it
+probably changed hands (`midcap.segments`). Cash earns the Fama-French daily risk-free rate. $1M, IBKR + 5 bp half-spread
+(base), 10 bp (stress), none (gross). Raw prices: dividends paid during a deal are not counted (understates returns).
+**Pre-registered (2026-10-20, before the deal list or any backtest existed):** primary `merger_arb` (20 slots), reported
+alongside 10 and 40 slots (3 configurations, no tuning). Pass: the primary's Fama-French five-factor plus momentum alpha of
+its excess return over the risk-free rate has t >= 2 at base costs and its mean excess return is positive at stress costs.
+Also reported: Sharpe of the excess return with a 90% interval, beta, maximum drawdown, deal count, mean and median deal
+return, share of deals losing more than 10%, and the returns in 2008-09 and 2020.
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each
