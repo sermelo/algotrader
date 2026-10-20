@@ -382,8 +382,8 @@ series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharp
 - **Deep arbitrage fails with next-open execution**: Sharpe -5.37 (-4.79 without the Hugging Face
   series), 0 of 14 folds positive, turnover 2,677% a year. Gross Sharpe is -0.15, so even before costs
   there is nothing (see ROADMAP S8: the paper trades at the close).
-- **Luck bar:** 1,207 configurations in all (129 here, 44 in the stop-loss test, 138 in the concentration test, 60 in the weekly
-  test, 58 in the mid-cap test); the best zero-edge one would reach a Sharpe of about 0.86 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
+- **Luck bar:** 1,210 configurations in all (129 here, 44 in the stop-loss test, 138 in the concentration test, 60 in the weekly
+  test, 58 in the mid-cap test, 3 in the merger test); the best zero-edge one would reach a Sharpe of about 0.86 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
 - **Combined signal and trend filter** (`combo.py`, 5 more experiments): blending momentum, low
   volatility, 52-week high and profitability gives long-only 0.69 (price signals only 0.75), alpha
   -1.3% a year (t -0.60) and long-short -0.24: blending does not create an edge. Holding the
@@ -454,6 +454,27 @@ the equal-weight universe 0.50 (+8.7%, no dividends after 2018).
   alphas are understated by about that much; momentum's would still be about t 1.5.
 - The first run crashed on bad data (exchange test symbols, negative and near-zero adjusted prices) after printing momentum's
   Sharpe as 0.26; the fixed data gives 0.78 with the same strategies and rule (see STRATEGY.md).
+
+## Merger arbitrage (2008 to Mar 2026)
+
+`python -m algotrader.mergerarb` tests a risk premium instead of a price pattern: buy the targets of announced cash
+takeovers and collect the gap to the offer. Deals come only from SEC filings (merger proxies and tender-offer filings, 19,434
+read); a deal is a filing whose named ticker closes 0-25% below the cash offer on the decision day; 1,428 deals, 919 held in the
+primary run (20 slots of 5%), cash earns the risk-free rate, 5 bp half-spread (10 bp stress). Full tables:
+[`results/merger/summary.md`](results/merger/summary.md), deal diagnostics [`results/merger/deal_check.md`](results/merger/deal_check.md).
+Rule fixed before the run: **Fama-French alpha t >= 2 at base costs and positive at stress costs.**
+
+- **Verdict: fail.** +1.7% a year (+1.1% over cash), Sharpe of the excess return 0.09 [-0.25, 0.47], beta 0.38, max drawdown
+  -39.2%; Fama-French alpha -3.1% a year (t -1.68). With 10 slots +0.3% a year, with 40 slots +2.2% (alpha t -1.79 and -1.55).
+  Lost in 2008 (-9.0%, SPY -36.2%) but much less than the market, and also in calm years (2015 -8.6%, 2018 -8.7%, 2024 -7.5%).
+- **The deals are real and read correctly:** deals whose price series ended (closed, or the data ends) sold a median 0.30% below
+  the offer. But entering at the proxy or tender filing, weeks after the announcement, leaves a median spread of 1.33% (mean 3.11%) at the
+  decision close; completed deals made +1.66% each on average, terminated ones -2.31%, and the market exposure (partial and
+  hostile tenders, a few acquirers whose price happened to be just below the offer, deals held to the 540-day limit) cost more
+  than the spread earned.
+- The published premium (Mitchell & Pulvino: about 4% a year over cash before 1999) is earned from the announcement day;
+  catching that needs announcement-day press releases (8-K exhibits) classified as cash takeovers, which this rule does not do.
+  Raw prices omit dividends paid during deals (a small understatement).
 
 ## Earlier exploration (3 tickers)
 

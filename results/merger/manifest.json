@@ -1,0 +1,17 @@
+{
+  "merger_arb": {
+    "code_sha256": "6e01e41092510acbba787e1acf6a8935e1fea05a624ca38a78b7c75854b79f10",
+    "configurations": 1,
+    "slots": 20
+  },
+  "merger_arb_10": {
+    "code_sha256": "6e01e41092510acbba787e1acf6a8935e1fea05a624ca38a78b7c75854b79f10",
+    "configurations": 1,
+    "slots": 10
+  },
+  "merger_arb_40": {
+    "code_sha256": "6e01e41092510acbba787e1acf6a8935e1fea05a624ca38a78b7c75854b79f10",
+    "configurations": 1,
+    "slots": 40
+  }
+}

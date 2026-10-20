@@ -382,7 +382,8 @@ probably changed hands (`midcap.segments`). Cash earns the Fama-French daily ris
 alongside 10 and 40 slots (3 configurations, no tuning). Pass: the primary's Fama-French five-factor plus momentum alpha of
 its excess return over the risk-free rate has t >= 2 at base costs and its mean excess return is positive at stress costs.
 Also reported: Sharpe of the excess return with a 90% interval, beta, maximum drawdown, deal count, mean and median deal
-return, share of deals losing more than 10%, and the returns in 2008-09 and 2020.
+return, share of deals losing more than 10%, and the returns in 2008-09 and 2020. **Result (2026-10-21): fail**: +1.1% a year over
+cash, Fama-French alpha -3.1% a year (t -1.68), beta 0.38, max drawdown -39.2% (README, "Merger arbitrage").
 
 ## Factor regressions (`algotrader/french.py`)
 
