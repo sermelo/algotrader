@@ -1,26 +1,26 @@
-# Handoff (updated 2026-10-16)
+# Handoff (updated 2026-10-22)
 
 State for the next Claude session. **What to do next is in `ROADMAP.md`** (research-based
 priority list; keep it updated as items are done).
 
 ## Where things stand
 
-- Everything is committed and pushed (2026-10-17): 35 experiments on the core (27 tickers,
-  `results/`) and broad (107 tickers, `results/broad/`) universes after the batched full
-  rerun (1% commission cap, fee model, ORB 10R target, overnight skip-weekday), all
-  fingerprints current, 207 tests passing.
-- **Running on the VPS:** `scripts/history_queue.sh` stopped at the Tiingo monthly quota.
-  On or after 2026-11-01 run it again for the remaining ~216 symbols, then
-  `python -m algotrader.history check`, `python -m algotrader.longrun` on the VPS,
-  `python -m algotrader.french report --results results/long`, and commit `results/long/`
-  (see ROADMAP "Long-history runner").
-- The deep-arb dry run (`data/long_wiki_provisional/`, not for committing) finished: see
-  ROADMAP S8 (fails with next-open execution).
-- `~/algotrader-work` on the VPS has the code of this commit except an older/different
-  `longrun.py`: rsync the working tree again before the next run.
-- Headline: no strategy clears the luck bar (389 configurations per universe, Sharpe 1.64;
-  778 over both, 1.75) or has significant alpha. Most consistent: long-short momentum
-  (alpha t 1.49 core, 1.52 broad), which is the momentum factor. See README "Experiments".
+- Everything is committed and pushed (`2c66786`, 2026-10-22); 336 tests pass; every committed
+  result's fingerprint is current. Nothing is running on the VPS; `~/algotrader-work` there has
+  the code of this commit.
+- Last work: portfolio engine fix (ROADMAP 14, buys in column order, cash shortfall scaled
+  evenly) and a full rerun of every portfolio experiment (`scripts/engine_rerun.sh`): no
+  verdict changed. Before that: merger arbitrage (S15, fail), drawdown bounds (`drawdown.py`).
+- Headline: 1,210 configurations tried; no strategy beats the luck bar or has significant
+  factor alpha. The agreed recommendation stands: a UCITS global index fund.
+- Open discussion (2026-10-22): sergio asked what to paper-trade. Proposed operating
+  profitability, top 10, monthly (long history 2012-2026: Sharpe 0.98, +16.0%/yr vs SPY +15.0%,
+  beta 0.83, FF alpha t 1.30), expecting roughly the market (plan on 6-8%/yr), as a test of
+  execution and costs, not of edge. Not started: it needs a live signal script (today's
+  target portfolio from current prices and the latest SEC facts; our data ends 2026-10-16),
+  then `docs/ibkr-integration.md`. Alternative offered: combined signal with the SPY 200-day
+  filter (+7.6%/yr, max drawdown -18%).
+- Next dated task: on or after 2026-11-01 the Tiingo second batch (ROADMAP pending 2).
 
 ## VPS access
 
