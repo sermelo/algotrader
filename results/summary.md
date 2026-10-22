@@ -26,20 +26,20 @@ Folds start 2023-07-01, 2024-01-01, 2024-07-01, 2025-01-01, 2025-07-01, 2026-01-
 | `rsi2_daily_overlays` | 1D | $10,000 | entry=10.0, exit_sma=5, regime_days=200, trend_sma=None, vol_target=None (6/6) | 1.35 [0.47, 2.31] | +14.8% | -2.7% | +2.0% (1.39) | 0.12 | 1.57 | 1.16 | 5/6 | `c566f6ed` |
 | `overnight_1min_100k_filters` | 1min | $100,000 | regime_days=None, trend_days=200 (4/6); regime_days=200, trend_days=200 (2/6) | 0.09 [-0.74, 0.88] | +1.1% | -8.2% | -2.6% (-0.95) | 0.17 | 1.72 | -1.83 | 3/6 | `d6aa18fa` |
 | `orb_5min_100k_filters` | 5min | $100,000 | min_rel_volume=1.5, or_minutes=30, regime_days=None, trend_days=20 (3/6); min_rel_volume=1.5, or_minutes=30, regime_days=None, trend_days=None (2/6); min_rel_volume=0.0, or_minutes=5, regime_days=200, trend_days=None (1/6) | -0.40 [-1.41, 0.58] | -1.6% | -3.7% | -0.9% (-1.40) | 0.02 | 0.67 | -1.44 | 3/6 | `dae3c104` |
-| `xs_momentum_daily` | 1D | $100,000 total | lookback=126, skip=0, top_n=10 (4/6); lookback=126, skip=21, top_n=10 (1/6); lookback=126, skip=21, top_n=5 (1/6) | 1.12 [0.29, 2.04] | +89.5% | -24.8% | +1.3% (0.21) | 1.09 | 1.14 | 1.11 | 6/6 | `a674f3d0` |
-| `xs_reversal_daily` | 1D | $100,000 total | every=M, lookback=21, top_n=10 (6/6) | 0.92 [0.20, 1.72] | +69.9% | -22.6% | -3.2% (-0.54) | 1.16 | 0.94 | 0.89 | 6/6 | `db399c84` |
-| `xs_momentum_ls_daily` | 1D | $100,000 total | lookback=252, short_n=10, skip=0, top_n=5 (4/6); lookback=126, short_n=5, skip=0, top_n=10 (1/6); lookback=252, short_n=10, skip=0, top_n=10 (1/6) | 0.96 [0.04, 2.02] | +46.1% | -15.1% | +10.6% (1.49) | 0.10 | 1.01 | 0.95 | 6/6 | `f069fecb` |
-| `pairs_daily` | 1D | $100,000 total | entry_z=2.0, exit_z=0.5, lookback=20 (6/6) | 0.64 [-0.28, 1.50] | +6.7% | -5.1% | +1.6% (0.91) | 0.02 | 0.89 | 0.45 | 3/6 | `53834350` |
-| `xs_gbm_daily` | 1D | $100,000 total | horizon=21, top_n=10 (3/6); horizon=5, top_n=10 (2/6); horizon=5, top_n=5 (1/6) | 0.76 [-0.04, 1.76] | +53.9% | -23.9% | -7.6% (-1.49) | 1.24 | 0.83 | 0.71 | 6/6 | `36a2adb7` |
-| `xs_gbm_ls_daily` | 1D | $100,000 total | horizon=21, short_n=5, top_n=10 (2/6); horizon=5, short_n=5, top_n=5 (1/6); horizon=21, short_n=10, top_n=10 (1/6); horizon=5, short_n=10, top_n=5 (1/6); horizon=21, short_n=5, top_n=5 (1/6) | -0.32 [-1.37, 0.70] | -13.8% | -28.4% | -7.8% (-1.23) | 0.22 | -0.16 | -0.43 | 2/6 | `45b28249` |
-| `low_vol_daily` | 1D | $100,000 total | lookback=126, top_n=5 (4/6); lookback=126, top_n=10 (1/6); lookback=126, top_n=20 (1/6) | 1.24 [0.36, 2.21] | +51.2% | -12.1% | +2.7% (0.72) | 0.57 | 1.26 | 1.24 | 6/6 | `3ed08f7c` |
-| `high52_daily` | 1D | $100,000 total | lookback=126, top_n=20 (5/6); lookback=126, top_n=10 (1/6) | 1.30 [0.50, 2.27] | +67.7% | -17.4% | +1.6% (0.53) | 0.82 | 1.32 | 1.29 | 6/6 | `1c2479fc` |
-| `sector_momentum_daily` | 1D | $100,000 total | lookback=63, top_n=2 (6/6) |  [0.00, 0.00] | +0.0% | +0.0% | +0.0% () | 0.00 |  |  | 0/0 | `19aa9fd1` |
-| `dual_momentum_daily` | 1D | $100,000 total | lookback=126, safe=TLT, top_n=2 (4/6); lookback=252, safe=TLT, top_n=1 (2/6) | 0.64 [-0.12, 1.52] | +33.3% | -12.7% | -3.4% (-0.52) | 0.73 | 0.65 | 0.63 | 4/6 | `25fdc07b` |
-| `xs_momentum_buffer_daily` | 1D | $100,000 total | keep_n=10, lookback=126, skip=21, top_n=5 (5/6); keep_n=10, lookback=252, skip=0, top_n=5 (1/6) | 1.19 [0.36, 2.10] | +128.4% | -23.5% | +6.3% (0.69) | 1.18 | 1.19 | 1.18 | 6/6 | `3254827f` |
-| `xs_momentum_buffer_ls_daily` | 1D | $100,000 total | keep_n=10, lookback=252, short_n=10, skip=0, top_n=5 (4/6); keep_n=10, lookback=126, short_n=10, skip=0, top_n=10 (1/6); keep_n=10, lookback=252, short_n=10, skip=21, top_n=5 (1/6) | 1.05 [0.20, 2.07] | +54.2% | -13.3% | +10.9% (1.49) | 0.18 | 1.08 | 1.05 | 5/6 | `d55515a8` |
-| `trend_multi_daily` | 1D | $100,000 total | target_vol=0.1, vol_lookback=21 (3/6); target_vol=0.2, vol_lookback=21 (2/6); target_vol=0.1, vol_lookback=63 (1/6) | 0.66 [-0.03, 1.35] | +19.5% | -6.9% | +2.1% (0.45) | 0.20 | 0.68 | 0.64 | 5/6 | `bdd7689d` |
-| `trend_multi_long_daily` | 1D | $100,000 total | target_vol=0.2, vol_lookback=21 (4/6); target_vol=0.2, vol_lookback=63 (2/6) | 0.83 [0.10, 1.59] | +31.9% | -9.1% | -0.1% (-0.02) | 0.50 | 0.85 | 0.81 | 6/6 | `aabc97d2` |
+| `xs_momentum_daily` | 1D | $100,000 total | lookback=126, skip=0, top_n=10 (4/6); lookback=126, skip=21, top_n=10 (1/6); lookback=126, skip=21, top_n=5 (1/6) | 1.12 [0.30, 2.05] | +89.6% | -24.7% | +1.3% (0.21) | 1.09 | 1.14 | 1.11 | 6/6 | `71e8b3d6` |
+| `xs_reversal_daily` | 1D | $100,000 total | every=M, lookback=21, top_n=10 (6/6) | 0.92 [0.20, 1.72] | +69.6% | -22.6% | -3.3% (-0.55) | 1.16 | 0.94 | 0.89 | 6/6 | `d33e781a` |
+| `xs_momentum_ls_daily` | 1D | $100,000 total | lookback=252, short_n=10, skip=0, top_n=5 (4/6); lookback=126, short_n=5, skip=0, top_n=10 (1/6); lookback=252, short_n=10, skip=0, top_n=10 (1/6) | 0.96 [0.04, 2.02] | +46.1% | -15.1% | +10.6% (1.49) | 0.10 | 1.01 | 0.95 | 6/6 | `e18e747e` |
+| `pairs_daily` | 1D | $100,000 total | entry_z=2.0, exit_z=0.5, lookback=20 (6/6) | 0.64 [-0.28, 1.50] | +6.7% | -5.1% | +1.6% (0.91) | 0.02 | 0.89 | 0.45 | 3/6 | `94beda06` |
+| `xs_gbm_daily` | 1D | $100,000 total | horizon=21, top_n=10 (3/6); horizon=5, top_n=10 (2/6); horizon=5, top_n=5 (1/6) | 0.77 [-0.03, 1.76] | +54.6% | -23.8% | -7.5% (-1.47) | 1.24 | 0.83 | 0.71 | 6/6 | `9d187010` |
+| `xs_gbm_ls_daily` | 1D | $100,000 total | horizon=21, short_n=5, top_n=10 (2/6); horizon=5, short_n=5, top_n=5 (1/6); horizon=21, short_n=10, top_n=10 (1/6); horizon=5, short_n=10, top_n=5 (1/6); horizon=21, short_n=5, top_n=5 (1/6) | -0.32 [-1.37, 0.70] | -13.8% | -28.4% | -7.8% (-1.23) | 0.22 | -0.16 | -0.43 | 2/6 | `449850df` |
+| `low_vol_daily` | 1D | $100,000 total | lookback=126, top_n=5 (4/6); lookback=126, top_n=10 (1/6); lookback=126, top_n=20 (1/6) | 1.24 [0.36, 2.21] | +51.2% | -12.1% | +2.7% (0.71) | 0.57 | 1.26 | 1.24 | 6/6 | `9cc5e54d` |
+| `high52_daily` | 1D | $100,000 total | lookback=126, top_n=20 (5/6); lookback=126, top_n=10 (1/6) | 1.30 [0.50, 2.27] | +67.7% | -17.3% | +1.6% (0.53) | 0.82 | 1.32 | 1.29 | 6/6 | `425a8e0b` |
+| `sector_momentum_daily` | 1D | $100,000 total | lookback=63, top_n=2 (6/6) |  [0.00, 0.00] | +0.0% | +0.0% | +0.0% () | 0.00 |  |  | 0/0 | `f32a66d5` |
+| `dual_momentum_daily` | 1D | $100,000 total | lookback=126, safe=TLT, top_n=2 (4/6); lookback=252, safe=TLT, top_n=1 (2/6) | 0.64 [-0.12, 1.52] | +33.3% | -12.7% | -3.4% (-0.52) | 0.73 | 0.65 | 0.63 | 4/6 | `73637bcf` |
+| `xs_momentum_buffer_daily` | 1D | $100,000 total | keep_n=10, lookback=126, skip=21, top_n=5 (5/6); keep_n=10, lookback=252, skip=0, top_n=5 (1/6) | 1.18 [0.36, 2.10] | +127.8% | -23.6% | +6.2% (0.67) | 1.18 | 1.19 | 1.17 | 6/6 | `2e8dfbbd` |
+| `xs_momentum_buffer_ls_daily` | 1D | $100,000 total | keep_n=10, lookback=252, short_n=10, skip=0, top_n=5 (4/6); keep_n=10, lookback=126, short_n=10, skip=0, top_n=10 (1/6); keep_n=10, lookback=252, short_n=10, skip=21, top_n=5 (1/6) | 1.05 [0.20, 2.07] | +54.2% | -13.3% | +10.9% (1.49) | 0.18 | 1.08 | 1.05 | 5/6 | `1722b059` |
+| `trend_multi_daily` | 1D | $100,000 total | target_vol=0.1, vol_lookback=21 (3/6); target_vol=0.2, vol_lookback=21 (2/6); target_vol=0.1, vol_lookback=63 (1/6) | 0.66 [-0.03, 1.35] | +19.6% | -6.9% | +2.1% (0.46) | 0.20 | 0.68 | 0.64 | 5/6 | `acec5661` |
+| `trend_multi_long_daily` | 1D | $100,000 total | target_vol=0.2, vol_lookback=21 (4/6); target_vol=0.2, vol_lookback=63 (2/6) | 0.83 [0.10, 1.59] | +31.9% | -9.1% | -0.1% (-0.02) | 0.50 | 0.85 | 0.81 | 6/6 | `104b5922` |
 | `pre_holiday_daily` | 1D | $10,000 | days_after=0, days_before=2 (6/6) | 0.17 [-0.66, 0.92] | +1.3% | -3.1% | -0.4% (-0.29) | 0.05 | 0.40 | -0.03 | 4/6 | `490b8ba6` |
 | `orb_5min_100k_target` | 5min | $100,000 | or_minutes=30, profit_r=10.0 (3/6); or_minutes=30, profit_r=None (2/6); or_minutes=5, profit_r=None (1/6) | 0.10 [-0.85, 0.88] | +0.5% | -3.4% | -0.5% (-0.65) | 0.04 | 0.87 | -0.65 | 3/6 | `9393d3a0` |
 | `overnight_1min_100k_weekday` | 1min | $100,000 | skip_weekdays=[0], trend_days=200 (5/6); skip_weekdays=[4], trend_days=200 (1/6) | 0.42 [-0.44, 1.24] | +6.8% | -6.9% | -0.6% (-0.22) | 0.15 | 1.85 | -1.27 | 3/6 | `a0718baa` |
@@ -68,20 +68,20 @@ Chosen on data before 2024-01-01, tested 2024-01-01 to end of data. Buy and hold
 | `rsi2_daily_overlays` | entry=10.0, exit_sma=5, regime_days=200, rsi_period=2, trend_sma=None, vol_target=None | +14.4% | 1.53 | -2.7% | 1.74 | 1.34 | 0.65 | 12 | 18% |
 | `overnight_1min_100k_filters` | regime_days=None, trend_days=200 | +2.9% | 0.21 | -8.2% | 1.85 | -1.71 | -0.60 | 178 | 0% |
 | `orb_5min_100k_filters` | min_rel_volume=1.5, or_minutes=30, regime_days=None, trend_days=20 | +1.2% | 0.44 | -1.4% | 1.11 | -0.22 | 0.56 | 11 | 3% |
-| `xs_momentum_daily` | every=M, lookback=126, skip=0, top_n=10 | +76.1% | 1.21 | -24.8% | 1.22 | 1.19 | 1.51 | 12 | 100% |
-| `xs_reversal_daily` | every=M, lookback=21, top_n=10 | +69.3% | 1.04 | -22.6% | 1.07 | 1.02 | 0.57 | 13 | 100% |
+| `xs_momentum_daily` | every=M, lookback=126, skip=0, top_n=10 | +76.0% | 1.21 | -24.7% | 1.23 | 1.20 | 1.51 | 12 | 100% |
+| `xs_reversal_daily` | every=M, lookback=21, top_n=10 | +69.1% | 1.04 | -22.6% | 1.07 | 1.01 | 0.57 | 13 | 100% |
 | `xs_momentum_ls_daily` | every=M, lookback=252, short_n=10, skip=0, top_n=10 | +13.2% | 0.48 | -13.1% | 0.53 | 0.46 | 1.26 | 13 | 100% |
 | `pairs_daily` | entry_z=2.0, exit_z=0.5, lookback=20 | +3.4% | 0.39 | -5.1% | 0.62 | 0.20 | 0.22 | 67 | 86% |
-| `xs_gbm_daily` | every=W, horizon=21, top_n=10 | +67.0% | 1.03 | -18.6% | 1.09 | 0.98 | 1.81 | 52 | 100% |
+| `xs_gbm_daily` | every=W, horizon=21, top_n=10 | +67.6% | 1.03 | -18.5% | 1.10 | 0.98 | 1.82 | 52 | 100% |
 | `xs_gbm_ls_daily` | every=W, horizon=21, short_n=5, top_n=10 | -4.5% | -0.09 | -12.6% | 0.07 | -0.19 | 3.10 | 52 | 100% |
 | `low_vol_daily` | every=M, lookback=126, top_n=5 | +41.3% | 1.19 | -12.1% | 1.20 | 1.19 | 0.94 | 5 | 100% |
-| `high52_daily` | every=M, lookback=126, top_n=20 | +65.3% | 1.47 | -17.4% | 1.49 | 1.46 | 1.44 | 12 | 100% |
+| `high52_daily` | every=M, lookback=126, top_n=20 | +65.3% | 1.47 | -17.3% | 1.49 | 1.46 | 1.44 | 12 | 100% |
 | `sector_momentum_daily` | every=M, lookback=63, top_n=2 (no grid point reached 5 median trades; best of all used) | +0.0% |  | +0.0% |  |  |  | 0 | 0% |
-| `dual_momentum_daily` | every=M, lookback=126, safe=TLT, top_n=2 | +37.7% | 0.84 | -12.7% | 0.84 | 0.83 | 1.30 | 5 | 94% |
-| `xs_momentum_buffer_daily` | every=M, keep_n=10, lookback=126, skip=21, top_n=5 | +112.3% | 1.28 | -23.5% | 1.29 | 1.27 | 1.80 | 9 | 100% |
+| `dual_momentum_daily` | every=M, lookback=126, safe=TLT, top_n=2 | +37.6% | 0.83 | -12.7% | 0.84 | 0.83 | 1.30 | 5 | 94% |
+| `xs_momentum_buffer_daily` | every=M, keep_n=10, lookback=126, skip=21, top_n=5 | +111.7% | 1.28 | -23.6% | 1.28 | 1.27 | 1.80 | 9 | 100% |
 | `xs_momentum_buffer_ls_daily` | every=M, keep_n=10, lookback=252, short_n=10, skip=21, top_n=5 | +29.6% | 0.78 | -12.8% | 0.81 | 0.78 | 1.18 | 7 | 100% |
 | `trend_multi_daily` | every=M, target_vol=0.1, vol_lookback=21 | +17.9% | 0.79 | -5.2% | 0.81 | 0.77 | 0.05 | 13 | 94% |
-| `trend_multi_long_daily` | every=M, long_only=True, target_vol=0.2, vol_lookback=63 | +27.5% | 0.84 | -9.1% | 0.85 | 0.83 | 0.62 | 13 | 94% |
+| `trend_multi_long_daily` | every=M, long_only=True, target_vol=0.2, vol_lookback=63 | +27.4% | 0.84 | -9.1% | 0.85 | 0.83 | 0.62 | 13 | 94% |
 | `pre_holiday_daily` | days_after=0, days_before=2 | +1.1% | 0.15 | -3.1% | 0.38 | -0.03 | 0.97 | 10 | 8% |
 | `orb_5min_100k_target` | min_rel_volume=1.5, or_minutes=30, profit_r=None | +1.9% | 0.42 | -2.0% | 1.18 | -0.30 | 0.25 | 19 | 5% |
 | `overnight_1min_100k_weekday` | skip_weekdays=[0], trend_days=200 | +8.0% | 0.56 | -6.9% | 2.00 | -1.13 | -0.13 | 144 | 0% |

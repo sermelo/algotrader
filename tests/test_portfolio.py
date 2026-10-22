@@ -226,3 +226,39 @@ def test_xs_ml_validation():
         CrossSectionalML(horizon=0)
     with pytest.raises(ValueError):
         CrossSectionalML().fit_many({t: b.iloc[:10] for t, b in drift_frames().items()})
+
+
+def test_cash_shortfall_scales_every_buy_by_the_same_factor():
+    # the 1% half-spread makes two half-weight buys cost 10,100 against 10,000 in cash: both are
+    # cut to 495 shares (before the fix the first got all 500 and the second only 490)
+    f = frames(A=[10, 10, 10], B=[10, 10, 10])
+    half = Fixed(lambda c: pd.DataFrame(0.5, index=c.index, columns=c.columns))
+    res = PortfolioBacktester(half, CostModel(commission_per_share=0, min_commission=0,
+                                              spread_bps=100)).run(f)
+    assert sorted((t, q) for _, t, q, _, _ in res.orders if q > 0) == [("A", 495), ("B", 495)]
+
+
+HASH_SCRIPT = """
+import sys; sys.path.insert(0, "tests")
+import numpy as np, pandas as pd
+from helpers import make_bars
+from algotrader import CostModel
+from algotrader.portfolio import PortfolioBacktester
+rng = np.random.default_rng(0)
+f = {f"T{i:02d}": make_bars(10 * np.cumprod(1 + rng.normal(0, 0.02, 40)), freq="1D") for i in range(30)}
+class W:
+    def weights(self, c):
+        return pd.DataFrame(np.where(np.arange(len(c))[:, None] % 10 < 5, 1 / 30, 0.0) + 0 * c.to_numpy(),
+                            index=c.index, columns=c.columns)
+res = PortfolioBacktester(W(), CostModel(spread_bps=20)).run(f)
+print(repr(res.orders), repr(res.equity.round(6).tolist()))
+"""
+
+
+def test_result_does_not_depend_on_the_hash_seed():
+    import os
+    import subprocess
+    import sys
+    runs = {subprocess.run([sys.executable, "-c", HASH_SCRIPT], capture_output=True, text=True, check=True,
+                           env=os.environ | {"PYTHONHASHSEED": seed}).stdout for seed in ("1", "2", "3")}
+    assert len(runs) == 1

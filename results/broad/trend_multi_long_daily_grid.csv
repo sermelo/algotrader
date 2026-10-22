@@ -21,5 +21,5 @@ fold,params,portfolio_return,portfolio_cagr,portfolio_sharpe,portfolio_max_drawd
 2025-07-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.108617,0.0317244,0.543672,-0.0693602,27,True
 2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 21}",0.106435,0.0269056,0.727043,-0.0383436,33,True
 2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.1, ""vol_lookback"": 63}",0.0914686,0.023241,0.657362,-0.0434043,33,True
-2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.228827,0.0555804,0.841596,-0.0695375,33,True
+2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 21}",0.228745,0.0555619,0.841832,-0.0695375,33,True
 2026-01-01,"{""every"": ""M"", ""long_only"": true, ""target_vol"": 0.2, ""vol_lookback"": 63}",0.191947,0.0471706,0.744063,-0.0693602,33,True

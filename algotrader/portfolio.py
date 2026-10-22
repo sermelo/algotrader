@@ -95,7 +95,8 @@ class PortfolioBacktester:
             # 1. trade the pending tickers towards the latest targets at today's open
             if pending:
                 value = cash + float((shares * last_close.fillna(0)).sum())
-                ready = [t for t in pending if not np.isnan(o[t])]
+                # column order, never set order: the result must not depend on the hash seed
+                ready = [t for t in tickers if t in pending and not np.isnan(o[t])]
                 # whole shares, rounded towards zero (also for shorts)
                 want = {t: int(value * target[t] / o[t]) for t in ready}
                 for t in [t for t in ready if want[t] < shares[t]]:          # sells first
@@ -105,9 +106,13 @@ class PortfolioBacktester:
                     cash += -q * fill - comm
                     shares[t] += q
                     orders.append((day, t, q, fill, comm))
-                for t in [t for t in ready if want[t] > shares[t]]:
-                    q = int(want[t] - shares[t])
-                    fill = self.costs.buy_price(o[t])
+                buys = [(t, int(want[t] - shares[t]), self.costs.buy_price(o[t]))
+                        for t in ready if want[t] > shares[t]]
+                need = sum(q * f + self.costs.commission(q, f) for _, q, f in buys)
+                if need > cash:              # cash short: every buy scaled down by the same factor
+                    buys = [(t, int(q * cash / need), f) for t, q, f in buys]
+                for t, q, fill in buys:
+                    # rounding and per-order minimums can still leave a few dollars short
                     while q > 0 and q * fill + self.costs.commission(q, fill) > cash:
                         q = int(min(q - 1, (cash - self.costs.commission(q, fill)) // fill))
                     if q > 0:

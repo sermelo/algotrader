@@ -134,11 +134,11 @@ Updated 2026-10-17. In order; details in the sections below.
     reached Sharpe 1.04 (FF alpha t 1.73), not significant. Possible follow-up: test operating profitability / asset growth
     top 5 alone on a period it was not chosen on (none available here).
 14. **Weekly rebalancing test done 2026-10-20** (`results/long_rebal/`): 0 of 10 strategies better weekly; turnover doubles, Sharpe
-    same or lower, nothing gained even before costs. **Engine fix pending:** `PortfolioBacktester.run` iterates the `pending` set,
-    so the order of buys (and which one is cut when cash is short) depends on PYTHONHASHSEED; results are not bit-reproducible
-    (momentum top 5 Sharpe 0.83 vs 0.77 in two runs of identical code and data). Fix: process tickers in column order and scale
-    all buys down proportionally when cash is short; then rerun every portfolio experiment (core, broad, long, long_stop,
-    long_conc, long_rebal, mid), since `portfolio.py` is in all their fingerprints.
+    same or lower, nothing gained even before costs. **Engine fix done 2026-10-22:** `PortfolioBacktester.run` used to iterate the `pending` set,
+    so the order of buys (and which one was cut when cash was short) depended on PYTHONHASHSEED (momentum top 5 Sharpe 0.83 vs
+    0.77 in two runs of identical code and data). Now column order and every buy scaled by the same factor; all portfolio
+    experiments rerun (core, broad, long, long_nohf, long_stop, long_conc, long_rebal, mid, merger; `scripts/engine_rerun.sh`,
+    about 29 hours on the VPS): most moved under 0.01 Sharpe, no verdict changed.
 
 15. **Merger arbitrage (S15, sergio, 2026-10-20)**: after asking what professional traders do that we have not tested, the
     one accessible gap is risk premia; merger arbitrage is testable with free SEC filings. Steps: `scripts/deal_forms.py`

@@ -1,5 +1,5 @@
 ticker,period,params,total_return,cagr,sharpe,max_drawdown,exposure,trades,orders,total_commission,final_equity
-PORTFOLIO,test,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.352923,0.114957,0.512556,-0.304112,0.998571,37,469,836.621,271264
-PORTFOLIO,gross,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.363878,0.118199,0.522314,-0.303261,0.998571,37,467,0,274733
-PORTFOLIO,stress,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.340279,0.111195,0.501213,-0.305861,0.998571,37,465,828.91,267894
-PORTFOLIO,train,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",1.00503,0.466331,1.77444,-0.20971,0.683406,16,193,273.781,200503
+PORTFOLIO,test,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.336803,0.110157,0.498348,-0.309641,0.998571,37,467,830.799,268505
+PORTFOLIO,gross,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.348891,0.11376,0.509184,-0.30771,0.998571,37,468,0,272232
+PORTFOLIO,stress,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",0.326363,0.107028,0.488868,-0.310656,0.998571,37,468,828.295,265553
+PORTFOLIO,train,"{""every"": ""M"", ""lookback"": 126, ""skip"": 0, ""top_n"": 10}",1.00856,0.467753,1.7785,-0.207463,0.683406,16,194,273.371,200856

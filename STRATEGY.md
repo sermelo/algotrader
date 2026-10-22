@@ -110,8 +110,9 @@ Wrappers around any strategy, selected by parameters in an experiment's grid:
 - `PortfolioBacktester` runs ONE long-only portfolio over all tickers on daily bars.
   A cross-sectional strategy's `weights(closes)` gives target weights per day from
   closes up to that day. Orders are placed only when the weights change, at the next
-  day's open (sells first, buys scaled down if cash is short), whole shares, same
-  `CostModel`. A ticker whose data ends is sold at its last close. Equity is marked
+  day's open (sells first, then buys; if cash is short every buy is scaled down by the same
+  factor, tickers in column order so the result does not depend on Python's hash seed), whole
+  shares, same `CostModel`. A ticker whose data ends is sold at its last close. Equity is marked
   to each day's close (last known close for tickers without a bar).
 - **Cross-sectional momentum** (`CrossSectionalMomentum`, Jegadeesh & Titman 1993):
   equal weight in the `top_n` tickers by return from `lookback` to `skip` days ago,
@@ -323,8 +324,8 @@ the strategies and the success rule are unchanged). Same walk-forward and engine
 Pre-registered: momentum (long, long-short), short-term reversal, low volatility, 52-week high, seasonality
 (long, long-short), combined price signal, with the long-history grids. Success criterion: Fama-French alpha
 t >= 2 at base costs, Sharpe above the equal-weight universe, positive at stress costs. **Result (2026-10-18): fail**; best
-Fama-French alpha momentum +4.2% a year, t 1.13 (README, "Mid-cap test"). With the cleaned data momentum's Sharpe is
-0.78 instead of the crashed run's 0.26: the bad series had wrecked its returns.
+Fama-French alpha momentum +3.3% a year, t 0.97 (README, "Mid-cap test"; +4.2%, t 1.13 before the 2026-10-22 engine fix). With the cleaned data momentum's Sharpe is
+0.77 instead of the crashed run's 0.26: the bad series had wrecked its returns.
 
 ## Stop-loss test (`algotrader/stoploss.py`, long history)
 

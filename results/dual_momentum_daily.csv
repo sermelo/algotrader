@@ -1,5 +1,5 @@
 ticker,period,params,total_return,cagr,sharpe,max_drawdown,exposure,trades,orders,total_commission,final_equity
-PORTFOLIO,test,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.37665,0.121958,0.835994,-0.126701,0.938571,13,31,34.425,172574
-PORTFOLIO,gross,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.381259,0.123308,0.843701,-0.126323,0.938571,13,31,0,173248
-PORTFOLIO,stress,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.373242,0.120957,0.829532,-0.12674,0.938571,13,31,34.41,172022
+PORTFOLIO,test,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.375601,0.12165,0.834889,-0.126701,0.938571,13,31,34.4,172443
+PORTFOLIO,gross,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.380207,0.123001,0.842605,-0.126323,0.938571,13,30,0,173116
+PORTFOLIO,stress,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.372325,0.120687,0.828629,-0.12674,0.938571,13,31,34.375,171907
 PORTFOLIO,train,"{""every"": ""M"", ""lookback"": 126, ""safe"": ""TLT"", ""top_n"": 2}",0.25358,0.132414,1.29944,-0.10075,0.541485,5,8,8.68,125358

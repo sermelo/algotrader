@@ -1,21 +1,21 @@
 {
   "combo_price_stop_long": {
-    "code_sha256": "c2a341a9d36ff23823b4b3ae841f0fa91511d3ccc5e84acf9d1999122b23cf07",
+    "code_sha256": "23db87d1077d573bec7f954ad2a972ac019ea89b93f49017cf4b31a68c5b1a56",
     "configurations": 11,
     "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
   },
   "high52_stop_long": {
-    "code_sha256": "c68b4d411d311f0534cb7e8aca4ba5dde08a286841b3ce99231ae868f4ec2358",
+    "code_sha256": "abf75ac7f28e18c8d6619a2932978c964dde960180e7c6fc627bded6b3c07d78",
     "configurations": 11,
     "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
   },
   "low_vol_stop_long": {
-    "code_sha256": "a3e97a62bd3e7381ed7b3d8944e477e481ef5cd16a94c47901f0552e8e62713c",
+    "code_sha256": "023cb8c890236cfc52b0eed211b3ec77471058621a9a367a3fc70151972cf7fa",
     "configurations": 11,
     "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
   },
   "xs_momentum_stop_long": {
-    "code_sha256": "a36683be17799ce16b946bde3e89900125f38cc5ce3800f56b0f8a38545400a4",
+    "code_sha256": "9d668fdd3c044280a23554d1f5dc4b15594f865d0402b2ac4bf8e5934f687dd1",
     "configurations": 11,
     "data_sha256": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb"
   }
