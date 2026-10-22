@@ -18,6 +18,7 @@ from .stats import expected_max_sharpe
 SOURCES = {"core": "results/manifest.json", "broad": "results/broad/manifest.json",
            "long": "results/long/manifest.json", "long_stop": "results/long_stop/manifest.json",
            "long_conc": "results/long_conc/manifest.json", "long_rebal": "results/long_rebal/manifest.json",
+           "long_vol": "results/long_vol/manifest.json",
            "mid": "results/mid/manifest.json", "merger": "results/merger/manifest.json"}
 
 
