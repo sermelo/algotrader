@@ -399,6 +399,20 @@ Also reported: Sharpe of the excess return with a 90% interval, beta, maximum dr
 return, share of deals losing more than 10%, and the returns in 2008-09 and 2020. **Result (2026-10-21): fail**: +1.1% a year over
 cash, Fama-French alpha -3.1% a year (t -1.68), beta 0.38, max drawdown -39.2% (README, "Merger arbitrage").
 
+## Paper trading (`algotrader/live.py`, `algotrader/paper.py`)
+
+The long-history `FundamentalSort` run forward (`config/paper.json`: operating profitability, top 10,
+monthly, $15,000; setup in `docs/paper-trading.md`). After the close of the last NYSE session of a month
+(exchange calendar XNYS), the members are today's S&P 500 list and the facts each member's current SEC
+company-facts JSON, through the same parser and `fundamentals.signals` (a value counts from the day after
+it was filed); the top N scores are chosen (ties in member order, as `_top_weights`). If the chosen names
+differ from those held, every name is traded to floor(equity x 0.99 / N / previous close) shares (names
+out of the target sold entirely, trims under $100 skipped, sells listed first) with market-on-open (`OPG`)
+orders, filled at the next open; otherwise nothing is traded. The first run with no state builds the
+portfolio at once. Checked on 2026-10-22: the live scores equal the backtest panel's for every ticker
+compared; the top 10 differs only through membership and the price-data gap after March 2026 (README,
+Limitations).
+
 ## Factor regressions (`algotrader/french.py`)
 
 Separate from the runner: `python -m algotrader.french report` regresses each

@@ -1,0 +1,17 @@
+{
+  "mode": "paper",
+  "host": "127.0.0.1",
+  "port": 4002,
+  "client_id": 17,
+  "signal": "operating_profitability",
+  "largest": true,
+  "top_n": 10,
+  "capital": 15000,
+  "max_equity": 30000,
+  "cash_buffer": 0.01,
+  "min_order_value": 100,
+  "max_orders": 30,
+  "max_order_slots": 1.5,
+  "out": "data/paper",
+  "notify_cmd": []
+}

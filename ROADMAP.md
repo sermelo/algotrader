@@ -83,7 +83,9 @@ Updated 2026-10-17. In order; details in the sections below.
    0.50 -> 0.43). Committed with the code (costs, engine, intraday, two new experiments).
 2. **D1 second batch**: on or after 2026-11-01 rerun `scripts/history_queue.sh` on the VPS
    for the remaining ~216 Tiingo symbols (the 500-symbol monthly quota stops it), then
-   `python -m algotrader.history check`.
+   `python -m algotrader.history check`. **Found 2026-10-22:** 166 of the 503 current members have prices only to
+   2026-03-31 (Hugging Face series), so every long backtest picks from the other two thirds after that; this batch
+   should fill them; then rerun the long experiments.
 3. ~~**Long-history results**~~ **done 2026-10-18**: 26 experiments in `results/long/` (with and without the Hugging Face series), factor alphas, luck bars, README section.
 4. ~~**S8 follow-up**: market-on-close variant on the 1-minute data~~ **done 2026-10-17**
    (`scripts/moc_residual_check.py`): MOC does not rescue it (see S8).
@@ -144,6 +146,11 @@ Updated 2026-10-17. In order; details in the sections below.
     members, check weekly or daily): momentum and operating profitability, 0 of 12 volatile versions with FF alpha t >= 2,
     the filter helps neither, weekly/daily helps neither. Momentum's higher CAGR there is beta 1.3 and size; operating
     profitability gets much worse (top 5 Sharpe 1.04 -> 0.66).
+
+14c. **Paper trading (sergio, 2026-10-22)**: operating profitability top 10 monthly, $15,000, IBKR paper account;
+    code done (`live.py`, `paper.py`, `config/paper.json`, `docs/paper-trading.md`); waiting for sergio's IBKR account,
+    then IB Gateway + IBC (VPS is ARM: needs ARM Java + Xvfb, ask Hermes) and the cron job. Ranking of every
+    configuration: `results/ranking.md` (`scripts/rank_configs.py`).
 
 15. **Merger arbitrage (S15, sergio, 2026-10-20)**: after asking what professional traders do that we have not tested, the
     one accessible gap is risk premia; merger arbitrage is testable with free SEC filings. Steps: `scripts/deal_forms.py`
