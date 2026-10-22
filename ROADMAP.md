@@ -140,6 +140,11 @@ Updated 2026-10-17. In order; details in the sections below.
     experiments rerun (core, broad, long, long_nohf, long_stop, long_conc, long_rebal, mid, merger; `scripts/engine_rerun.sh`,
     about 29 hours on the VPS): most moved under 0.01 Sharpe, no verdict changed.
 
+14b. **Volatile-subset test done 2026-10-22** (`results/long_vol/`, sergio's idea: pick only from the most volatile third of
+    members, check weekly or daily): momentum and operating profitability, 0 of 12 volatile versions with FF alpha t >= 2,
+    the filter helps neither, weekly/daily helps neither. Momentum's higher CAGR there is beta 1.3 and size; operating
+    profitability gets much worse (top 5 Sharpe 1.04 -> 0.66).
+
 15. **Merger arbitrage (S15, sergio, 2026-10-20)**: after asking what professional traders do that we have not tested, the
     one accessible gap is risk premia; merger arbitrage is testable with free SEC filings. Steps: `scripts/deal_forms.py`
     (index of deal filings, done), `python -m algotrader.mergerarb fetch` (VPS, ~19,500 filings), `deals`, `run`; commit

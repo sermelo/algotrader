@@ -8,10 +8,12 @@ priority list; keep it updated as items are done).
 - Everything is committed and pushed (`2c66786`, 2026-10-22); 336 tests pass; every committed
   result's fingerprint is current. Nothing is running on the VPS; `~/algotrader-work` there has
   the code of this commit.
-- Last work: portfolio engine fix (ROADMAP 14, buys in column order, cash shortfall scaled
+- Last work (2026-10-22): volatile-subset test (`volsubset.py`, `results/long_vol/`, ROADMAP 14b):
+  momentum and operating profitability picking only from the most volatile third of members, monthly,
+  weekly, daily; all three pre-registered rules fail. Before that: portfolio engine fix (ROADMAP 14, buys in column order, cash shortfall scaled
   evenly) and a full rerun of every portfolio experiment (`scripts/engine_rerun.sh`): no
   verdict changed. Before that: merger arbitrage (S15, fail), drawdown bounds (`drawdown.py`).
-- Headline: 1,210 configurations tried; no strategy beats the luck bar or has significant
+- Headline: 1,226 configurations tried; no strategy beats the luck bar or has significant
   factor alpha. The agreed recommendation stands: a UCITS global index fund.
 - Open discussion (2026-10-22): sergio asked what to paper-trade. Proposed operating
   profitability, top 10, monthly (long history 2012-2026: Sharpe 0.98, +16.0%/yr vs SPY +15.0%,

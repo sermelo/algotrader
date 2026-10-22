@@ -363,6 +363,19 @@ weekly is better for a strategy if weekly minus monthly (base costs) at top 5 or
 better in general only if that holds for most strategies. **Result (2026-10-20): not better**, 0 of 10 pass (README,
 "Long history").
 
+## Volatile subset (`algotrader/volsubset.py`, long history)
+
+`volatile(closes)`: on each day, the `FRAC` (1/3) of the tickers trading that day with the highest standard deviation of their
+last 63 daily close-to-close returns (at least 40), from member closes up to that day. `VolatileSubset(inner)` keeps the inner
+strategy's own score (`score(closes)`, or its fundamental panel) only for those tickers and ranks it with the same rule
+(`_top_weights`: top N, equal weight, at the inner strategy's rebalance days); a holding that leaves the subset is sold at the
+next rebalance. Momentum 12-1 and operating profitability at top 5 and 20, rebalanced at month, week or day ends, on the
+volatile subset and on all members, gross / base / stress costs, $1M, from 2008, reported from 2012. Pre-registered rules
+(committed in `af6df32` before the run): an edge needs a volatile version's Fama-French alpha t >= 2 at base costs and positive
+at stress; the filter helps a strategy if volatile minus all members has FF alpha t >= 2 for most of its six size/frequency
+pairs; checking more often helps if weekly or daily minus monthly (volatile subset) has FF alpha t >= 2 for most strategy/size
+pairs. **Result (2026-10-22): all three fail** (README, "Long history").
+
 ## Merger arbitrage (`algotrader/mergerarb.py`, 2008 to Mar 2026)
 
 A risk premium (Mitchell & Pulvino 2001), not a price signal. **Deals** from SEC filings only: the target's merger proxy or
