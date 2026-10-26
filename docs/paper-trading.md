@@ -36,13 +36,24 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
 
 ## Gateway and cron (Claude does this once the account exists)
 
-5. **IB Gateway + IBC** (github.com/IbcAlpha/IBC) on the Hermes VPS, listening on localhost only (port
-   4002, no port opened outward). The VPS is ARM (aarch64) with no Java: it needs an ARM Java 17 with JavaFX
-   (e.g. Azul Zulu FX), Xvfb for the virtual display, and the Gateway jars run with that Java. Check with the
-   `Hermes` session first (packages to install, memory: Gateway needs about 1 GB). Alternative: run it on
-   this machine (x64, standard installer) if it stays on; it has little free memory.
-   API settings: enable socket clients, **uncheck Read-Only API**, trusted IP 127.0.0.1, auto-restart outside
-   15:30-22:00 Madrid.
+5. **IB Gateway + IBC on the Hermes VPS: installed 2026-10-26**, all in user space (the `hermes` user has
+   no sudo; nothing installed system-wide, no port opened):
+   - Java: Azul Zulu FX JDK **25.0.2** aarch64 in `~/ibkr/jdk` (Gateway 10.50's installer accepts exactly
+     25.0.2; its bundled JRE is x64). Gateway 10.50 (stable) in `~/Jts/ibgateway/stable` (symlink `1050`),
+     installed with `INSTALL4J_JAVA_HOME_OVERRIDE=~/ibkr/jdk INSTALL4J_DISABLE_BUNDLED_JRE=true sh
+     ibgateway-stable-standalone-linux-x64.sh -q -dir ~/Jts/ibgateway/stable`.
+   - Xvfb: Ubuntu `xvfb` and its five missing packages unpacked with `apt-get download` + `dpkg -x` into
+     `~/ibkr/x`. Xvfb looks for `xkbcomp` in `/usr/bin`, so `~/ibkr/x/usr/bin/Xvfb-ibkr` is a copy with
+     that path patched to `/tmp/xb` (a symlink to `~/ibkr/x/usr/bin`, recreated by the start script).
+   - IBC 3.24.2 in `~/ibc` (`gatewaystart.sh`: version 1050, paper, Java above, 2FA timeout restarts);
+     config in `~/.config/ibkr/ibc.ini` (chmod 600): paper, API port 4002, Read-Only API off, trusted IP
+     127.0.0.1, other incoming connections rejected, daily restart 06:00 UTC (08:00 Madrid in winter).
+     **`IbLoginId` and `IbPassword` are blank: sergio fills them in on the VPS.**
+   - Start: `~/ibkr/start-gateway.sh` (starts Xvfb on :99 if needed, then IBC; refuses while the login is
+     blank). Logs: `~/ibkr/gateway.log`, `~/ibc/logs/`. Tested: the Gateway opens its login dialog on ARM
+     and IBC sets paper mode (about 300 MB RSS). Not yet started on reboot (needs a `@reboot` crontab entry).
+   - Stop: kill the PIDs from `pgrep -u hermes -f "[i]bcalpha.ibc.IbcGateway|[i]bcstart.sh|[g]atewaystart.sh"`
+     (the brackets keep the pattern from matching the ssh shell itself).
 6. **Dry run**: `uv run python -m algotrader.paper status`, then `uv run python -m algotrader.paper daily`
    (prints the orders it would place, places none).
 7. **Cron** (VPS clock is UTC; 21:30 UTC is after the US close in summer and winter):

@@ -16,8 +16,9 @@ priority list; keep it updated as items are done).
 - Headline: 1,226 configurations tried; no strategy beats the luck bar or has significant
   factor alpha. The agreed recommendation stands: a UCITS global index fund.
 - **Paper trading set up in code (2026-10-22, ROADMAP 14c):** operating profitability top 10, monthly,
-  $15,000, IBKR paper account (`docs/paper-trading.md`). Blocked on sergio opening an IBKR account and a
-  paper login; then IB Gateway + IBC (VPS is aarch64, no Java: check with Hermes) and cron. Live signal
+  $15,000, IBKR paper account (`docs/paper-trading.md`). Paper account DUR288542 exists. IB Gateway 10.50 +
+  IBC installed on the VPS 2026-10-26 (user space, docs step 5); waiting for sergio to put the paper login
+  in `~/.config/ibkr/ibc.ini` there, then start, dry run, and cron (incl. `@reboot` for the Gateway). Live signal
   verified on the VPS (5 min, SEC API). Ranking of all configurations: `results/ranking.md`.
 - Earlier discussion (2026-10-22): sergio asked what to paper-trade. Proposed operating
   profitability, top 10, monthly (long history 2012-2026: Sharpe 0.98, +16.0%/yr vs SPY +15.0%,
