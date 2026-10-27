@@ -17,8 +17,8 @@ priority list; keep it updated as items are done).
   factor alpha. The agreed recommendation stands: a UCITS global index fund.
 - **Paper trading set up in code (2026-10-22, ROADMAP 14c):** operating profitability top 10, monthly,
   $15,000, IBKR paper account (`docs/paper-trading.md`). Paper account DUR288542 exists. IB Gateway 10.50 +
-  IBC installed on the VPS 2026-10-26 (user space, docs step 5); waiting for sergio to put the paper login
-  in `~/.config/ibkr/ibc.ini` there, then start, dry run, and cron (incl. `@reboot` for the Gateway). Live signal
+  IBC installed on the VPS 2026-10-26 (user space, docs step 5); logged in 2026-10-27 (started by hand), status and
+  dry run work. Next: sergio's OK for the cron jobs (`daily --submit` weekdays 21:30 UTC, `@reboot` Gateway). Live signal
   verified on the VPS (5 min, SEC API). Ranking of all configurations: `results/ranking.md`.
 - Earlier discussion (2026-10-22): sergio asked what to paper-trade. Proposed operating
   profitability, top 10, monthly (long history 2012-2026: Sharpe 0.98, +16.0%/yr vs SPY +15.0%,

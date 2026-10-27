@@ -24,7 +24,9 @@ import argparse
 import csv
 import json
 import math
+import re
 import subprocess
+import urllib.request
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
@@ -139,6 +141,39 @@ def from_ib_symbol(symbol: str) -> str:
     return symbol.replace(" ", ".")
 
 
+ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+
+
+def parse_ecb(xml: str) -> dict:
+    """ECB daily reference rates: currency -> units per euro."""
+    rates = {c: float(r) for c, r in re.findall(r"currency=['\"](\w{3})['\"]\s+rate=['\"]([\d.]+)['\"]", xml)}
+    if "USD" not in rates:
+        raise ValueError("no USD rate in the ECB file")
+    return rates
+
+
+def ecb_usd_per_eur(opener=urllib.request.urlopen) -> float:
+    with opener(ECB_URL, timeout=30) as r:
+        return parse_ecb(r.read().decode())["USD"]
+
+
+def usd_per_base(vals: dict, ecb=ecb_usd_per_eur) -> float:
+    """US dollars per unit of the account's base currency, from IBKR's account values.
+
+    IBKR gives ('ExchangeRate', 'USD') (base units per USD) only once the account holds dollars; a
+    euro account without it (before the first trade) uses the ECB reference rate. Anything else is
+    refused rather than assumed to be 1."""
+    base = next((cur for (tag, cur) in vals if tag == "NetLiquidation" and cur not in ("", "BASE")), None)
+    if base == "USD":
+        return 1.0
+    rate = vals.get(("ExchangeRate", "USD"))
+    if rate and float(rate) > 0:
+        return 1.0 / float(rate)
+    if base == "EUR":
+        return ecb()
+    raise RuntimeError(f"no USD exchange rate for base currency {base!r}")
+
+
 class IbkrBroker:
     """The few calls the runner needs, on IB Gateway / TWS through ib_async."""
 
@@ -158,8 +193,7 @@ class IbkrBroker:
         return {(v.tag, v.currency): v.value for v in self.ib.accountValues(self.account)}
 
     def _usd_per_base(self, vals) -> float:
-        rate = vals.get(("ExchangeRate", "USD"))       # base currency per USD
-        return 1.0 / float(rate) if rate else 1.0
+        return usd_per_base(vals)
 
     def equity_usd(self) -> float:
         vals = self._values()

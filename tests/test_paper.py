@@ -165,3 +165,21 @@ def test_notify_runs_the_command(tmp_path):
     cfg = Config(notify_cmd=["sh", "-c", f'echo "$0" > {log}'])
     paper.notify(cfg, "hello")
     assert log.read_text().strip() == "hello"
+
+
+ECB_XML = """<gesmes:Envelope><Cube><Cube time='2026-10-27'><Cube currency='USD' rate='1.1612'/>
+<Cube currency='JPY' rate='172.10'/></Cube></Cube></gesmes:Envelope>"""
+
+
+def test_usd_per_base_currency():
+    usd = {("NetLiquidation", "USD"): "15000"}
+    assert paper.usd_per_base(usd) == 1.0
+    held = {("NetLiquidation", "EUR"): "13000", ("ExchangeRate", "USD"): "0.8"}   # 0.8 EUR per USD
+    assert paper.usd_per_base(held, ecb=lambda: 9.9) == pytest.approx(1.25)
+    fresh = {("NetLiquidation", "EUR"): "13000", ("ExchangeRate", "EUR"): "1.00"}  # no dollars held yet
+    assert paper.usd_per_base(fresh, ecb=lambda: 1.1612) == 1.1612
+    with pytest.raises(RuntimeError):                                              # never assume 1
+        paper.usd_per_base({("NetLiquidation", "GBP"): "10000"}, ecb=lambda: 1.16)
+    assert paper.parse_ecb(ECB_XML) == {"USD": 1.1612, "JPY": 172.10}
+    with pytest.raises(ValueError):
+        paper.parse_ecb("<Cube currency='JPY' rate='172.1'/>")

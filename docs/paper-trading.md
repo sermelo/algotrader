@@ -52,6 +52,12 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
    - Start: `~/ibkr/start-gateway.sh` (starts Xvfb on :99 if needed, then IBC; refuses while the login is
      blank). Logs: `~/ibkr/gateway.log`, `~/ibc/logs/`. Tested: the Gateway opens its login dialog on ARM
      and IBC sets paper mode (about 300 MB RSS). Not yet started on reboot (needs a `@reboot` crontab entry).
+   - 2026-10-27: sergio filled in the login; the Gateway logged in to DUR288542 (Simulated Trading, base EUR,
+     €13,108). IBKR reports no USD exchange rate until the account holds dollars (and the paper account
+     has no forex data), so the runner converts a euro account with the ECB daily reference rate until
+     then, and refuses any other currency without a rate. Status and dry run work (account $14,666).
+     The Gateway's API socket listens on all interfaces (it has no bind option); only 127.0.0.1 is trusted
+     and other connections are rejected.
    - Stop: kill the PIDs from `pgrep -u hermes -f "[i]bcalpha.ibc.IbcGateway|[i]bcstart.sh|[g]atewaystart.sh"`
      (the brackets keep the pattern from matching the ssh shell itself).
 6. **Dry run**: `uv run python -m algotrader.paper status`, then `uv run python -m algotrader.paper daily`
