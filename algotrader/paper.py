@@ -157,21 +157,27 @@ def ecb_usd_per_eur(opener=urllib.request.urlopen) -> float:
         return parse_ecb(r.read().decode())["USD"]
 
 
-def usd_per_base(vals: dict, ecb=ecb_usd_per_eur) -> float:
-    """US dollars per unit of the account's base currency, from IBKR's account values.
+def usd_rate(vals: dict, ecb=ecb_usd_per_eur) -> tuple:
+    """(US dollars per unit of the account's base currency, where the rate came from).
 
-    IBKR gives ('ExchangeRate', 'USD') (base units per USD) only once the account holds dollars; a
-    euro account without it (before the first trade) uses the ECB reference rate. Anything else is
-    refused rather than assumed to be 1."""
+    From IBKR's account values: ('ExchangeRate', 'USD') or, as a paper account with dollar cash reports
+    it, ('$LEDGER-ExchangeRate', 'USD') (base units per USD); a euro account with neither uses the ECB
+    reference rate. Anything else is refused rather than assumed to be 1."""
     base = next((cur for (tag, cur) in vals if tag == "NetLiquidation" and cur not in ("", "BASE")), None)
     if base == "USD":
-        return 1.0
-    rate = vals.get(("ExchangeRate", "USD"))
-    if rate and float(rate) > 0:
-        return 1.0 / float(rate)
+        return 1.0, "base"
+    for tag in ("ExchangeRate", "$LEDGER-ExchangeRate"):
+        rate = vals.get((tag, "USD"))
+        if rate and float(rate) > 0:
+            return 1.0 / float(rate), "ibkr"
     if base == "EUR":
-        return ecb()
+        return ecb(), "ecb"
     raise RuntimeError(f"no USD exchange rate for base currency {base!r}")
+
+
+def usd_per_base(vals: dict, ecb=ecb_usd_per_eur) -> float:
+    """US dollars per unit of the account's base currency (see `usd_rate`)."""
+    return usd_rate(vals, ecb)[0]
 
 
 class IbkrBroker:
@@ -194,6 +200,13 @@ class IbkrBroker:
 
     def _usd_per_base(self, vals) -> float:
         return usd_per_base(vals)
+
+    def fx(self) -> dict:
+        """Base currency, account value in it, and the dollar rate used (with its source)."""
+        vals = self._values()
+        (_, cur), base = next(((k, float(v)) for k, v in vals.items() if k[0] == "NetLiquidation" and k[1] not in ("", "BASE")))
+        rate, source = usd_rate(vals)
+        return {"base_currency": cur, "equity_base": base, "usd_per_base": rate, "rate_source": source}
 
     def equity_usd(self) -> float:
         vals = self._values()
@@ -259,9 +272,21 @@ def _append_csv(path: Path, rows: list, key=None):
     rows = [r for r in rows if not key or r[key] not in seen]
     if not rows:
         return
+    fields = list(rows[0])
+    if path.exists():
+        with path.open(newline="") as fh:
+            old = csv.DictReader(fh)
+            header, kept = list(old.fieldnames or []), list(old)
+        if header != fields:                             # columns added: rewrite with all of them
+            fields = header + [f for f in fields if f not in header]
+            with path.open("w", newline="") as fh:
+                w = csv.DictWriter(fh, fieldnames=fields, restval="")
+                w.writeheader()
+                w.writerows(kept + rows)
+            return
     new = not path.exists()
     with path.open("a", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        w = csv.DictWriter(fh, fieldnames=fields, restval="")
         if new:
             w.writeheader()
         w.writerows(rows)
@@ -279,10 +304,12 @@ def daily(cfg: Config, broker, day, submit=False, target_fn=None, calendar=None)
     if paper_account != (cfg.mode == "paper"):
         raise RuntimeError(f"account {broker.account} does not match mode {cfg.mode}: refusing")
 
-    equity, cash, held = broker.equity_usd(), broker.cash_usd(), broker.positions()
+    equity, cash, held, fx = broker.equity_usd(), broker.cash_usd(), broker.positions(), broker.fx()
     _append_csv(out / "fills.csv", broker.fills_today(), key="exec_id")
     _append_csv(out / "equity.csv", [{"day": str(day.date()), "equity_usd": round(equity, 2),
-                                      "cash_usd": round(cash, 2), "positions": json.dumps(held, sort_keys=True)}])
+                                      "cash_usd": round(cash, 2), "positions": json.dumps(held, sort_keys=True),
+                                      "base_currency": fx["base_currency"], "equity_base": round(fx["equity_base"], 2),
+                                      "usd_per_base": round(fx["usd_per_base"], 6), "rate_source": fx["rate_source"]}])
     state_path = out / "state.json"
     state = json.loads(state_path.read_text()) if state_path.exists() else {}
     lines = [f"paper {day.date()}: account ${equity:,.0f} (cash ${cash:,.0f}), {len(held)} positions"]
@@ -340,7 +367,9 @@ def main(argv=None):
         broker = IbkrBroker(cfg, readonly=not a.submit)
         if a.command == "status":
             state = Path(cfg.out) / "state.json"
-            print(f"account {broker.account}: ${broker.equity_usd():,.0f}, cash ${broker.cash_usd():,.0f}")
+            fx = broker.fx()
+            print(f"account {broker.account}: ${broker.equity_usd():,.0f}, cash ${broker.cash_usd():,.0f} "
+                  f"({fx['base_currency']} {fx['equity_base']:,.0f} at {fx['usd_per_base']:.4f} USD, {fx['rate_source']})")
             print("positions:", broker.positions())
             print("open orders:", broker.open_orders())
             print("state:", state.read_text() if state.exists() else "none")

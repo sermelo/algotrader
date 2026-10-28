@@ -13,5 +13,5 @@
   "max_orders": 30,
   "max_order_slots": 1.5,
   "out": "data/paper",
-  "notify_cmd": []
+  "notify_cmd": ["/home/hermes/.config/telegram-notify/send.sh"]
 }

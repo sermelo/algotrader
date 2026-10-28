@@ -1,12 +1,20 @@
-# Handoff (updated 2026-10-22)
+# Handoff (updated 2026-10-28)
 
 State for the next Claude session. **What to do next is in `ROADMAP.md`** (research-based
 priority list; keep it updated as items are done).
 
 ## Where things stand
 
-- Everything is committed and pushed (`2c66786`, 2026-10-22); 336 tests pass; every committed
-  result's fingerprint is current. Nothing is running on the VPS; `~/algotrader-work` there has
+- **Read `TASKS.md` first** (state, decisions, open items). 2026-10-28: the stale-SEC-values fix in `fundamentals.py`
+  and the full long-history rerun it needed are committed (ROADMAP 19; no verdict changed; paper configuration Sharpe
+  0.99, +16.7% a year, max drawdown -41.0%). Paper account converted to dollars; alerts set up; cron jobs wait for
+  sergio (start postponed until after the November Tiingo batch).
+- 2026-10-27 later (uncommitted too): paper runner reads IBKR's `$LEDGER-ExchangeRate` (3b, account $14,612.50);
+  monthly winners/losers step 1 (`extremes.py`, `results/extremes/`: no stable one-sided predictor); found broken
+  adjusted prices in the long history (TASKS 12).
+- Paper trading start postponed by sergio until after the Tiingo batch (Nov) and the long reruns; no cron jobs.
+- Before 2026-10-27: everything was committed and pushed (`2c66786`, 2026-10-22); 336 tests pass; every committed
+  result's fingerprint was current; `~/algotrader-work` on the VPS had
   the code of this commit.
 - Last work (2026-10-22): volatile-subset test (`volsubset.py`, `results/long_vol/`, ROADMAP 14b):
   momentum and operating profitability picking only from the most volatile third of members, monthly,
@@ -21,7 +29,7 @@ priority list; keep it updated as items are done).
   dry run work. Next: sergio's OK for the cron jobs (`daily --submit` weekdays 21:30 UTC, `@reboot` Gateway). Live signal
   verified on the VPS (5 min, SEC API). Ranking of all configurations: `results/ranking.md`.
 - Earlier discussion (2026-10-22): sergio asked what to paper-trade. Proposed operating
-  profitability, top 10, monthly (long history 2012-2026: Sharpe 0.98, +16.0%/yr vs SPY +15.0%,
+  profitability, top 10, monthly (long history 2012-2026: Sharpe 0.98, +16.0%/yr vs SPY +15.0% before the 2026-10-28 fix; now 0.99, +16.7%,
   beta 0.83, FF alpha t 1.30), expecting roughly the market (plan on 6-8%/yr), as a test of
   execution and costs, not of edge. Not started: it needs a live signal script (today's
   target portfolio from current prices and the latest SEC facts; our data ends 2026-10-16),

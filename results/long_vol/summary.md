@@ -27,12 +27,12 @@ About 2.3% of zero-edge tests reach t >= 2 by chance, so 1 in 12 is what luck gi
 | `momentum` | top20 M | +1.1% (0.35) | +0.9% | no |
 | `momentum` | top20 W | +1.2% (0.39) | +0.7% | no |
 | `momentum` | top20 D | +0.1% (0.04) | -1.1% | no |
-| `op_profitability` | top5 M | +0.8% (0.19) | +0.6% | no |
-| `op_profitability` | top5 W | +1.2% (0.31) | +0.9% | no |
-| `op_profitability` | top5 D | +2.2% (0.55) | +1.6% | no |
-| `op_profitability` | top20 M | -0.1% (-0.04) | -0.3% | no |
-| `op_profitability` | top20 W | -0.4% (-0.15) | -0.7% | no |
-| `op_profitability` | top20 D | -0.8% (-0.33) | -1.5% | no |
+| `op_profitability` | top5 M | +1.5% (0.36) | +1.3% | no |
+| `op_profitability` | top5 W | +1.2% (0.29) | +0.9% | no |
+| `op_profitability` | top5 D | +2.0% (0.47) | +1.3% | no |
+| `op_profitability` | top20 M | +0.1% (0.04) | -0.1% | no |
+| `op_profitability` | top20 W | +0.5% (0.20) | +0.2% | no |
+| `op_profitability` | top20 D | +0.4% (0.14) | -0.2% | no |
 
 ## 2. Volatile third minus all members
 
@@ -44,12 +44,12 @@ About 2.3% of zero-edge tests reach t >= 2 by chance, so 1 in 12 is what luck gi
 | `momentum` | top20 M | +3.6% (1.73) | +1.5% (0.87) | no |
 | `momentum` | top20 W | +4.7% (2.17) | +1.9% (1.08) | no |
 | `momentum` | top20 D | +3.4% (1.56) | +0.7% (0.37) | no |
-| `op_profitability` | top5 M | -2.0% (-0.40) | -4.5% (-1.02) | no |
-| `op_profitability` | top5 W | -0.5% (-0.09) | -3.5% (-0.79) | no |
-| `op_profitability` | top5 D | +0.4% (0.08) | -2.5% (-0.57) | no |
-| `op_profitability` | top20 M | +1.1% (0.36) | -1.4% (-0.55) | no |
-| `op_profitability` | top20 W | +1.5% (0.49) | -1.4% (-0.55) | no |
-| `op_profitability` | top20 D | +0.7% (0.21) | -2.0% (-0.74) | no |
+| `op_profitability` | top5 M | +0.1% (0.01) | -1.9% (-0.43) | no |
+| `op_profitability` | top5 W | +0.5% (0.11) | -2.1% (-0.49) | no |
+| `op_profitability` | top5 D | +1.0% (0.21) | -1.6% (-0.38) | no |
+| `op_profitability` | top20 M | +1.0% (0.32) | -1.5% (-0.58) | no |
+| `op_profitability` | top20 W | +2.0% (0.60) | -1.1% (-0.43) | no |
+| `op_profitability` | top20 D | +1.4% (0.41) | -1.4% (-0.51) | no |
 
 ## 3. More frequent minus monthly, volatile third
 
@@ -59,10 +59,10 @@ About 2.3% of zero-edge tests reach t >= 2 by chance, so 1 in 12 is what luck gi
 | `momentum` | top5 D - M | +4.6% (1.70) | +3.4% (1.25) | no |
 | `momentum` | top20 W - M | +0.7% (0.52) | +0.1% (0.10) | no |
 | `momentum` | top20 D - M | -0.6% (-0.42) | -1.0% (-0.71) | no |
-| `op_profitability` | top5 W - M | +1.0% (0.48) | +0.5% (0.22) | no |
-| `op_profitability` | top5 D - M | +1.8% (0.80) | +1.4% (0.63) | no |
-| `op_profitability` | top20 W - M | +0.2% (0.18) | -0.3% (-0.27) | no |
-| `op_profitability` | top20 D - M | -0.5% (-0.46) | -0.8% (-0.65) | no |
+| `op_profitability` | top5 W - M | +0.4% (0.19) | -0.2% (-0.12) | no |
+| `op_profitability` | top5 D - M | +1.2% (0.54) | +0.5% (0.22) | no |
+| `op_profitability` | top20 W - M | +1.0% (0.89) | +0.4% (0.34) | no |
+| `op_profitability` | top20 D - M | +0.6% (0.49) | +0.3% (0.21) | no |
 
 ## Each strategy
 
@@ -88,17 +88,17 @@ About 2.3% of zero-edge tests reach t >= 2 by chance, so 1 in 12 is what luck gi
 
 | Version | Sharpe [90% CI] | CAGR | Volatility | Max DD | Worst month | Beta | FF alpha/yr (t) | Stress Sharpe | Turnover |
 |---|---|---|---|---|---|---|---|---|---|
-| top 5 monthly, all members | 1.04 [0.63, 1.51] | +18.9% | 18.3% | -35.4% | -11.8% | 0.83 | +5.2% (1.75) | 1.04 | 105% |
-| top 5 weekly, all members | 1.01 [0.59, 1.48] | +18.3% | 18.3% | -34.8% | -11.9% | 0.83 | +4.7% (1.57) | 1.00 | 130% |
-| top 5 daily, all members | 1.01 [0.59, 1.48] | +18.3% | 18.4% | -34.4% | -11.9% | 0.83 | +4.7% (1.55) | 1.00 | 146% |
-| top 5 monthly, volatile third | 0.66 [0.21, 1.11] | +14.7% | 25.9% | -51.6% | -35.4% | 1.17 | +0.8% (0.19) | 0.65 | 350% |
-| top 5 weekly, volatile third | 0.68 [0.27, 1.11] | +15.7% | 26.3% | -50.2% | -30.3% | 1.20 | +1.2% (0.31) | 0.67 | 607% |
-| top 5 daily, volatile third | 0.72 [0.32, 1.14] | +16.7% | 26.1% | -47.5% | -27.2% | 1.19 | +2.2% (0.55) | 0.70 | 1114% |
-| top 20 monthly, all members | 0.92 [0.49, 1.40] | +15.1% | 16.8% | -38.5% | -17.1% | 0.92 | +1.3% (0.77) | 0.92 | 75% |
-| top 20 weekly, all members | 0.91 [0.48, 1.37] | +14.8% | 16.8% | -38.4% | -17.6% | 0.92 | +1.0% (0.62) | 0.90 | 84% |
-| top 20 daily, all members | 0.91 [0.48, 1.38] | +15.0% | 16.9% | -38.6% | -17.3% | 0.92 | +1.1% (0.66) | 0.91 | 100% |
-| top 20 monthly, volatile third | 0.72 [0.29, 1.15] | +14.9% | 23.1% | -45.2% | -24.2% | 1.22 | -0.1% (-0.04) | 0.71 | 295% |
-| top 20 weekly, volatile third | 0.71 [0.30, 1.11] | +15.0% | 23.7% | -44.2% | -21.1% | 1.25 | -0.4% (-0.15) | 0.69 | 539% |
-| top 20 daily, volatile third | 0.67 [0.26, 1.09] | +14.1% | 23.8% | -47.0% | -22.7% | 1.24 | -0.8% (-0.33) | 0.65 | 1023% |
+| top 5 monthly, all members | 0.94 [0.52, 1.44] | +17.3% | 18.8% | -40.3% | -17.4% | 0.87 | +3.3% (1.12) | 0.94 | 109% |
+| top 5 weekly, all members | 0.94 [0.51, 1.44] | +17.3% | 18.8% | -40.3% | -17.6% | 0.86 | +3.4% (1.11) | 0.94 | 130% |
+| top 5 daily, all members | 0.95 [0.52, 1.45] | +17.6% | 18.9% | -40.3% | -17.7% | 0.86 | +3.6% (1.19) | 0.95 | 140% |
+| top 5 monthly, volatile third | 0.69 [0.23, 1.13] | +15.5% | 26.0% | -53.2% | -33.8% | 1.16 | +1.5% (0.36) | 0.68 | 359% |
+| top 5 weekly, volatile third | 0.68 [0.26, 1.12] | +15.8% | 26.7% | -56.6% | -24.5% | 1.20 | +1.2% (0.29) | 0.67 | 591% |
+| top 5 daily, volatile third | 0.71 [0.30, 1.15] | +16.7% | 26.8% | -57.1% | -26.1% | 1.20 | +2.0% (0.47) | 0.69 | 1057% |
+| top 20 monthly, all members | 0.94 [0.50, 1.41] | +15.3% | 16.7% | -38.0% | -16.4% | 0.90 | +1.6% (0.92) | 0.93 | 76% |
+| top 20 weekly, all members | 0.94 [0.50, 1.41] | +15.3% | 16.7% | -38.1% | -16.4% | 0.90 | +1.6% (0.94) | 0.94 | 86% |
+| top 20 daily, all members | 0.95 [0.50, 1.42] | +15.6% | 16.8% | -38.1% | -16.7% | 0.91 | +1.8% (1.01) | 0.94 | 101% |
+| top 20 monthly, volatile third | 0.72 [0.28, 1.15] | +15.0% | 23.0% | -42.9% | -21.8% | 1.21 | +0.1% (0.04) | 0.71 | 295% |
+| top 20 weekly, volatile third | 0.74 [0.33, 1.15] | +16.0% | 23.9% | -45.5% | -19.1% | 1.25 | +0.5% (0.20) | 0.73 | 532% |
+| top 20 daily, volatile third | 0.72 [0.31, 1.14] | +15.5% | 24.0% | -48.4% | -20.2% | 1.25 | +0.4% (0.14) | 0.69 | 1011% |
 | SPY (buy and hold) | 0.93 [0.52, 1.39] | +15.0% | 16.5% | -33.7% | -12.5% | 1.00 | -0.1% (-0.19) |  |  |
 

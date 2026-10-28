@@ -2,7 +2,7 @@
 
 Backtesting different algorithmic trading strategies on US equity 1-minute IEX bars
 (HF Data Library). Read `README.md` (usage, design, results) and `STRATEGY.md`
-(exact rules) before changing code. **Read `HANDOFF.md` first**, and `ROADMAP.md` for the research-based priority list of
+(exact rules) before changing code. **Read `HANDOFF.md` first**, then `TASKS.md` (open work items, keep it current), and `ROADMAP.md` for the research-based priority list of
 what to implement next (keep it updated as items are done): it records the work in
 progress (runs on the VPS, what is committed and what is not, next steps).
 

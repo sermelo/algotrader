@@ -133,7 +133,7 @@ Updated 2026-10-17. In order; details in the sections below.
 13. **Concentration test done 2026-10-19** (`results/long_conc/`): holding 3 or 5 stocks instead of 50 does not pay in general
     (2 of 11 strategies pass the pre-registered rule, about chance; mean Sharpe 0.55 at top 3 vs 0.74 at top 50, same CAGR, more
     risk); a top 5 / keep-in-top-20 buffer halves turnover without raising Sharpe; the best strategy chosen each January at top 5
-    reached Sharpe 1.04 (FF alpha t 1.73), not significant. Possible follow-up: test operating profitability / asset growth
+    reached Sharpe 1.04 (FF alpha t 1.73), not significant (0.94, t 1.12, after the 2026-10-28 fundamentals fix, item 19). Possible follow-up: test operating profitability / asset growth
     top 5 alone on a period it was not chosen on (none available here).
 14. **Weekly rebalancing test done 2026-10-20** (`results/long_rebal/`): 0 of 10 strategies better weekly; turnover doubles, Sharpe
     same or lower, nothing gained even before costs. **Engine fix done 2026-10-22:** `PortfolioBacktester.run` used to iterate the `pending` set,
@@ -145,7 +145,7 @@ Updated 2026-10-17. In order; details in the sections below.
 14b. **Volatile-subset test done 2026-10-22** (`results/long_vol/`, sergio's idea: pick only from the most volatile third of
     members, check weekly or daily): momentum and operating profitability, 0 of 12 volatile versions with FF alpha t >= 2,
     the filter helps neither, weekly/daily helps neither. Momentum's higher CAGR there is beta 1.3 and size; operating
-    profitability gets much worse (top 5 Sharpe 1.04 -> 0.66).
+    profitability gets much worse (top 5 Sharpe 1.04 -> 0.66; 0.94 -> 0.69 after the fundamentals fix).
 
 14c. **Paper trading (sergio, 2026-10-22)**: operating profitability top 10 monthly, $15,000, IBKR paper account;
     code done (`live.py`, `paper.py`, `config/paper.json`, `docs/paper-trading.md`); waiting for sergio's IBKR account,
@@ -167,6 +167,17 @@ Updated 2026-10-17. In order; details in the sections below.
     (minor). Our Hugging Face minute bars already cover 1992 to Mar 2026, so no older history is gained.
 17. **Drawdown bounds done 2026-10-20** (`drawdown.py`, `results/*/drawdown.md`): block-bootstrap bounds on the maximum
     drawdown; rerun `python -m algotrader.drawdown` after any results change.
+18. **Monthly winners and losers, step 1 done 2026-10-27** (`extremes.py`, `results/extremes/`, TASKS 11): features known a
+    month ahead (volatility, largest daily return, 52-week high, past losers, earnings due, new members) lift both tails about
+    equally; no large asymmetric lift is stable across years (industries the largest, operating profitability the most
+    stable at +0.09). Step 2 (a pre-registered rule) not run: nothing to build it on (agreed with sergio).
+19. **Stale SEC values fixed, long history rerun, done 2026-10-28** (TASKS 1-2): `fundamentals.py` chose one XBRL tag per
+    company for its whole history and carried values forward forever (Qualcomm's 2019 equity still used in 2026); now the tag
+    is chosen per period, a ratio's parts come from the same period and values expire 18 months after their period end.
+    Every long-history family rerun (`scripts/fundamentals_rerun.sh`, ~30 h on the VPS). Price-only results identical; no
+    verdict changed (concentration 2 of 11, weekly 0 of 10, volatile subset 0 of 12). Paper configuration (operating
+    profitability top 10) Sharpe 0.98 -> 0.99, +16.0% -> +16.7% a year, max drawdown -34.9% -> -41.0%; top 5 1.04 -> 0.94;
+    asset growth ranks 4-5 +30.7% -> +20.3% a year; combined signal top 5 0.21 -> 0.46.
 
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names

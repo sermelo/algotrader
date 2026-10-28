@@ -17,44 +17,44 @@ risk-adjusted option that is not concentrated in a handful of names (a top-10 po
 
 | # | Configuration | Test | CAGR | Per month | Sharpe [90% CI] | Volatility | Max drawdown |
 |---|---|---|---|---|---|---|---|
-| 1 | `op_profitability|top10` | long_conc | +16.0% | +1.25% | 0.98 [0.56, 1.44] | 16.6% | -34.9% |
+| 1 | `op_profitability|top10` | long_conc | +16.7% | +1.29% | 0.99 [0.55, 1.50] | 17.0% | -41.0% |
 
 ## By return (CAGR)
 
 | # | Configuration | Test | CAGR | Per month | Sharpe [90% CI] | Volatility | Max drawdown |
 |---|---|---|---|---|---|---|---|
-| 1 | `asset_growth|band4-5` | long_conc | +30.7% | +2.26% | 0.97 [0.53, 1.40] | 33.3% | -55.4% |
-| 2 | `momentum|vol|top5|W` | long_vol | +29.0% | +2.15% | 0.95 [0.59, 1.32] | 32.2% | -40.8% |
+| 1 | `momentum|vol|top5|W` | long_vol | +29.0% | +2.15% | 0.95 [0.59, 1.32] | 32.2% | -40.8% |
+| 2 | `value|band4-5` | long_conc | +28.9% | +2.14% | 0.84 [0.39, 1.31] | 39.2% | -69.8% |
 | 3 | `momentum|top3` | long_conc | +28.5% | +2.11% | 0.92 [0.53, 1.31] | 33.5% | -39.2% |
 | 4 | `momentum|vol|top5|D` | long_vol | +27.6% | +2.05% | 0.91 [0.55, 1.28] | 32.7% | -40.2% |
 | 5 | `momentum|top5|W` | long_rebal | +26.9% | +2.01% | 0.97 [0.60, 1.35] | 29.1% | -35.1% |
 | 6 | `momentum|all|top5|D` | long_vol | +26.5% | +1.98% | 0.95 [0.59, 1.33] | 29.3% | -37.0% |
-| 7 | `asset_growth|buf5-20|W` | long_rebal | +24.3% | +1.83% | 0.91 [0.47, 1.32] | 28.3% | -51.7% |
-| 8 | `asset_growth|buf5-20` | long_conc | +24.1% | +1.81% | 0.90 [0.46, 1.31] | 28.5% | -51.0% |
-| 9 | `asset_growth|top5|W` | long_rebal | +24.0% | +1.81% | 0.97 [0.53, 1.42] | 25.7% | -45.2% |
-| 10 | `asset_growth|top5` | long_conc | +23.9% | +1.80% | 0.95 [0.51, 1.40] | 26.0% | -45.1% |
-| 11 | `momentum|vol|top5|M` | long_vol | +22.3% | +1.69% | 0.79 [0.43, 1.16] | 31.7% | -37.6% |
-| 12 | `momentum|buf3-10` | long_conc | +22.1% | +1.68% | 0.76 [0.40, 1.14] | 34.0% | -38.3% |
-| 13 | `momentum|top5` | long_conc | +21.2% | +1.62% | 0.81 [0.45, 1.19] | 28.9% | -37.9% |
-| 14 | `momentum|vol|top20|W` | long_vol | +20.1% | +1.54% | 0.84 [0.48, 1.21] | 25.9% | -34.9% |
-| 15 | `value|top5|W` | long_rebal | +19.6% | +1.51% | 0.81 [0.37, 1.25] | 26.6% | -53.1% |
+| 7 | `asset_growth|top5|W` | long_rebal | +23.4% | +1.77% | 0.96 [0.52, 1.42] | 25.3% | -45.2% |
+| 8 | `asset_growth|top5` | long_conc | +23.2% | +1.75% | 0.94 [0.49, 1.39] | 25.5% | -45.1% |
+| 9 | `asset_growth|buf5-20|W` | long_rebal | +22.5% | +1.70% | 0.86 [0.42, 1.27] | 28.3% | -51.7% |
+| 10 | `momentum|vol|top5|M` | long_vol | +22.3% | +1.69% | 0.79 [0.43, 1.16] | 31.7% | -37.6% |
+| 11 | `asset_growth|top3` | long_conc | +22.2% | +1.69% | 0.87 [0.45, 1.30] | 27.4% | -49.1% |
+| 12 | `asset_growth|buf5-20` | long_conc | +22.2% | +1.68% | 0.84 [0.41, 1.25] | 28.5% | -51.0% |
+| 13 | `momentum|buf3-10` | long_conc | +22.1% | +1.68% | 0.76 [0.40, 1.14] | 34.0% | -38.3% |
+| 14 | `momentum|top5` | long_conc | +21.2% | +1.62% | 0.81 [0.45, 1.19] | 28.9% | -37.9% |
+| 15 | `asset_growth|band4-5` | long_conc | +20.3% | +1.55% | 0.74 [0.30, 1.17] | 32.0% | -56.8% |
 
 ## By Sharpe ratio (return per unit of risk)
 
 | # | Configuration | Test | CAGR | Per month | Sharpe [90% CI] | Volatility | Max drawdown |
 |---|---|---|---|---|---|---|---|
-| 1 | `op_profitability|top5` | long_conc | +18.9% | +1.46% | 1.04 [0.63, 1.51] | 18.3% | -35.4% |
-| 2 | `op_profitability|top5|W` | long_rebal | +18.3% | +1.41% | 1.01 [0.59, 1.48] | 18.3% | -34.8% |
-| 3 | `op_profitability|all|top5|D` | long_vol | +18.3% | +1.41% | 1.01 [0.59, 1.48] | 18.4% | -34.4% |
-| 4 | `op_profitability|top10` | long_conc | +16.0% | +1.25% | 0.98 [0.56, 1.44] | 16.6% | -34.9% |
-| 5 | `op_profitability|top3` | long_conc | +18.7% | +1.44% | 0.97 [0.58, 1.44] | 19.5% | -34.2% |
-| 6 | `asset_growth|band4-5` | long_conc | +30.7% | +2.26% | 0.97 [0.53, 1.40] | 33.3% | -55.4% |
-| 7 | `asset_growth|top5|W` | long_rebal | +24.0% | +1.81% | 0.97 [0.53, 1.42] | 25.7% | -45.2% |
-| 8 | `momentum|top5|W` | long_rebal | +26.9% | +2.01% | 0.97 [0.60, 1.35] | 29.1% | -35.1% |
-| 9 | `asset_growth|top5` | long_conc | +23.9% | +1.80% | 0.95 [0.51, 1.40] | 26.0% | -45.1% |
-| 10 | `momentum|vol|top5|W` | long_vol | +29.0% | +2.15% | 0.95 [0.59, 1.32] | 32.2% | -40.8% |
-| 11 | `momentum|all|top5|D` | long_vol | +26.5% | +1.98% | 0.95 [0.59, 1.33] | 29.3% | -37.0% |
-| 12 | `op_profitability|buf3-10` | long_conc | +16.1% | +1.25% | 0.93 [0.54, 1.40] | 17.6% | -28.7% |
-| 13 | `op_profitability|buf5-20` | long_conc | +15.2% | +1.19% | 0.93 [0.52, 1.38] | 16.8% | -30.6% |
-| 14 | `op_profitability|top20` | long_conc | +15.1% | +1.18% | 0.92 [0.49, 1.40] | 16.8% | -38.5% |
-| 15 | `momentum|top3` | long_conc | +28.5% | +2.11% | 0.92 [0.53, 1.31] | 33.5% | -39.2% |
+| 1 | `op_profitability|top10` | long_conc | +16.7% | +1.29% | 0.99 [0.55, 1.50] | 17.0% | -41.0% |
+| 2 | `momentum|top5|W` | long_rebal | +26.9% | +2.01% | 0.97 [0.60, 1.35] | 29.1% | -35.1% |
+| 3 | `asset_growth|top5|W` | long_rebal | +23.4% | +1.77% | 0.96 [0.52, 1.42] | 25.3% | -45.2% |
+| 4 | `momentum|vol|top5|W` | long_vol | +29.0% | +2.15% | 0.95 [0.59, 1.32] | 32.2% | -40.8% |
+| 5 | `op_profitability|all|top5|D` | long_vol | +17.6% | +1.36% | 0.95 [0.52, 1.45] | 18.9% | -40.3% |
+| 6 | `momentum|all|top5|D` | long_vol | +26.5% | +1.98% | 0.95 [0.59, 1.33] | 29.3% | -37.0% |
+| 7 | `op_profitability|all|top20|D` | long_vol | +15.6% | +1.21% | 0.95 [0.50, 1.42] | 16.8% | -38.1% |
+| 8 | `asset_growth|top5` | long_conc | +23.2% | +1.75% | 0.94 [0.49, 1.39] | 25.5% | -45.1% |
+| 9 | `op_profitability|top5` | long_conc | +17.3% | +1.34% | 0.94 [0.52, 1.44] | 18.8% | -40.3% |
+| 10 | `op_profitability|top5|W` | long_rebal | +17.3% | +1.34% | 0.94 [0.51, 1.44] | 18.8% | -40.3% |
+| 11 | `op_profitability|top20|W` | long_rebal | +15.3% | +1.20% | 0.94 [0.50, 1.41] | 16.7% | -38.1% |
+| 12 | `op_profitability|top20` | long_conc | +15.3% | +1.19% | 0.94 [0.50, 1.41] | 16.7% | -38.0% |
+| 13 | `momentum|top3` | long_conc | +28.5% | +2.11% | 0.92 [0.53, 1.31] | 33.5% | -39.2% |
+| 14 | `momentum|vol|top5|D` | long_vol | +27.6% | +2.05% | 0.91 [0.55, 1.28] | 32.7% | -40.2% |
+| 15 | `op_profitability|top3` | long_conc | +17.5% | +1.36% | 0.91 [0.48, 1.40] | 20.0% | -44.4% |

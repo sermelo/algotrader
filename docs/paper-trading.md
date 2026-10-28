@@ -7,8 +7,9 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
 ## What it trades
 
 - **Operating profitability, top 10, monthly, $15,000** (about $1,500 a stock). Backtest 2012-2026 on the
-  point-in-time S&P 500: CAGR +16.0% (about +1.25% a month), Sharpe 0.98 [0.56, 1.44], max drawdown -34.9%;
-  SPY +15.0% (+1.17% a month), 0.93, -33.7%. Fama-French alpha not significant: **plan on about the market**
+  point-in-time S&P 500: CAGR +16.7% (about +1.29% a month), Sharpe 0.99 [0.55, 1.50], max drawdown -41.0%
+  (Jan-Mar 2020, worst month -17.9%); SPY +15.0% (+1.17% a month), 0.93, -33.7% (rerun 2026-10-28 with the
+  fundamentals fix; before it +16.0%, 0.98, -34.9%). Since 2019 +15.1% a year against SPY +17.2%. Fama-French alpha not significant: **plan on about the market**
   (6-8% a year is a sober expectation). The test is of execution and costs, not of an edge.
 - Rule, as in the backtest: after the close of the last NYSE session of each month, rank today's S&P 500
   members by latest annual operating income / stockholders' equity (positive equity only; a report counts
@@ -18,7 +19,8 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
 - Differences from the backtest: today's member list (Wikipedia) instead of the archived lists; whole shares
   of a $1,500 slot (a stock over $1,500 a share is not bought and its slot stays in cash); 1% kept in cash;
   trims under $100 skipped; real IBKR fills and commissions.
-- Today's target (2026-10-21 data): CL, GDDY, LYV, VRSK, IT, TPR, QCOM, MA, APP, STX.
+- Today's target (2026-10-27 data, with the fundamentals fix): CL, GDDY, LYV, VRSK, IT, TPR, MA, APP, STX, AAPL
+  (QCOM was there only through a stale 2019 equity value).
 
 ## Steps only sergio can do
 
@@ -56,6 +58,12 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
      €13,108). IBKR reports no USD exchange rate until the account holds dollars (and the paper account
      has no forex data), so the runner converts a euro account with the ECB daily reference rate until
      then, and refuses any other currency without a rate. Status and dry run work (account $14,666).
+   - 2026-10-27 14:22 UTC (sergio's OK): EUR 12,950 converted to $14,435.11 (EUR.USD odd lot at 1.11468, commission
+     EUR 1.79), so the stock purchases are paid in dollars instead of borrowing them (a euro account buying US stocks
+     gets a dollar loan, about 4% a year). EUR 48.21 left; the trade settles 2026-10-29.
+     With dollars held, IBKR reports the rate only as `$LEDGER-ExchangeRate` (EUR per USD, 0.8970318 = 1.11479
+     USD per EUR), not as `ExchangeRate`; the runner now reads it before falling back to the ECB rate (which
+     overstated the account by 0.4%: $14,662 instead of $14,612.50).
      The Gateway's API socket listens on all interfaces (it has no bind option); only 127.0.0.1 is trusted
      and other connections are rejected.
    - Stop: kill the PIDs from `pgrep -u hermes -f "[i]bcalpha.ibc.IbcGateway|[i]bcstart.sh|[g]atewaystart.sh"`
@@ -67,8 +75,10 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
    30 21 * * 1-5 cd ~/algotrader-work && ~/.local/bin/uv run python -m algotrader.paper daily --submit >> data/paper/cron.log 2>&1
    ```
    The first run builds the portfolio at the next open; after that it decides only at month ends.
-8. **Telegram**: set `notify_cmd` in `config/paper.json` to a sender on that machine (the
-   `notify-telegram` skill lives on sergio's machine only; copying its bot token to the VPS needs his OK).
+8. **Telegram** (done 2026-10-27, sergio's OK): the `notify-telegram` sender and its bot config are on the VPS in
+   `~/.config/telegram-notify/` (directory 700, config 600, never in the repo); `notify_cmd` in `config/paper.json` points
+   to its `send.sh`. Every run's message (daily summary, month-end plan and orders) and every error, including a Gateway
+   that cannot be reached, is sent. Not covered: a cron job that fails before Python starts (check `cron.log`).
 
 ## Safety
 
@@ -79,7 +89,8 @@ orders or a buy over 1.5 slots would go out, or a target stock has no price; it 
 
 ## What gets recorded (`data/paper/`, on the machine that runs it)
 
-`equity.csv` (account value in USD, cash, positions, every weekday), `fills.csv` (IBKR fills with their
+`equity.csv` (account value in USD, cash, positions, the base currency, the value in it, the USD rate used and
+its source, `ibkr` or `ecb`, every weekday), `fills.csv` (IBKR fills with their
 commissions), `orders.csv` (orders placed, with the close used for sizing), `target_<day>.json` (each
 decision's top 10 and scores), `state.json`. Compare monthly with SPY and with the backtest's costs (2 bp
 half-spread + commission): paper fills are top of book only, so they flatter live trading.

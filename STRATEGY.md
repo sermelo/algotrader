@@ -247,7 +247,16 @@ close, filled at the next open. No stop by default.
   = latest annual operating income / latest annual stockholders' equity (positive only). A value counts from the day after
   its filing date; for each date the value with the latest period end known so far is
   used (an amendment of that period replaces it from its own filing date; older periods
-  reported later as comparatives do not).
+  reported later as comparatives do not). Where a filing reports a period under several tags
+  (e.g. stockholders' equity with and without non-controlling interests, or the revenue tags
+  before and after ASC 606), the first in the list is used, chosen per period, so a company
+  that switches tags keeps current values. The two parts of a ratio (operating income and
+  equity, gross profit and assets, this and the previous fiscal year's assets for growth, 330-400
+  days apart; revenue and cost) come from the same period end, each part's latest value filed by
+  then. A value expires 18 months (548 days) after its period end (Fama-French use fiscal year
+  t-1 from June t to June t+1), so a company that stops reporting a fact drops out. These three
+  rules were added on 2026-10-27: before, the tag was chosen once per company and values were
+  carried forward forever (Qualcomm's 2019 equity was still used in 2026).
 - **Earnings drift** (`pead.py`): reaction day = the 8-K (item 2.02) acceptance day, or
   the next trading day if accepted at or after 16:00 New York time; EAR = (1+r_d)(1+r_d+1)
   - 1 minus the same for the market (SPY, or the equal-weight mean of the stocks),
@@ -405,7 +414,7 @@ The long-history `FundamentalSort` run forward (`config/paper.json`: operating p
 monthly, $15,000; setup in `docs/paper-trading.md`). After the close of the last NYSE session of a month
 (exchange calendar XNYS), the members are today's S&P 500 list and the facts each member's current SEC
 company-facts JSON, through the same parser and `fundamentals.signals` (a value counts from the day after
-it was filed); the top N scores are chosen (ties in member order, as `_top_weights`). If the chosen names
+it was filed, under the tag, same-period and 18-month rules above); the top N scores are chosen (ties in member order, as `_top_weights`). If the chosen names
 differ from those held, every name is traded to floor(equity x 0.99 / N / previous close) shares (names
 out of the target sold entirely, trims under $100 skipped, sells listed first) with market-on-open (`OPG`)
 orders, filled at the next open; otherwise nothing is traded. The first run with no state builds the

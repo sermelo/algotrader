@@ -1,0 +1,15 @@
+feature,months,spread_pct_month,t
+ret_1m,207,-0.2034,-0.7271
+ret_6m,207,-0.0980,-0.2736
+ret_12_1,207,-0.2007,-0.5205
+vol_63,207,0.5604,1.3175
+max_ret_21,207,0.4267,1.2610
+min_ret_21,207,-0.4575,-1.3606
+dist_52w_high,207,-0.4752,-1.1110
+log_dollar_volume,207,0.0496,0.3031
+book_to_market,202,-0.1232,-0.4409
+gross_profitability,196,0.0201,0.1091
+asset_growth,196,-0.0830,-0.5023
+operating_profitability,196,0.1511,0.9340
+earnings_due,207,0.0780,0.7828
+new_member,207,-0.1526,-0.7646

@@ -1,3 +1,4 @@
+import csv
 import json
 
 import pandas as pd
@@ -100,6 +101,7 @@ class FakeBroker:
         self.open_, self.placed = list(open_), []
 
     def equity_usd(self): return self.equity
+    def fx(self): return {"base_currency": "USD", "equity_base": self.equity, "usd_per_base": 1.0, "rate_source": "base"}
     def cash_usd(self): return self.equity - sum(q * self.prices.get(t, 0) for t, q in self.held.items())
     def positions(self): return dict(self.held)
     def closes(self, tickers): return {t: self.prices[t] for t in tickers if t in self.prices}
@@ -176,10 +178,23 @@ def test_usd_per_base_currency():
     assert paper.usd_per_base(usd) == 1.0
     held = {("NetLiquidation", "EUR"): "13000", ("ExchangeRate", "USD"): "0.8"}   # 0.8 EUR per USD
     assert paper.usd_per_base(held, ecb=lambda: 9.9) == pytest.approx(1.25)
+    ledger = {("NetLiquidation", "EUR"): "13107.88", ("$LEDGER-ExchangeRate", "USD"): "0.8970318"}  # paper account
+    assert paper.usd_rate(ledger, ecb=lambda: 9.9) == (pytest.approx(1.114788, abs=1e-6), "ibkr")
     fresh = {("NetLiquidation", "EUR"): "13000", ("ExchangeRate", "EUR"): "1.00"}  # no dollars held yet
+    assert paper.usd_rate(fresh, ecb=lambda: 1.1612) == (1.1612, "ecb")
     assert paper.usd_per_base(fresh, ecb=lambda: 1.1612) == 1.1612
     with pytest.raises(RuntimeError):                                              # never assume 1
         paper.usd_per_base({("NetLiquidation", "GBP"): "10000"}, ecb=lambda: 1.16)
     assert paper.parse_ecb(ECB_XML) == {"USD": 1.1612, "JPY": 172.10}
     with pytest.raises(ValueError):
         paper.parse_ecb("<Cube currency='JPY' rate='172.1'/>")
+
+
+def test_equity_record_gets_new_columns_without_losing_rows(tmp_path):
+    (tmp_path / "equity.csv").write_text("day,equity_usd,cash_usd,positions\n2026-10-27,14665.75,14544.4,{}\n")
+    daily(cfg_in(tmp_path), FakeBroker(), "2026-10-28", target_fn=lambda d: [])
+    rows = list(csv.DictReader((tmp_path / "equity.csv").open()))
+    assert [r["day"] for r in rows] == ["2026-10-27", "2026-10-28"]
+    assert rows[0]["usd_per_base"] == "" and rows[1]["usd_per_base"] == "1.0" and rows[1]["rate_source"] == "base"
+    daily(cfg_in(tmp_path), FakeBroker(), "2026-10-29", target_fn=lambda d: [])
+    assert (tmp_path / "equity.csv").read_text().count("day,") == 1

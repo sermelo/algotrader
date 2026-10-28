@@ -1,0 +1,11 @@
+{
+  "months": 207,
+  "rows": 97149,
+  "first": "2008-12-31",
+  "last": "2026-02-27",
+  "data": "f248ef52067cc8d3c54aa6b74b864f8e65f2f59ab3cb438836e50400e23ceeeb",
+  "code": {
+    "algotrader/extremes.py": "5df3d497355852ae26d0028b6b963d2d90758f6613afee24a747c33cdff54fa2",
+    "scripts/monthly_extremes.py": "fe04dca4680dac4adb4cb83fffdd4099b7324b11763b15e1400fe57f660a1684"
+  }
+}
