@@ -6,6 +6,16 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
 
 ## What it trades
 
+Two **books** in the one paper account (IBKR gives one paper account per login), each with its own shares,
+cash and record; their orders are netted per stock (details in STRATEGY.md, "Paper trading"):
+
+- **Momentum, top 5, weekly, $15,000** (added 2026-10-28, sergio's candidate for real money): each Friday (the
+  week's last NYSE session) after the close, rank today's members by their return from 12 months to 1 month ago
+  (adjusted IBKR daily closes) and hold the top 5 at equal weight, trading only when the names change. Backtest
+  2012 to Oct 2026: +26.9% a year (about +2.0% a month), Sharpe 0.97 [0.60, 1.35], volatility 29%, max drawdown
+  -35.1%, worst month -27.8%, turnover about 820% a year; Fama-French alpha +9.6% (t 1.91, not significant). It is
+  the market with about twice the swings, best of 1,226 tries; its lead over operating profitability is all after
+  2018 (2012-18 +16.3% against +18.5% a year).
 - **Operating profitability, top 10, monthly, $15,000** (about $1,500 a stock). Backtest 2012-2026 on the
   point-in-time S&P 500: CAGR +16.7% (about +1.29% a month), Sharpe 0.99 [0.55, 1.50], max drawdown -41.0%
   (Jan-Mar 2020, worst month -17.9%); SPY +15.0% (+1.17% a month), 0.93, -33.7% (rerun 2026-10-28 with the
@@ -29,7 +39,8 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
    Fixed plan's $1 minimum is about 6.7 bp, Tiered about 3 bp.
 2. **Create the paper account**: Client Portal > Settings > Paper Trading Account. Note its username (a
    separate login) and account id (starts with `DU`). **Reset its balance to $15,000** (or the euro
-   equivalent; the runner refuses above `max_equity`, $30,000). Base currency USD if offered.
+   equivalent; the runner refuses above `max_equity`). 2026-10-28: sergio reset it to about $30,000 for the two
+   books (effective 2026-10-29); `max_equity` $45,000. Base currency USD if offered.
 3. Optional: enable "share market data with the paper account". Not required: the runner sizes with the
    previous close, which delayed data gives for free.
 4. Give the paper username and password to the machine that runs IB Gateway (step 5), in
@@ -74,7 +85,9 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
    ```
    30 21 * * 1-5 cd ~/algotrader-work && ~/.local/bin/uv run python -m algotrader.paper daily --submit >> data/paper/cron.log 2>&1
    ```
-   The first run builds the portfolio at the next open; after that it decides only at month ends.
+   The first run builds both books at the next open; after that operating profitability decides at month ends and
+   momentum at week ends. The Friday run of the momentum book downloads about 500 daily histories from IBKR
+   (kept in `data/paper/prices/`).
 8. **Telegram** (done 2026-10-27, sergio's OK): the `notify-telegram` sender and its bot config are on the VPS in
    `~/.config/telegram-notify/` (directory 700, config 600, never in the repo); `notify_cmd` in `config/paper.json` points
    to its `send.sh`. Every run's message (daily summary, month-end plan and orders) and every error, including a Gateway
@@ -83,14 +96,17 @@ ranks against everything else tested: [`results/ranking.md`](../results/ranking.
 ## Safety
 
 The runner refuses to trade if the account id does not start with `DU` in paper mode (and the reverse in
-live mode), the account is worth more than `max_equity`, orders are still open, more than `max_orders`
-orders or a buy over 1.5 slots would go out, or a target stock has no price; it decides at most once a day;
+live mode), the account is worth more than `max_equity` or has less unallocated cash than a new book's
+capital, orders are still open, the books' shares do not add up to the account's positions, more than
+`max_orders` orders or a buy over 1.5 of a book's slots would go out, or a target stock has no price; each book
+decides at most once a day;
 `touch data/paper/STOP` stops it. Without `--submit` it never places an order, and it connects read-only.
 
 ## What gets recorded (`data/paper/`, on the machine that runs it)
 
 `equity.csv` (account value in USD, cash, positions, the base currency, the value in it, the USD rate used and
-its source, `ibkr` or `ecb`, every weekday), `fills.csv` (IBKR fills with their
-commissions), `orders.csv` (orders placed, with the close used for sizing), `target_<day>.json` (each
-decision's top 10 and scores), `state.json`. Compare monthly with SPY and with the backtest's costs (2 bp
+its source, `ibkr` or `ecb`, every weekday), `books.csv` (each book's value, cash and shares, every weekday),
+`fills.csv` (IBKR fills with their commissions and order reference), `orders.csv` (net orders placed, with the
+close used for sizing), `target_<signal>_<day>.json` (each decision's top N and scores), `prices/` (momentum's
+closes), `state.json` (each book's shares, cash, target, last decision; orders waiting for their fills). Compare monthly with SPY and with the backtest's costs (2 bp
 half-spread + commission): paper fills are top of book only, so they flatter live trading.

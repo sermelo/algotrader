@@ -1,20 +1,28 @@
-"""Paper trading of a long-history strategy on an IBKR paper account (sergio, 2026-10-22).
+"""Paper trading of long-history strategies on one IBKR paper account (sergio, 2026-10-22).
 
-Strategy: `config/paper.json` (operating profitability, top 10, monthly, $15,000). It is the
-backtest's rule run forward: on the last NYSE session of each month, after the close, the target is
-the top N members by the signal (`live.target`); if the chosen names differ from the names held,
-every holding is traded to equal weight of the account's value with market-on-open orders (IBKR
-`OPG`), filled at the next session's open, as the backtest's next-open fills; if the names are the
-same nothing is traded (holdings drift, as in the backtest). The first run with an empty state
-builds the portfolio at once.
+Strategies: the `books` of `config/paper.json` (operating profitability top 10 monthly and momentum
+top 5 weekly, $15,000 each). Each book is the backtest's rule run forward on its own shares and cash:
+on the last NYSE session of its period (month or week), after the close, the target is the top N
+members by its signal (`live.target`, `live.momentum_target`); if the chosen names differ from the
+names the book holds, every holding of the book is traded to equal weight of the book's value with
+market-on-open orders (IBKR `OPG`), filled at the next session's open, as the backtest's next-open
+fills; if the names are the same nothing is traded (holdings drift, as in the backtest). A book with
+no state builds its portfolio at once.
+
+The books' orders are netted into one order per stock (the account never sends a buy and a sell of
+the same stock), and each fill is split back between the books (`allocate`): the books on the other
+side of the net order trade with the others at the fill price. The books' shares must add up to the
+account's positions every day, or nothing is traded. Cash that no book owns (dividends, interest,
+currency differences) is reported as unallocated.
 
 `daily` is the one cron job (every weekday after the US close): it records the account value, the
-positions and the day's fills (with IBKR's own commissions) under `data/paper/`, then decides and,
-with `--submit`, places the orders. Safety: the account must be a paper account (id DU...) in
-paper mode (and the reverse in live mode); refuses when the account is worth more than
-`max_equity` (paper balance not reset), when orders are still open, when a STOP file exists, when
-more than `max_orders` orders or a buy over `max_order_slots` x account / top_n would go out, or when a
-target stock has no price; one decision per day. Messages go to `notify_cmd` (Telegram).
+positions, the day's fills (with IBKR's own commissions) and each book's value under `data/paper/`,
+then decides and, with `--submit`, places the orders. Safety: the account must be a paper account
+(id DU...) in paper mode (and the reverse in live mode); refuses when the account is worth more than
+`max_equity` (paper balance not reset) or less than the books' capital at their start, when orders
+are still open, when the books do not add up to the account, when a STOP file exists, when more than
+`max_orders` orders or a buy over `max_order_slots` x book value / top_n would go out, or when a
+target stock has no price; one decision per book and day. Messages go to `notify_cmd` (Telegram).
 
     python -m algotrader.paper daily            # dry run: records, prints the orders it would place
     python -m algotrader.paper daily --submit   # the cron job
@@ -33,6 +41,22 @@ from pathlib import Path
 import pandas as pd
 
 CONFIG = Path("config/paper.json")
+MOMENTUM = "momentum"                        # the price signal (12-1 month return); others are SEC signals
+
+
+@dataclass(frozen=True)
+class Book:
+    """One strategy's part of the account: its own shares and cash, decided on its own schedule."""
+    name: str
+    signal: str = "operating_profitability"  # a `fundamentals.signals` panel, or MOMENTUM
+    top_n: int = 10
+    every: str = "M"                         # decide on the last session of each month ('M') or week ('W')
+    capital: float = 15_000.0                # the book's money at its start (USD)
+    largest: bool = True
+
+    def __post_init__(self):
+        if not self.name or self.top_n < 1 or self.capital <= 0 or self.every not in ("M", "W"):
+            raise ValueError("require a name, top_n >= 1, capital > 0, every 'M' or 'W'")
 
 
 @dataclass(frozen=True)
@@ -52,6 +76,7 @@ class Config:
     max_order_slots: float = 1.5             # no single buy above 1.5 x equity / top_n
     out: str = "data/paper"
     notify_cmd: list = field(default_factory=list)   # e.g. [".../notify-telegram/send.sh"]
+    books: tuple = ()                        # Book list; empty: one monthly book from the fields above
 
     def __post_init__(self):
         if self.mode not in ("paper", "live"):
@@ -60,22 +85,37 @@ class Config:
             raise ValueError("require top_n >= 1, 0 <= cash_buffer < 0.5, capital > 0")
         if self.max_equity < self.capital or not self.max_order_slots >= 1 or self.max_orders < 1:
             raise ValueError("require max_equity >= capital, max_order_slots >= 1, max_orders >= 1")
+        names = [b.name for b in self.books]
+        if len(set(names)) != len(names) or sum(b.capital for b in self.books) > self.max_equity:
+            raise ValueError("book names must differ and their capital must not exceed max_equity")
 
     @classmethod
     def load(cls, path=CONFIG):
-        return cls(**json.loads(Path(path).read_text()))
+        raw = json.loads(Path(path).read_text())
+        raw["books"] = tuple(Book(**b) for b in raw.get("books", ()))
+        return cls(**raw)
+
+    def book_list(self) -> tuple:
+        return self.books or (Book("main", self.signal, self.top_n, "M", self.capital, self.largest),)
 
 
 # ---------------------------------------------------------------- decisions (pure)
 
-def is_month_end(day, calendar=None) -> bool:
-    """True if `day` is the last NYSE session of its month."""
+def is_period_end(day, every="M", calendar=None) -> bool:
+    """True if `day` is the last NYSE session of its month ('M') or week ('W', Monday to Sunday, as the
+    backtest's rebalance days)."""
     import exchange_calendars as xc
     cal = calendar or xc.get_calendar("XNYS")
     day = pd.Timestamp(day).normalize()
     if not cal.is_session(day):
         return False
-    return cal.next_session(day).month != day.month
+    nxt = cal.next_session(day)
+    return nxt.to_period(every) != day.to_period(every)
+
+
+def is_month_end(day, calendar=None) -> bool:
+    """True if `day` is the last NYSE session of its month."""
+    return is_period_end(day, "M", calendar)
 
 
 def needs_rebalance(target: list, held: dict) -> bool:
@@ -117,18 +157,58 @@ def plan(target: list, held: dict, prices: dict, equity: float, cash_buffer=0.01
     return sorted(orders, key=lambda o: o.qty > 0)          # sells first
 
 
-def check(orders: list, equity: float, cfg: Config) -> list:
-    """Reasons to refuse the plan (empty if it may go out)."""
+def check(orders: list, equity: float, cfg: Config, top_n=None) -> list:
+    """Reasons to refuse the plan (empty if it may go out); `equity` and `top_n` of the book."""
     problems = []
     if equity > cfg.max_equity:
         problems.append(f"account worth ${equity:,.0f} > max_equity ${cfg.max_equity:,.0f}: reset the paper balance")
     if len(orders) > cfg.max_orders:
         problems.append(f"{len(orders)} orders > max_orders {cfg.max_orders}")
-    limit = cfg.max_order_slots * equity / cfg.top_n
+    limit = cfg.max_order_slots * equity / (top_n or cfg.top_n)
     for o in orders:
         if o.qty > 0 and o.qty * o.price > limit:
             problems.append(f"{o.ticker}: buy ${o.qty * o.price:,.0f} > {cfg.max_order_slots:g} slots (${limit:,.0f})")
     return problems
+
+
+def net_orders(book_orders: dict) -> tuple:
+    """{book: [Order]} -> (one Order per ticker with the summed quantity, sells first; {ticker: {book: qty}}).
+    A ticker whose quantities cancel out gets no order."""
+    alloc = {}
+    for b, orders in book_orders.items():
+        for o in orders:
+            alloc.setdefault(o.ticker, {})[b] = alloc.get(o.ticker, {}).get(b, 0) + o.qty
+    price = {o.ticker: o.price for orders in book_orders.values() for o in orders}
+    reason = {}
+    for b, orders in book_orders.items():
+        for o in orders:
+            reason.setdefault(o.ticker, []).append(f"{b}:{o.reason}")
+    net = [Order(t, sum(a.values()), price[t], "+".join(reason[t])) for t, a in sorted(alloc.items())
+           if sum(a.values())]
+    return sorted(net, key=lambda o: o.qty > 0), alloc
+
+
+def allocate(alloc: dict, filled: int, price: float, commission: float = 0.0) -> dict:
+    """Split a net order's fill between the books: {book: (shares, cash change)}.
+
+    `alloc` is each book's wanted quantity (signed), `filled` the shares the market filled (signed, the
+    net order's side). Books on the other side of the net order (or all books, if it nets to zero)
+    trade their whole quantity with the others at `price`; the books on its side share the market fill
+    plus those crossed shares in proportion to their quantities (whole shares, the remainder to the
+    largest) and pay the commission in the same proportion. Shares and cash add up to the fill."""
+    net = sum(alloc.values())
+    sign = (net > 0) - (net < 0)
+    other = {b: q for b, q in alloc.items() if sign == 0 or q * sign <= 0}
+    side = {b: abs(q) for b, q in alloc.items() if b not in other}
+    avail = abs(filled) + sum(abs(q) for q in other.values())
+    want = sum(side.values())
+    got = {b: (q * avail) // want for b, q in side.items()} if want else {}
+    if got:
+        got[max(side, key=lambda b: (side[b], b))] += avail - sum(got.values())
+    out = {b: (q, -q * price) for b, q in other.items()}
+    for b, g in got.items():
+        out[b] = (sign * g, -sign * g * price - (commission * g / avail if avail else 0.0))
+    return out
 
 
 # ---------------------------------------------------------------- broker
@@ -239,15 +319,26 @@ class IbkrBroker:
                 out[t] = float(p)
         return out
 
+    def history(self, tickers, duration="2 Y") -> pd.DataFrame:
+        """Daily closes adjusted for splits and dividends (IBKR `ADJUSTED_LAST`) up to the last session,
+        dates x tickers (a ticker without data is left out)."""
+        cols = {}
+        for t, c in self._contracts(list(tickers)).items():
+            bars = self.ib.reqHistoricalData(c, endDateTime="", durationStr=duration, barSizeSetting="1 day",
+                                             whatToShow="ADJUSTED_LAST", useRTH=True, formatDate=1, timeout=120)
+            if bars:
+                cols[t] = pd.Series({pd.Timestamp(b.date): float(b.close) for b in bars})
+        return pd.DataFrame(cols).sort_index()
+
     def open_orders(self) -> list:
         return [f"{t.order.action} {t.order.totalQuantity:g} {from_ib_symbol(t.contract.symbol)}"
                 for t in self.ib.openTrades()]
 
-    def place_moo(self, order: Order) -> int:
+    def place_moo(self, order: Order, ref: str) -> int:
         from ib_async import MarketOrder
         c = self._contracts([order.ticker])[order.ticker]
         o = MarketOrder("BUY" if order.qty > 0 else "SELL", abs(order.qty), tif="OPG",
-                        orderRef=f"algotrader:{order.reason}", account=self.account)
+                        orderRef=ref, account=self.account)
         return self.ib.placeOrder(c, o).order.orderId
 
     def fills_today(self) -> list:
@@ -292,9 +383,48 @@ def _append_csv(path: Path, rows: list, key=None):
         w.writerows(rows)
 
 
-def daily(cfg: Config, broker, day, submit=False, target_fn=None, calendar=None) -> str:
-    """Record, decide, and (with `submit`) place the orders. Returns the message sent."""
+def _book_value(b: dict, prices: dict) -> float:
+    return b["cash"] + sum(q * prices.get(t, float("nan")) for t, q in b["shares"].items())
+
+
+def _apply(b: dict, ticker: str, shares: int, cash: float):
+    b["shares"][ticker] = b["shares"].get(ticker, 0) + int(shares)
+    if not b["shares"][ticker]:
+        del b["shares"][ticker]
+    b["cash"] += cash
+
+
+def _fill_totals(fills_path: Path, order_ref: str) -> tuple:
+    """(signed shares, average price, commission) of the recorded fills of one order."""
+    if not fills_path.exists():
+        return 0, float("nan"), 0.0
+    rows = [r for r in csv.DictReader(fills_path.open()) if r.get("order_ref") == order_ref]
+    sign = {"BOT": 1, "SLD": -1}
+    shares = sum(sign.get(r["side"], 0) * float(r["shares"]) for r in rows)
+    value = sum(float(r["shares"]) * float(r["price"]) for r in rows)
+    comm = sum(float(r["commission"]) for r in rows if r.get("commission") not in ("", "nan", None))
+    size = sum(float(r["shares"]) for r in rows)
+    return int(round(shares)), (value / size if size else float("nan")), comm
+
+
+def _default_target(book: Book, cfg: Config, broker, out: Path):
     from . import live
+    if book.signal == MOMENTUM:
+        def history(tickers, day):
+            path = out / "prices" / f"closes_{day.date()}.parquet"
+            if path.exists():
+                return pd.read_parquet(path)
+            closes = broker.history(tickers)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            closes.to_parquet(path)
+            return closes
+        return lambda day: live.momentum_target(day, book.top_n, history=history, out=out)["tickers"]
+    return lambda day: live.target(day, book.top_n, book.signal, book.largest, out=out)["tickers"]
+
+
+def daily(cfg: Config, broker, day, submit=False, target_fn=None, calendar=None) -> str:
+    """Record, decide, and (with `submit`) place the orders. Returns the message sent.
+    `target_fn(book, day)` gives a book's target (default: `live`)."""
     out = Path(cfg.out)
     out.mkdir(parents=True, exist_ok=True)
     day = pd.Timestamp(day).normalize()
@@ -312,35 +442,103 @@ def daily(cfg: Config, broker, day, submit=False, target_fn=None, calendar=None)
                                       "usd_per_base": round(fx["usd_per_base"], 6), "rate_source": fx["rate_source"]}])
     state_path = out / "state.json"
     state = json.loads(state_path.read_text()) if state_path.exists() else {}
+    books = state.setdefault("books", {})
     lines = [f"paper {day.date()}: account ${equity:,.0f} (cash ${cash:,.0f}), {len(held)} positions"]
 
-    first = "target" not in state
-    if state.get("last_decision") == str(day.date()) or not (first or is_month_end(day, calendar)):
-        return "\n".join(lines)
-    target_fn = target_fn or (lambda d: live.target(d, cfg.top_n, cfg.signal, cfg.largest, out=out)["tickers"])
-    target = target_fn(day)
-    lines.append(f"target ({cfg.signal} top {cfg.top_n}): {', '.join(target)}")
-    if not needs_rebalance(target, held):
-        lines.append("same names as held: no trades")
-        orders = []
-    else:
+    # fills of earlier decisions -> the books
+    still = []
+    for p in state.get("pending", []):
+        if p["day"] >= str(day.date()):
+            still.append(p)
+            continue
+        filled, price, comm = _fill_totals(out / "fills.csv", p["order_ref"])
+        if filled != p["qty"]:
+            lines.append(f"{p['ticker']}: {filled} of {p['qty']} shares filled")
+        for b, (q, c) in allocate(p["alloc"], filled, price if filled else p["price"], comm).items():
+            _apply(books[b], p["ticker"], q, c)
+    state["pending"] = still
+
+    # new books start with their capital in cash, if the account has it
+    free = cash - sum(b["cash"] for b in books.values())
+    for book in cfg.book_list():
+        if book.name not in books:
+            if free < book.capital * 0.98:
+                raise RuntimeError(f"book {book.name}: ${book.capital:,.0f} wanted, ${free:,.0f} unallocated cash")
+            books[book.name] = {"shares": {}, "cash": float(book.capital)}
+            free -= book.capital
+    owned = {}
+    for b in books.values():
+        for t, q in b["shares"].items():
+            owned[t] = owned.get(t, 0) + q
+    owned = {t: q for t, q in owned.items() if q}
+    if owned != {t: q for t, q in held.items() if q}:
+        raise RuntimeError(f"books do not add up to the account: books {owned}, account {held}")
+
+    by_name = {b.name: b for b in cfg.book_list()}
+    prices = broker.closes(sorted(owned)) if owned else {}
+    rows = []
+    for name, b in books.items():
+        v = _book_value(b, prices)
+        rows.append({"day": str(day.date()), "book": name, "equity_usd": round(v, 2), "cash_usd": round(b["cash"], 2),
+                     "positions": json.dumps(b["shares"], sort_keys=True)})
+        lines.append(f"  {name}: ${v:,.0f} (cash ${b['cash']:,.0f}), {len(b['shares'])} positions")
+    _append_csv(out / "books.csv", rows)
+    lines.append(f"  unallocated cash ${cash - sum(b['cash'] for b in books.values()):,.0f}")
+
+    book_orders, decided = {}, []
+    for name, book in by_name.items():
+        b = books[name]
+        due = "target" not in b or is_period_end(day, book.every, calendar)
+        if b.get("last_decision") == str(day.date()) or not due:
+            continue
+        fn = target_fn or (lambda bk, d: _default_target(bk, cfg, broker, out)(d))
+        target = fn(book, day)
+        decided.append(name)
+        lines.append(f"{name} target ({book.signal} top {book.top_n}): {', '.join(target)}")
+        b["new_target"] = target
+        if not needs_rebalance(target, b["shares"]):
+            lines.append(f"{name}: same names as held, no trades")
+            continue
+        need = sorted(set(target) | set(b["shares"]) - set(prices))
+        prices.update(broker.closes(need) if need else {})
+        orders = plan(target, b["shares"], prices, _book_value(b, prices), cfg.cash_buffer, cfg.min_order_value)
+        problems = check(orders, _book_value(b, prices), cfg, book.top_n)
+        if problems:
+            raise RuntimeError(f"{name} plan refused: " + "; ".join(problems))
+        book_orders[name] = orders
+    orders, alloc = net_orders(book_orders)
+    problems = []
+    if orders and equity > cfg.max_equity:
+        problems.append(f"account worth ${equity:,.0f} > max_equity ${cfg.max_equity:,.0f}: reset the paper balance")
+    if len(orders) > cfg.max_orders:
+        problems.append(f"{len(orders)} orders > max_orders {cfg.max_orders}")
+    if problems:
+        raise RuntimeError("plan refused: " + "; ".join(problems))
+    if orders or alloc:
         opened = broker.open_orders()
         if opened:
             raise RuntimeError(f"orders still open, refusing to add more: {opened}")
-        prices = broker.closes(sorted(set(target) | set(held)))
-        orders = plan(target, held, prices, equity, cfg.cash_buffer, cfg.min_order_value)
-        problems = check(orders, equity, cfg)
-        if problems:
-            raise RuntimeError("plan refused: " + "; ".join(problems))
-        for o in orders:
-            lines.append(f"  {'BUY ' if o.qty > 0 else 'SELL'} {abs(o.qty):5d} {o.ticker:6s} ~${o.price:,.2f} ({o.reason})")
+    for o in orders:
+        parts = ", ".join(f"{b} {q:+d}" for b, q in sorted(alloc[o.ticker].items()))
+        lines.append(f"  {'BUY ' if o.qty > 0 else 'SELL'} {abs(o.qty):5d} {o.ticker:6s} ~${o.price:,.2f} ({parts})")
+    crossed = [t for t, a in alloc.items() if not sum(a.values())]
+    for t in crossed:
+        lines.append(f"  {t}: books trade {alloc[t]} with each other at ${prices[t]:,.2f}, no order")
     if submit:
-        ids = [broker.place_moo(o) for o in orders]
+        ids = [broker.place_moo(o, ref=f"algotrader:{day.date()}:{o.ticker}") for o in orders]
         _append_csv(out / "orders.csv", [dict(asdict(o), day=str(day.date()), order_id=i) for o, i in zip(orders, ids)])
-        state.update(target=target, last_decision=str(day.date()))
+        for o in orders:
+            state["pending"].append({"day": str(day.date()), "ticker": o.ticker, "qty": o.qty, "price": o.price,
+                                     "order_ref": f"algotrader:{day.date()}:{o.ticker}", "alloc": alloc[o.ticker]})
+        for t in crossed:
+            for b, (q, c) in allocate(alloc[t], 0, prices[t]).items():
+                _apply(books[b], t, q, c)
+        for name in decided:
+            books[name]["target"] = books[name].pop("new_target")
+            books[name]["last_decision"] = str(day.date())
         state_path.write_text(json.dumps(state, indent=2))
         lines.append(f"{len(orders)} market-on-open orders placed" if orders else "nothing to place")
-    else:
+    elif decided:
         lines.append("dry run: nothing placed (use --submit)")
     return "\n".join(lines)
 
@@ -372,7 +570,11 @@ def main(argv=None):
                   f"({fx['base_currency']} {fx['equity_base']:,.0f} at {fx['usd_per_base']:.4f} USD, {fx['rate_source']})")
             print("positions:", broker.positions())
             print("open orders:", broker.open_orders())
-            print("state:", state.read_text() if state.exists() else "none")
+            st = json.loads(state.read_text()) if state.exists() else {}
+            for name, b in st.get("books", {}).items():
+                print(f"book {name}: cash ${b['cash']:,.0f}, shares {b['shares']}, target {b.get('target')}, "
+                      f"last decision {b.get('last_decision')}")
+            print("pending:", st.get("pending", []) or "none")
             return
         notify(cfg, daily(cfg, broker, a.day, submit=a.submit))
     except Exception as e:                                # every failure reaches the phone

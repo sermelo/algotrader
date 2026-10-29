@@ -410,8 +410,12 @@ cash, Fama-French alpha -3.1% a year (t -1.68), beta 0.38, max drawdown -39.2% (
 
 ## Paper trading (`algotrader/live.py`, `algotrader/paper.py`)
 
-The long-history `FundamentalSort` run forward (`config/paper.json`: operating profitability, top 10,
-monthly, $15,000; setup in `docs/paper-trading.md`). After the close of the last NYSE session of a month
+Two long-history strategies run forward on one IBKR paper account, each as a **book** with its own shares and
+cash (`config/paper.json`; setup in `docs/paper-trading.md`): operating profitability top 10, monthly, $15,000,
+and momentum top 5, weekly, $15,000 (added 2026-10-28 at sergio's request; his high-return candidate, backtest
++26.9% a year, Sharpe 0.97, max drawdown -35.1%).
+
+**Operating profitability.** The long-history `FundamentalSort` run forward. After the close of the last NYSE session of a month
 (exchange calendar XNYS), the members are today's S&P 500 list and the facts each member's current SEC
 company-facts JSON, through the same parser and `fundamentals.signals` (a value counts from the day after
 it was filed, under the tag, same-period and 18-month rules above); the top N scores are chosen (ties in member order, as `_top_weights`). If the chosen names
@@ -421,6 +425,20 @@ orders, filled at the next open; otherwise nothing is traded. The first run with
 portfolio at once. Checked on 2026-10-22: the live scores equal the backtest panel's for every ticker
 compared; the top 10 differs only through membership and the price-data gap after March 2026 (README,
 Limitations).
+
+**Momentum.** `CrossSectionalMomentum` (lookback 252, skip 21 trading days) run forward: after the close of the
+last NYSE session of each week (Monday to Sunday, as the backtest's `every='W'`), the score of each of today's
+members is its adjusted close 21 sessions ago / its adjusted close 252 sessions ago - 1, from IBKR daily
+`ADJUSTED_LAST` closes of the last two years (IBKR takes durations over 12 months only in years); a member without a close that day is not ranked; at least 95% of
+the members must have prices. Top 5, same sizing and orders as above, applied to the book's own value.
+
+**Books.** A book's value is its cash plus its shares at the previous close; it trades only its own shares. The
+books' orders are netted into one market-on-open order per stock; where one book sells what another buys, they
+trade with each other at that order's fill price (at the decision close if the quantities cancel out and no
+order goes out), and the books on the order's side share the market fill and its commission in proportion to
+their quantities. The books' shares must add up to the account's positions before anything is traded. Cash no
+book owns (dividends, interest on cash, currency effects) is recorded as unallocated, so a book's return omits
+dividends while its backtest includes them (about 1-2% a year).
 
 ## Factor regressions (`algotrader/french.py`)
 

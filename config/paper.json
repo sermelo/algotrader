@@ -3,15 +3,29 @@
   "host": "127.0.0.1",
   "port": 4002,
   "client_id": 17,
-  "signal": "operating_profitability",
-  "largest": true,
-  "top_n": 10,
-  "capital": 15000,
-  "max_equity": 30000,
+  "max_equity": 45000,
   "cash_buffer": 0.01,
   "min_order_value": 100,
   "max_orders": 30,
   "max_order_slots": 1.5,
   "out": "data/paper",
-  "notify_cmd": ["/home/hermes/.config/telegram-notify/send.sh"]
+  "notify_cmd": [
+    "/home/hermes/.config/telegram-notify/send.sh"
+  ],
+  "books": [
+    {
+      "name": "op_profitability",
+      "signal": "operating_profitability",
+      "top_n": 10,
+      "every": "M",
+      "capital": 15000
+    },
+    {
+      "name": "momentum",
+      "signal": "momentum",
+      "top_n": 5,
+      "every": "W",
+      "capital": 15000
+    }
+  ]
 }

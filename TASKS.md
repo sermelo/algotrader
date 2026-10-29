@@ -16,6 +16,19 @@ research priorities are in `ROADMAP.md`; `HANDOFF.md` has VPS access and lessons
 - **Live account** (sergio's own): EUR 1,000, leave it in euros until live trading starts (then convert once per
   deposit; each conversion costs at least ~$2).
 
+## Paper trading: two books (2026-10-28/29)
+
+- [x] sergio chose **momentum top 5 weekly** as his candidate for real money (keep recommending it with its caveats;
+  memory `momentum-top5-weekly-candidate`) and wants it paper-traded next to operating profitability. IBKR gives one
+  paper account, so `paper.py` runs **books**: op profitability top 10 monthly and momentum top 5 weekly, $15,000 each,
+  orders netted per stock, fills split back (`allocate`), books must add up to the account. Momentum prices: IBKR
+  `ADJUSTED_LAST` daily history, 2 years, ~0.6 s a stock (checked 2026-10-29: 501 bars for AAPL, BRK B, MA, NVDA).
+- [x] Paper balance reset by sergio to EUR 30,109 (about $33,559) on 2026-10-29. The Gateway failed to log in again
+  after the reset (2026-10-28 20:34 UTC) and stopped at the 06:00 restart; restarted 2026-10-29 11:38 UTC, credentials
+  unchanged.
+- [ ] **Convert EUR to USD again** (needs sergio's OK, as item 3): about EUR 27,000 -> $30,000, so the books buy with dollars.
+- [ ] Cron (item 5, still postponed until after the Tiingo batch, needs sergio's OK).
+
 ## Before paper trading starts
 
 **2026-10-27: start postponed until after the Tiingo batch (item 10) and its reruns (sergio).**

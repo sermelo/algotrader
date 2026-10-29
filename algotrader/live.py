@@ -12,7 +12,12 @@ data instead of the archived bulk files:
 - **choice**: the `top_n` highest (lowest if not `largest`) scores, ties in member order, as
   `_top_weights` ranks them.
 
-    python -m algotrader.live --top-n 10        # print today's target and write data/paper/target_<day>.json
+`momentum_target` does the same for the backtest's `CrossSectionalMomentum` (12-1 month return,
+`lookback` 252 and `skip` 21 trading days) from adjusted daily closes of today's members (IBKR's
+`ADJUSTED_LAST` history through `paper.IbkrBroker.history`); a member without a close on the decision
+day is not ranked, as in the backtest.
+
+    python -m algotrader.live --top-n 10        # print today's target, write data/paper/target_<signal>_<day>.json
 """
 import argparse
 import io
@@ -106,7 +111,42 @@ def target(day, top_n=10, signal="operating_profitability", largest=True, out=OU
            "names": {t: str(members.loc[t, "name"]) for t in picks},
            "members": len(members), "scored": int(s.notna().sum())}
     out.mkdir(parents=True, exist_ok=True)
-    (out / f"target_{day.date()}.json").write_text(json.dumps(res, indent=2))
+    (out / f"target_{signal}_{day.date()}.json").write_text(json.dumps(res, indent=2))
+    return res
+
+
+MIN_COVERAGE = 0.95               # share of today's members that must have prices
+
+
+def momentum_scores(closes: pd.DataFrame, lookback=252, skip=21) -> pd.Series:
+    """12-1 month momentum on the last day of `closes` (dates x tickers, adjusted), as
+    `CrossSectionalMomentum.score`; NaN for a ticker without a close that day."""
+    from .portfolio import CrossSectionalMomentum
+    s = CrossSectionalMomentum(lookback=lookback, skip=skip).score(closes).iloc[-1]
+    return s.where(closes.iloc[-1].notna())
+
+
+def momentum_target(day, top_n=5, history=None, out=OUT, members=None, closes=None) -> dict:
+    """Today's momentum target, as `target`; `history(tickers, day)` gives the closes up to `day`."""
+    day = pd.Timestamp(day).normalize()
+    out = Path(out)
+    members = fetch_members() if members is None else members
+    tickers = list(members.index)
+    closes = history(tickers, day) if closes is None else closes
+    closes = closes.reindex(columns=tickers)
+    if closes.index[-1].normalize() != day:
+        raise ValueError(f"prices end on {closes.index[-1].date()}, not on {day.date()}")
+    have = closes.iloc[-1].notna().mean()
+    if have < MIN_COVERAGE:
+        raise ValueError(f"only {have:.0%} of members have a close on {day.date()}")
+    s = momentum_scores(closes)
+    picks = choose(s, top_n)
+    res = {"day": str(day.date()), "signal": "momentum", "top_n": top_n, "largest": True,
+           "tickers": picks, "scores": {t: float(s[t]) for t in picks},
+           "names": {t: str(members.loc[t, "name"]) for t in picks},
+           "members": len(members), "scored": int(s.notna().sum())}
+    out.mkdir(parents=True, exist_ok=True)
+    (out / f"target_momentum_{day.date()}.json").write_text(json.dumps(res, indent=2))
     return res
 
 
