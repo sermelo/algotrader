@@ -86,6 +86,8 @@ cash and record; their orders are netted per stock (details in STRATEGY.md, "Pap
    ```
    30 21 * * 1-5 cd ~/algotrader-work && ~/.local/bin/uv run python -m algotrader.paper daily --submit >> data/paper/cron.log 2>&1
    ```
+   **Installed 2026-10-29** with a guard (`[ "$(date -u +\%F)" \> 2026-10-29 ] &&`) so the first run is Friday 2026-10-30,
+   plus `15 21 * * 1-5` and `@reboot` entries that start the Gateway if it is not running.
    The first run builds both books at the next open; after that operating profitability decides at month ends and
    momentum at week ends. The Friday run of the momentum book downloads about 500 daily histories from IBKR
    (kept in `data/paper/prices/`).

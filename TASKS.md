@@ -30,7 +30,10 @@ research priorities are in `ROADMAP.md`; `HANDOFF.md` has VPS access and lessons
   the ECB's 1.1133; commission EUR 1.79), about $30,094; about EUR 3,100 left. Account $33,558. Dry run of both books
   (2026-10-28 close, `data/paper_dry/` on the VPS, delete at the start): op CL GDDY LYV VRSK IT TPR MA APP STX AAPL,
   momentum SNDK MRNA LITE MU STX; 14 net orders.
-- [ ] Cron (item 5, still postponed until after the Tiingo batch, needs sergio's OK).
+- [x] **Cron installed 2026-10-29** (sergio's OK: start now, adjust after the Tiingo batch if needed): on the VPS
+  `30 21 * * 1-5` `paper daily --submit` guarded to run from 2026-10-30, `15 21 * * 1-5` and `@reboot`
+  `~/ibkr/start-gateway.sh` (no-op when running). First decision Fri 2026-10-30 after the close (both books build),
+  market-on-open fills Mon 2026-11-02. Check `data/paper/cron.log` and Telegram on Friday night and Monday.
 
 ## Before paper trading starts
 
@@ -96,7 +99,7 @@ market-on-open orders at the **Monday 2026-11-02** open.
    (`~/.config/telegram-notify/`, 700/600), `notify_cmd` set in `config/paper.json` (here and on the VPS, uncommitted
    here); test messages sent from the VPS directly and through `paper.notify`. Errors (Gateway down, 2FA pending) arrive
    as "paper <day>: ERROR ...".
-5. [ ] **Cron jobs: POSTPONED (sergio, 2026-10-27): paper trading waits until the Tiingo second batch (item 10)
+5. [x] **Cron jobs: installed 2026-10-29 (see "Paper trading: two books"); was POSTPONED (sergio, 2026-10-27): paper trading waits until the Tiingo second batch (item 10)
    is in and the long reruns are done.** Not on Friday 2026-10-30. Note told to him: the live signal uses no price
    history (today's members, SEC facts, previous close), so the batch changes the backtest reference numbers, not
    the orders. Start date to agree with him then (as soon as ready, building at once, or at the November month end,

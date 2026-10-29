@@ -9,6 +9,8 @@ priority list; keep it updated as items are done).
   and the full long-history rerun it needed are committed (ROADMAP 19; no verdict changed; paper configuration Sharpe
   0.99, +16.7% a year, max drawdown -41.0%). Paper account converted to dollars; alerts set up; cron jobs wait for
   sergio (start postponed until after the November Tiingo batch).
+- 2026-10-29: paper runs two books (op profitability top 10 monthly, momentum top 5 weekly, $15k each) on the reset
+  account ($33,558, mostly USD); cron installed on the VPS, first decision Fri 2026-10-30 after the close.
 - 2026-10-27 later (uncommitted too): paper runner reads IBKR's `$LEDGER-ExchangeRate` (3b, account $14,612.50);
   monthly winners/losers step 1 (`extremes.py`, `results/extremes/`: no stable one-sided predictor); found broken
   adjusted prices in the long history (TASKS 12).
