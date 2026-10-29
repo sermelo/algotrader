@@ -117,6 +117,8 @@ market-on-open orders at the **Monday 2026-11-02** open.
   bugs and check orders, fills, costs and records against the backtest; profit cannot be proven in months (with a
   Sharpe near 1 it takes about 4 years). **Correction:** before the fix I said it trailed SPY by 4.8% a year since 2019;
   with the fix it is 2.1% a year (FF alpha t 0.14).
+- **No calendar switching** (2026-10-29, sergio agreed): both books are held all year; week/month/earnings-season
+  patterns do not repeat and a walk-forward month-switching rule did worse (README, "Calendar check").
 - **No tuning:** Sharpe is flat across N = 3..50, monthly = weekly = daily, buffers cut turnover but not risk, the
   volatile subset is worse; any tweak picked on this history is try number 1,227.
 - **No leverage (1.0x):** half-Kelly with a sober 6-8% a year and ~4% IBKR borrowing is 0.6-0.9x; with the fixed
