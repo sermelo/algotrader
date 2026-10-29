@@ -26,7 +26,10 @@ research priorities are in `ROADMAP.md`; `HANDOFF.md` has VPS access and lessons
 - [x] Paper balance reset by sergio to EUR 30,109 (about $33,559) on 2026-10-29. The Gateway failed to log in again
   after the reset (2026-10-28 20:34 UTC) and stopped at the 06:00 restart; restarted 2026-10-29 11:38 UTC, credentials
   unchanged.
-- [ ] **Convert EUR to USD again** (needs sergio's OK, as item 3): about EUR 27,000 -> $30,000, so the books buy with dollars.
+- [x] **EUR -> USD again** (done 2026-10-29 ~12:05 UTC, sergio's OK): sold EUR 27,000 at 1.11459 (limit 1.1021, 1% under
+  the ECB's 1.1133; commission EUR 1.79), about $30,094; about EUR 3,100 left. Account $33,558. Dry run of both books
+  (2026-10-28 close, `data/paper_dry/` on the VPS, delete at the start): op CL GDDY LYV VRSK IT TPR MA APP STX AAPL,
+  momentum SNDK MRNA LITE MU STX; 14 net orders.
 - [ ] Cron (item 5, still postponed until after the Tiingo batch, needs sergio's OK).
 
 ## Before paper trading starts

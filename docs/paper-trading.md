@@ -40,7 +40,8 @@ cash and record; their orders are netted per stock (details in STRATEGY.md, "Pap
 2. **Create the paper account**: Client Portal > Settings > Paper Trading Account. Note its username (a
    separate login) and account id (starts with `DU`). **Reset its balance to $15,000** (or the euro
    equivalent; the runner refuses above `max_equity`). 2026-10-28: sergio reset it to about $30,000 for the two
-   books (effective 2026-10-29); `max_equity` $45,000. Base currency USD if offered.
+   books (effective 2026-10-29); `max_equity` $45,000. 2026-10-29 (sergio's OK): EUR 27,000 sold at 1.11459 for
+   about $30,094 (EUR.USD limit 1% under the ECB rate, commission EUR 1.79), about EUR 3,100 kept. Base currency USD if offered.
 3. Optional: enable "share market data with the paper account". Not required: the runner sizes with the
    previous close, which delayed data gives for free.
 4. Give the paper username and password to the machine that runs IB Gateway (step 5), in
