@@ -1,0 +1,11 @@
+{
+  "code": {
+    "scripts/calendar_check.py": "2ab0a78d10e73581d05f939e2a5528354da5d22ba6261a4412e449b1f96f6414"
+  },
+  "inputs": {
+    "results/long_conc/returns.csv": "e66ae48413c4f669b49e3af1f381181293e620d75dac9c20844d61be3f8f2bec",
+    "results/long_rebal/returns.csv": "1086517ad98b6be07f08666eddb67ec70a0914229bbf9435c1a9305453f48ac2"
+  },
+  "first": "2012-01-03",
+  "last": "2026-10-16"
+}
