@@ -233,4 +233,6 @@ most. Numbers below are the authors' claims, from abstracts and secondary source
    reliably beat simple volatility models.
 6. Not worth testing: LSTM next-day direction (Fischer & Krauss, *EJOR* 2018: no profit
    after costs since 2010); papers reporting only forecast error or accuracy; order-book
-   models (no order-book data here).
+   models (no order-book data here); deep reinforcement learning agents (Kabbani & Duman,
+   *IEEE Access* 2022: the agent keeps learning on its two-year test set and fills at the
+   signal close; see `index.md` and ROADMAP S16).
