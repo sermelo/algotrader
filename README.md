@@ -624,7 +624,7 @@ commit `7fc720e` and earlier):
   100% on every ticker (about 10,000 trades each).
 - Its published `results/summary_with_commission_all.csv` listed 3 tickers (not the 50
   claimed), two of them with just 2 trades, and could not be reproduced from any code.
-- Its generating pipeline (`/home/hermes/run_pipeline.sh`) and ticker list were never in the repo.
+- Its generating pipeline (`/home/hermes/run_pipeline.sh`) and ticker list were never in the repo (since 2026-11-04 archived on the VPS in `~/archive/hermes-era-algotrader/`).
 
 ## Limitations
 

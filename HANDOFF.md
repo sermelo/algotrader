@@ -41,13 +41,17 @@ priority list; keep it updated as items are done).
 
 ## VPS access
 
-Hermes VPS (Oracle Cloud, 2 ARM cores, 12 GB RAM), user `hermes`, Tailscale IP
-`100.88.160.76`, key `/home/sergio/Workspace/hermes_oci/ssh.key` (never print or copy
-it). Work only in `~/algotrader-work`; do not touch `~/.hermes` or restart Hermes
-services; never open ports. Ask the `Hermes` Claude session if anything changed.
+VPS `vps` (Oracle Cloud, 2 ARM cores, 12 GB RAM; Tailscale node `vps-oci`), user `algotrader`
+(home `/home/algotrader`, no sudo; renamed from `hermes` on 2026-11-04, when Hermes Agent was
+removed), Tailscale IP `100.88.160.76`, key `/home/sergio/Workspace/VPS/ssh.key` (never print or
+copy it). Experiments run in `~/algotrader-work`; the paper trading crontab, IB Gateway/IBC/Xvfb
+and `~/.config/ibkr` are under the same user. Never open ports. Host details are in
+`/home/sergio/Workspace/VPS/AGENTS.md`; ask the `vps` Claude session if anything on the host
+changes. Hermes's early algotrader experiments are archived in `~/archive/hermes-era-algotrader/`
+(the legacy code, never reproduced; delete when no longer needed).
 
 ```bash
-K=/home/sergio/Workspace/hermes_oci/ssh.key; H=hermes@100.88.160.76
+K=/home/sergio/Workspace/VPS/ssh.key; H=algotrader@100.88.160.76
 rsync -a --delete --exclude .venv --exclude data --exclude results --exclude .git \
   --exclude "*.log" --exclude "*.done" \
   -e "ssh -i $K" ./ $H:algotrader-work/

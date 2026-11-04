@@ -50,8 +50,8 @@ cash and record; their orders are netted per stock (details in STRATEGY.md, "Pap
 
 ## Gateway and cron (Claude does this once the account exists)
 
-5. **IB Gateway + IBC on the Hermes VPS: installed 2026-10-26**, all in user space (the `hermes` user has
-   no sudo; nothing installed system-wide, no port opened):
+5. **IB Gateway + IBC on the VPS: installed 2026-10-26**, all in user space (the `algotrader` user, called
+   `hermes` until 2026-11-04, has no sudo; nothing installed system-wide, no port opened):
    - Java: Azul Zulu FX JDK **25.0.2** aarch64 in `~/ibkr/jdk` (Gateway 10.50's installer accepts exactly
      25.0.2; its bundled JRE is x64). Gateway 10.50 (stable) in `~/Jts/ibgateway/stable` (symlink `1050`),
      installed with `INSTALL4J_JAVA_HOME_OVERRIDE=~/ibkr/jdk INSTALL4J_DISABLE_BUNDLED_JRE=true sh
@@ -78,7 +78,7 @@ cash and record; their orders are netted per stock (details in STRATEGY.md, "Pap
      overstated the account by 0.4%: $14,662 instead of $14,612.50).
      The Gateway's API socket listens on all interfaces (it has no bind option); only 127.0.0.1 is trusted
      and other connections are rejected.
-   - Stop: kill the PIDs from `pgrep -u hermes -f "[i]bcalpha.ibc.IbcGateway|[i]bcstart.sh|[g]atewaystart.sh"`
+   - Stop: kill the PIDs from `pgrep -u algotrader -f "[i]bcalpha.ibc.IbcGateway|[i]bcstart.sh|[g]atewaystart.sh"`
      (the brackets keep the pattern from matching the ssh shell itself).
 6. **Dry run**: `uv run python -m algotrader.paper status`, then `uv run python -m algotrader.paper daily`
    (prints the orders it would place, places none).
