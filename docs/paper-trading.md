@@ -63,8 +63,10 @@ cash and record; their orders are netted per stock (details in STRATEGY.md, "Pap
      config in `~/.config/ibkr/ibc.ini` (chmod 600): paper, API port 4002, Read-Only API off, trusted IP
      127.0.0.1, other incoming connections rejected, daily restart 06:00 UTC (08:00 Madrid in winter).
      **`IbLoginId` and `IbPassword` are blank: sergio fills them in on the VPS.**
-   - Start: `~/ibkr/start-gateway.sh` (starts Xvfb on :99 if needed, then IBC; refuses while the login is
-     blank). Logs: `~/ibkr/gateway.log`, `~/ibc/logs/`. Tested: the Gateway opens its login dialog on ARM
+   - Start: `~/ibkr/start-gateway.sh`, a copy of `scripts/start_gateway.sh` (starts Xvfb on :99 if needed, then IBC;
+     refuses while the login is blank; since 2026-11-04 also kills and restarts a Gateway that has run 5 minutes
+     without its API port, e.g. stuck after a refused login, and sends a Telegram message if the port is still closed
+     3 minutes after a start). Logs: `~/ibkr/gateway.log` (the script's lines), `~/ibkr/ibc-console.log`, `~/ibc/logs/`. Tested: the Gateway opens its login dialog on ARM
      and IBC sets paper mode (about 300 MB RSS). Not yet started on reboot (needs a `@reboot` crontab entry).
    - 2026-10-27: sergio filled in the login; the Gateway logged in to DUR288542 (Simulated Trading, base EUR,
      €13,108). IBKR reports no USD exchange rate until the account holds dollars (and the paper account

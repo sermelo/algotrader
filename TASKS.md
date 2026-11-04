@@ -34,6 +34,15 @@ research priorities are in `ROADMAP.md`; `HANDOFF.md` has VPS access and lessons
   `30 21 * * 1-5` `paper daily --submit` guarded to run from 2026-10-30, `15 21 * * 1-5` and `@reboot`
   `~/ibkr/start-gateway.sh` (no-op when running). First decision Fri 2026-10-30 after the close (both books build),
   market-on-open fills Mon 2026-11-02. Check `data/paper/cron.log` and Telegram on Friday night and Monday.
+- [x] **Gateway down 2026-10-31 to 11-04, fills not booked** (found 2026-11-04 during the VPS rename check). IBC's
+  06:00 UTC restart on Sat 10-31 got "Unrecognized Username or Password" (as after the 10-28 reset) and the Gateway
+  stayed logged out; the 21:15 cron saw the java process and did nothing, so `daily` failed on Mon 11-02 and Tue 11-03
+  (connection refused, Telegram alerts sent). The 10-30 orders filled Mon 11-02 at the open (all 14 positions match),
+  but IB returns no executions from earlier sessions. Fixed with sergio's OK: `data/paper/fills.csv` backfilled from the
+  positions' average cost (price includes the commission, commission 0; exec ids `backfill-2026-11-02-*`; state before
+  it in `state.before-backfill-2026-11-04.json`), and `~/ibkr/start-gateway.sh` is now `scripts/start_gateway.sh`
+  (tested): it restarts a Gateway that has run 5 minutes without port 4002, waits up to 3 minutes for the port and
+  sends a Telegram message if it stays closed. The 21:15 run therefore retries a refused login before the 21:30 job.
 
 ## Before paper trading starts
 
