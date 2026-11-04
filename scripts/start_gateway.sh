@@ -5,6 +5,7 @@
 # out after IBKR refused a login, as on 2026-10-31) is killed and started again. If the port is
 # still closed WAIT seconds after a start, a Telegram message is sent.
 PORT=${IBKR_PORT:-4002}
+USER=${USER:-$(id -un)}                # cron does not set it
 GRACE=${IBKR_GRACE:-300}
 WAIT=${IBKR_WAIT:-180}
 XB=${IBKR_XB:-/tmp/xb}

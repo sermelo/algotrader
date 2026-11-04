@@ -8,7 +8,7 @@ SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "start_gateway.sh"
 
 STUBS = {
     # gateway pattern: running if the flag exists; Xvfb: running if its flag exists
-    "pgrep": 'case "$*" in *Xvfb*) [ -e "$FAKE/xvfb" ];; *) [ -e "$FAKE/running" ] && echo 123;; esac',
+    "pgrep": '[ -n "$2" ] || exit 2; case "$*" in *Xvfb*) [ -e "$FAKE/xvfb" ];; *) [ -e "$FAKE/running" ] && echo 123;; esac',
     "pkill": 'echo "pkill $*" >> "$FAKE/log"; rm -f "$FAKE/running" "$FAKE/listening"',
     "ss": '[ -e "$FAKE/listening" ] && echo "LISTEN 0 50 *:4002 *:*"; true',
     "ps": 'cat "$FAKE/etimes"',
@@ -18,7 +18,7 @@ STUBS = {
 }
 
 
-def run(tmp_path, *flags, etimes=0, login=True):
+def run(tmp_path, *flags, etimes=0, login=True, user="algotrader"):
     home, fake, bin_ = tmp_path / "home", tmp_path / "fake", tmp_path / "bin"
     for d in (home / ".config" / "ibkr", home / "ibkr", fake, bin_):
         d.mkdir(parents=True, exist_ok=True)
@@ -32,8 +32,10 @@ def run(tmp_path, *flags, etimes=0, login=True):
     for f in flags:
         (fake / f).touch()
     (fake / "etimes").write_text(f"{etimes}\n")
-    env = {"PATH": f"{bin_}:{os.environ['PATH']}", "HOME": str(home), "USER": "algotrader", "FAKE": str(fake),
+    env = {"PATH": f"{bin_}:{os.environ['PATH']}", "HOME": str(home), "FAKE": str(fake),
            "IBKR_XB": str(tmp_path / "xb"), "IBKR_NOTIFY": str(notify)}
+    if user:
+        env["USER"] = user
     p = subprocess.run(["sh", str(SCRIPT)], env=env, capture_output=True, text=True, timeout=30)
     log = (fake / "log").read_text() if (fake / "log").exists() else ""
     return p.returncode, p.stdout, log
@@ -58,6 +60,12 @@ def test_restarts_a_gateway_running_without_its_port(tmp_path):
     assert code == 0
     assert "not listening: restarting" in out and "listening after" in out
     assert log.index("pkill") < log.index("gatewaystart.sh")
+
+
+def test_without_user_set_as_under_cron(tmp_path):
+    code, out, log = run(tmp_path, "running", "listening", "xvfb", etimes=50_000, user=None)
+    assert code == 0 and "already running" in out
+    assert log == ""
 
 
 def test_a_gateway_still_logging_in_is_not_killed(tmp_path):
