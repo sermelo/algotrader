@@ -209,6 +209,10 @@ market-on-open orders at the **Monday 2026-11-02** open.
 
 ## Dated
 
-10. [ ] On or after 2026-11-01: Tiingo second batch (ROADMAP pending 2: `scripts/history_queue.sh` on the VPS for the
+10. [ ] **Running since 2026-11-04 21:40 UTC** (`history2.log` on the VPS, about 75 s a symbol). The first batch
+   (2026-10-16) did not stop at the quota: it crashed on NYX after 472 symbols, because Tiingo answers `[]` (HTTP 200)
+   for a symbol without data; fixed in `history.tiingo_download` (`[]` = missing, other non-CSV replies logged as
+   errors and retried). This changes `history.py`, so `results/long*` show stale until the reruns below.
+   On or after 2026-11-01: Tiingo second batch (ROADMAP pending 2: `scripts/history_queue.sh` on the VPS for the
    remaining ~216 symbols; 166 current members' prices end 2026-03-31 until then), then `history check` and the long
    reruns (combine with item 9).

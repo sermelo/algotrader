@@ -116,6 +116,23 @@ def test_tiingo_download_saves_logs_and_stops(tmp_path):
     assert st == {"BBB": "ok"}                       # resumes, skips done and missing
 
 
+
+def test_tiingo_empty_json_is_missing_and_other_replies_are_errors(tmp_path):
+    (tmp_path / "token").write_text("secret\n")
+    c = Clock()
+    lim = history.TiingoLimiter(tmp_path / "log.csv", per_month=10, interval=0, clock=c, sleep=c.sleep)
+    replies = {"OLD": b"[]", "ODD": b'{"detail": "Error: something"}', "AAA": TIINGO_CSV}
+
+    def opener(req):
+        return Resp(replies[req.full_url.split("/")[-2]])
+
+    st = history.tiingo_download(["OLD", "ODD", "AAA"], tmp_path / "t", lim,
+                                 token_file=tmp_path / "token", opener=opener)
+    assert st["OLD"] == "empty" and st["AAA"] == "ok"   # Tiingo answers [] (HTTP 200) for no data
+    assert st["ODD"].startswith("error {\"detail\"")
+    assert (tmp_path / "t" / "OLD.missing").exists()
+    assert not (tmp_path / "t" / "ODD.missing").exists()  # retried on the next run
+
 def _series(r, start="2010-01-04"):
     idx = pd.bdate_range(start, periods=len(r))
     return pd.DataFrame({"close": 100 * np.cumprod(1 + np.asarray(r))}, index=idx)

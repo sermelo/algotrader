@@ -201,7 +201,11 @@ def tiingo_download(symbols, out_dir, limiter, token_file=TIINGO_TOKEN, start="1
             if e.code == 429:
                 break
             continue
-        df = parse_tiingo_csv(data) if data.strip() else pd.DataFrame(columns=COLUMNS)
+        body = data.strip()
+        if body and body != b"[]" and not body.startswith(b"date"):   # not the CSV: an error message
+            status[sym] = "error " + body[:80].decode("utf-8", "replace")
+            continue
+        df = parse_tiingo_csv(data) if body and body != b"[]" else pd.DataFrame(columns=COLUMNS)  # [] = no data
         if df.empty:
             (out / f"{sym}.missing").write_text("empty\n")
             status[sym] = "empty"

@@ -47,8 +47,8 @@ removed), Tailscale IP `100.88.160.76`, key `/home/sergio/Workspace/VPS/ssh.key`
 copy it). Experiments run in `~/algotrader-work`; the paper trading crontab, IB Gateway/IBC/Xvfb
 and `~/.config/ibkr` are under the same user. Never open ports. Host details are in
 `/home/sergio/Workspace/VPS/AGENTS.md`; ask the `vps` Claude session if anything on the host
-changes. Hermes's early algotrader experiments are archived in `~/archive/hermes-era-algotrader/`
-(the legacy code, never reproduced; delete when no longer needed).
+changes. (Hermes's early algotrader experiments, archived there on 2026-11-04, were deleted the same
+day at sergio's request; the legacy code is in git history up to `7fc720e`.)
 
 ```bash
 K=/home/sergio/Workspace/VPS/ssh.key; H=algotrader@100.88.160.76
