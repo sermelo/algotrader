@@ -218,6 +218,10 @@ market-on-open orders at the **Monday 2026-11-02** open.
    (2026-10-16) did not stop at the quota: it crashed on NYX after 472 symbols, because Tiingo answers `[]` (HTTP 200)
    for a symbol without data; fixed in `history.tiingo_download` (`[]` = missing, other non-CSV replies logged as
    errors and retried). This changes `history.py`, so `results/long*` show stale until the reruns below.
+   **Long rerun queued** (`scripts/long_rerun.sh`, started 2026-11-04 22:15 UTC, waits for `history_queue.done`, then about
+   30 hours like the 10-27 run, outputs to `data/rerun_t/`, log `data/long_rerun.log`). **Do not rsync code into
+   `~/algotrader-work` until `data/rerun_t/all.done` exists** (the rerun and the paper cron run from it). Then: copy the
+   outputs into `results/long*`, `french report`, `trials`, `drawdown`, update README/STRATEGY numbers, commit.
    On or after 2026-11-01: Tiingo second batch (ROADMAP pending 2: `scripts/history_queue.sh` on the VPS for the
    remaining ~216 symbols; 166 current members' prices end 2026-03-31 until then), then `history check` and the long
    reruns (combine with item 9).
