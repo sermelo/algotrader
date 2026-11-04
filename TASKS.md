@@ -198,7 +198,12 @@ market-on-open orders at the **Monday 2026-11-02** open.
    cause, cut or drop the broken pieces (as `midcap.segments` does), then rerun the long families with item 9/10. Check
    how much the backtests used them (membership months, holdings) first.
 
-9. [ ] **Book-to-market market value still wrong in two cases** (found 2026-10-27 while checking the fix, not caused
+9. [x] **Done 2026-11-04** (`fundamentals.split_adjusted` and the turnover check, tested; on the VPS data book-to-market
+   months above 5 fell from 606 to 436, CMG mid-2024 1.95 -> 0.039, SPG/FOX gone, BRK-B left only for 2009-11..2010-03, before
+   its split, when the B shares traded too little for the check; dividend drift changes no value). Still above 5 and
+   not this bug: FMCC/FNMA (2008-10, likely genuine), GNW, AIG 2009, energy distress, and **FI (24 months) and WTW (10)**,
+   which look like reused tickers in the price data (new item 11). Results wait for the long reruns (item 10).
+   **Book-to-market market value still wrong in two cases** (found 2026-10-27 while checking the fix, not caused
    by it): (a) multi-class companies report one class as the non-dimensional share count (SPG's 8,000 Class B
    shares, BRK-B, FOX), so the market value is far too small and book-to-market absurd (SPG 4,417); (b) after a
    split the share count from the last filing is pre-split while the raw close is post-split (CMG 2024, CSX 2021),
@@ -216,3 +221,7 @@ market-on-open orders at the **Monday 2026-11-02** open.
    On or after 2026-11-01: Tiingo second batch (ROADMAP pending 2: `scripts/history_queue.sh` on the VPS for the
    remaining ~216 symbols; 166 current members' prices end 2026-03-31 until then), then `history check` and the long
    reruns (combine with item 9).
+
+11. [ ] **FI and WTW book-to-market above 5** for 24 and 10 months (found 2026-11-04): Fiserv (FISV -> FI 2023) and Willis
+   Towers Watson (WLTW -> WTW 2022) cannot have that; probably the price series or the CIK of another company under the
+   same ticker. Check `coverage.csv` and the CIK map for both.

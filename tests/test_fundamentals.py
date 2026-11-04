@@ -61,6 +61,53 @@ def test_amendment_of_latest_period_updates_from_its_filing_date():
     assert s["book_to_market"].loc["2013-05-02", "AAA"] == pytest.approx(6.0)
 
 
+
+def _split_prices(idx, split_day="2013-03-01"):
+    """2-for-1 split on `split_day`: the raw close halves, the adjusted close (latest basis) does not move."""
+    raw = pd.DataFrame({"AAA": np.where(idx < pd.Timestamp(split_day), 10.0, 5.0)}, index=idx)
+    return raw, pd.DataFrame({"AAA": 5.0}, index=idx)
+
+
+def test_share_count_is_split_adjusted_to_each_day():
+    idx = pd.bdate_range("2013-01-28", "2013-04-19")
+    f = _facts()
+    f = f[(f["cik"] == 1) & ~((f["tag"] == "StockholdersEquity") & (f["form"] != "10-K"))]
+    raw, close = _split_prices(idx)
+    cik = pd.DataFrame({"cik": [1]}, index=["AAA"])
+    plain = signals(f, cik, raw)["book_to_market"]
+    adj = signals(f, cik, raw, close)["book_to_market"]
+    assert plain.loc["2013-03-04", "AAA"] == pytest.approx(500 / (10 * 5))      # pre-split count x post-split price
+    assert adj.loc["2013-02-04", "AAA"] == pytest.approx(500 / (10 * 10))
+    assert adj.loc["2013-03-04", "AAA"] == pytest.approx(500 / (20 * 5))        # count doubled with the split
+    # later prices cannot change an earlier value
+    wrecked_raw, wrecked_close = raw.copy(), close.copy()
+    wrecked_raw.loc["2013-03-15":] = 1.0
+    wrecked_close.loc["2013-03-15":] = 0.01
+    again = signals(f, cik, wrecked_raw, wrecked_close)["book_to_market"]
+    pd.testing.assert_series_equal(again.loc[:"2013-03-14", "AAA"], adj.loc[:"2013-03-14", "AAA"])
+
+
+def test_dividends_do_not_move_the_share_count():
+    idx = pd.bdate_range("2013-01-28", "2013-04-19")
+    f = _facts()
+    f = f[(f["cik"] == 1) & ~((f["tag"] == "StockholdersEquity") & (f["form"] != "10-K"))]
+    raw = pd.DataFrame({"AAA": 10.0}, index=idx)
+    close = pd.DataFrame({"AAA": np.where(idx < pd.Timestamp("2013-03-01"), 9.9, 10.0)}, index=idx)   # 1% dividend
+    btm = signals(f, pd.DataFrame({"cik": [1]}, index=["AAA"]), raw, close)["book_to_market"]
+    assert btm.loc["2013-03-04", "AAA"] == pytest.approx(500 / (10 * 10))
+
+
+def test_share_count_of_one_class_gives_no_book_to_market():
+    idx = pd.bdate_range("2013-01-02", "2013-03-29")
+    rows = [fact(1, "StockholdersEquity", "2012-12-31", 500, "2013-02-01"),
+            fact(1, "EntityCommonStockSharesOutstanding", "2013-01-15", 10, "2013-02-01")]   # market value 100
+    raw, cik = pd.DataFrame({"AAA": 10.0}, index=idx), pd.DataFrame({"cik": [1]}, index=["AAA"])
+    busy = pd.DataFrame({"AAA": 300.0}, index=idx)              # 3x the market value trades every day
+    s = signals(pd.DataFrame(rows), cik, raw, raw, busy)
+    assert s["book_to_market"]["AAA"].isna().all()
+    s = signals(pd.DataFrame(rows), cik, raw, raw, busy / 10)   # 30% a day: plausible
+    assert s["book_to_market"].loc["2013-03-01", "AAA"] == pytest.approx(5.0)
+
 def test_fundamental_sort_long_short():
     idx = pd.bdate_range("2013-01-01", periods=3)
     closes = pd.DataFrame(1.0, index=idx, columns=list("ABC"))

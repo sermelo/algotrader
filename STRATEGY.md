@@ -241,7 +241,10 @@ close, filled at the next open. No stop by default.
   equity per year. Alpha/beta against SPY.
 - **Fundamental sorts** (`fundamentals.py`): book-to-market = latest stockholders'
   equity (10-K/10-Q) / (latest shares outstanding x unadjusted close), negative equity
-  excluded; gross profitability = latest annual gross profit (reported, else revenue -
+  excluded; the share count is moved to each day's share basis by the splits since its date
+  (jumps of over 20% in raw / adjusted close; dividends ignored), and a market value under twice
+  the 63-day median daily dollar volume (a count of one share class only: SPG, BRK-B, FOX) gives no
+  value (both added 2026-11-04); gross profitability = latest annual gross profit (reported, else revenue -
   cost of revenue; 330-400-day periods) / latest annual total assets; asset growth =
   latest annual assets / previous annual assets - 1; operating profitability (RMW-style)
   = latest annual operating income / latest annual stockholders' equity (positive only). A value counts from the day after

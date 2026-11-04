@@ -38,6 +38,8 @@ REVENUE = ("Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "S
 COST = ("CostOfRevenue", "CostOfGoodsAndServicesSold", "CostOfGoodsSold")
 ANNUAL_FORMS = ("10-K", "10-K/A", "10-KT", "20-F", "40-F")
 MAX_AGE = pd.Timedelta(days=548)          # 18 months after the period end
+SPLIT_STEP = 0.2                          # a day's raw/adjusted ratio change above this is a split
+MAX_TURNOVER = 0.5                        # implied market value under 2x the daily dollar volume: wrong count
 
 
 def _known(facts: pd.DataFrame, tags, annual=False, duration_days=None) -> pd.DataFrame:
@@ -83,11 +85,13 @@ def _previous_year(rows: pd.DataFrame) -> pd.DataFrame:
     return moved.assign(end=moved["end_next"])[["cik", "available", "end", "value"]]
 
 
-def _latest_panel(rows: pd.DataFrame, cik_of: dict, index: pd.DatetimeIndex, max_age=MAX_AGE) -> pd.DataFrame:
+def _latest_panel(rows: pd.DataFrame, cik_of: dict, index: pd.DatetimeIndex, max_age=MAX_AGE,
+                  ends=False):
     """Daily panel: for each ticker, the value with the latest period end among the
-    rows available by that day, while that period ended at most `max_age` before."""
+    rows available by that day, while that period ended at most `max_age` before
+    (with `ends`, also the panel of those period ends)."""
     days = index.to_series()
-    out = {}
+    out, out_end = {}, {}
     for ticker, cik in cik_of.items():
         r = rows[rows["cik"] == cik].sort_values("available", kind="stable")
         if r.empty:
@@ -100,18 +104,57 @@ def _latest_panel(rows: pd.DataFrame, cik_of: dict, index: pd.DatetimeIndex, max
         s = pd.DataFrame(vals, columns=["available", "value", "end"]).drop_duplicates("available", keep="last")
         s = s.set_index("available").sort_index()
         s = s.reindex(index.union(s.index)).ffill().reindex(index)
-        out[ticker] = s["value"].where(days - s["end"] <= max_age)
+        fresh = days - s["end"] <= max_age
+        out[ticker] = s["value"].where(fresh)
+        out_end[ticker] = s["end"].where(fresh)
+    if ends:
+        return pd.DataFrame(out, index=index), pd.DataFrame(out_end, index=index)
     return pd.DataFrame(out, index=index)
 
 
-def signals(facts: pd.DataFrame, cik_map: pd.DataFrame, raw_close: pd.DataFrame) -> dict:
-    """The four signal panels on `raw_close`'s dates and tickers."""
+def split_adjusted(shares: pd.DataFrame, ends: pd.DataFrame, raw_close: pd.DataFrame,
+                   close: pd.DataFrame) -> pd.DataFrame:
+    """Share counts moved to each day's share basis: a count dated `end` is multiplied by the
+    splits between `end` and that day, found as jumps of over `SPLIT_STEP` in raw / adjusted close
+    (dividends move that ratio only slightly and are ignored). Uses prices up to each day only."""
+    out = shares.copy()
+    for t in shares.columns:
+        if t not in raw_close or t not in close:
+            continue
+        ratio = (raw_close[t] / close[t]).replace([np.inf, -np.inf], np.nan).dropna()
+        if ratio.empty:
+            continue
+        step = ratio / ratio.shift()
+        step = step.where((step - 1).abs() > SPLIT_STEP, 1.0).fillna(1.0)
+        ratio = step.cumprod()                                     # changes only at splits
+        e = ends[t]
+        known = e.notna()
+        pos = np.searchsorted(ratio.index.values, e[known].values, side="right") - 1
+        at_end = ratio.to_numpy()[np.clip(pos, 0, None)]       # a count older than the prices: the first ratio
+        now = ratio.reindex(shares.index).ffill()
+        factor = pd.Series(np.nan, index=shares.index)
+        factor[known] = at_end / now[known].to_numpy()
+        out[t] = shares[t] * factor.fillna(1.0)
+    return out
+
+
+def signals(facts: pd.DataFrame, cik_map: pd.DataFrame, raw_close: pd.DataFrame, close=None,
+            dollar_volume=None) -> dict:
+    """The four signal panels on `raw_close`'s dates and tickers. With the adjusted `close`,
+    share counts are split-adjusted to each day (`split_adjusted`); with `dollar_volume`, a market
+    value under 1 / `MAX_TURNOVER` times its 63-day median daily dollar volume gives no
+    book-to-market (a count of one share class only, e.g. SPG, BRK-B, FOX)."""
     index = raw_close.index
     cik_of = {t: int(c) for t, c in cik_map["cik"].dropna().items() if t in raw_close.columns}
     panel = lambda rows: _latest_panel(rows, cik_of, index)
     equity = panel(_known(facts, EQUITY))
-    shares = panel(_known(facts, SHARES))
+    shares, share_ends = _latest_panel(_known(facts, SHARES), cik_of, index, ends=True)
+    if close is not None:
+        shares = split_adjusted(shares, share_ends, raw_close, close.reindex(index))
     mcap = shares * raw_close.reindex(columns=equity.columns.union(shares.columns))
+    if dollar_volume is not None:
+        dv = dollar_volume.reindex(index).rolling(63, min_periods=5).median()
+        mcap = mcap.where(~(mcap * MAX_TURNOVER < dv.reindex(columns=mcap.columns)))
     btm = (equity / mcap.reindex(columns=equity.columns)).where(lambda x: x > 0)
     year = (330, 400)
     annual = lambda tags, days=None: _known(facts, tags, annual=True, duration_days=days)

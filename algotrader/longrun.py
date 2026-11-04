@@ -137,9 +137,11 @@ def fundamental_panels(frames: dict, members=None, edgar=EDGAR) -> dict:
     if id(frames) in _PANELS:
         return _PANELS[id(frames)]
     raw = pd.DataFrame({t: f["raw_close"] for t, f in frames.items() if "raw_close" in f})
+    close = pd.DataFrame({t: f["close"] for t, f in frames.items() if "raw_close" in f})
+    dollar_volume = pd.DataFrame({t: f["close"] * f["volume"] for t, f in frames.items() if "raw_close" in f})
     facts = pd.read_parquet(Path(edgar) / "facts.parquet")
     cik = pd.read_csv(Path(edgar) / "cik_map.csv", index_col=0)
-    _PANELS[id(frames)] = {"panels": signals(facts, cik, raw)}
+    _PANELS[id(frames)] = {"panels": signals(facts, cik, raw, close, dollar_volume)}
     return _PANELS[id(frames)]
 
 
