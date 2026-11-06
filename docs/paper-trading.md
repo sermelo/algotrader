@@ -12,14 +12,16 @@ cash and record; their orders are netted per stock (details in STRATEGY.md, "Pap
 - **Momentum, top 5, weekly, $15,000** (added 2026-10-28, sergio's candidate for real money): each Friday (the
   week's last NYSE session) after the close, rank today's members by their return from 12 months to 1 month ago
   (adjusted IBKR daily closes) and hold the top 5 at equal weight, trading only when the names change. Backtest
-  2012 to Oct 2026: +26.9% a year (about +2.0% a month), Sharpe 0.97 [0.60, 1.35], volatility 29%, max drawdown
-  -35.1%, worst month -27.8%, turnover about 820% a year; Fama-French alpha +9.6% (t 1.91, not significant). It is
-  the market with about twice the swings, best of 1,226 tries; its lead over operating profitability is all after
-  2018 (2012-18 +16.3% against +18.5% a year).
+  2012 to Nov 2026 (rerun 2026-11-06 after the second Tiingo batch; before +26.9%, 0.97, -35.1%): +27.5% a year
+  (about +2.0% a month), Sharpe 0.97 [0.61, 1.38], volatility 30%, max drawdown -36.8%, worst month -23.1% (Jul 2026),
+  turnover about 780% a year; Fama-French alpha +11.6% (t 2.24: above 2, but picked as the best of 1,226 tries after
+  seeing the results, so not evidence of an edge). It is the market with about twice the swings; its lead over operating profitability is
+  all after 2018 (2012-18 +15.9% against +19.1% a year).
 - **Operating profitability, top 10, monthly, $15,000** (about $1,500 a stock). Backtest 2012-2026 on the
-  point-in-time S&P 500: CAGR +16.7% (about +1.29% a month), Sharpe 0.99 [0.55, 1.50], max drawdown -41.0%
-  (Jan-Mar 2020, worst month -17.9%); SPY +15.0% (+1.17% a month), 0.93, -33.7% (rerun 2026-10-28 with the
-  fundamentals fix; before it +16.0%, 0.98, -34.9%). Since 2019 +15.1% a year against SPY +17.2%. Fama-French alpha not significant: **plan on about the market**
+  point-in-time S&P 500: CAGR +16.4% (about +1.27% a month), Sharpe 0.98 [0.54, 1.47], max drawdown -41.0%
+  (Jan-Mar 2020, worst month -17.9%); SPY +15.0% (+1.17% a month), 0.93, -33.7% (rerun 2026-11-06 after the second
+  Tiingo batch and the share-count fix; 2026-10-28 +16.7%, 0.99; before the fundamentals fix +16.0%, 0.98, -34.9%).
+  Since 2019 +14.1% a year against SPY +17.2%. Fama-French alpha not significant: **plan on about the market**
   (6-8% a year is a sober expectation). The test is of execution and costs, not of an edge.
 - Rule, as in the backtest: after the close of the last NYSE session of each month, rank today's S&P 500
   members by latest annual operating income / stockholders' equity (positive equity only; a report counts

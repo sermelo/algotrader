@@ -178,6 +178,11 @@ Updated 2026-10-17. In order; details in the sections below.
     verdict changed (concentration 2 of 11, weekly 0 of 10, volatile subset 0 of 12). Paper configuration (operating
     profitability top 10) Sharpe 0.98 -> 0.99, +16.0% -> +16.7% a year, max drawdown -34.9% -> -41.0%; top 5 1.04 -> 0.94;
     asset growth ranks 4-5 +30.7% -> +20.3% a year; combined signal top 5 0.21 -> 0.46.
+20. **Second Tiingo batch and share-count fix, long history rerun, done 2026-11-06** (TASKS 9-10): 211 more Tiingo symbols
+    (most of the 166 members whose prices had ended in March 2026), book-to-market share counts split-adjusted and one-class
+    counts dropped; every long family rerun (`scripts/long_rerun.sh`). No verdict changed except concentration 2 -> 1 of 11
+    (asset growth top 5 t 2.40 -> 1.87). Paper books: operating profitability top 10 0.98, +16.4% a year; momentum top 5
+    weekly 0.97, +27.5% a year, max drawdown -36.8%.
 
 **Mid-cap test (started 2026-10-18)**: do the factor strategies work outside the S&P 500? Universe from dollar volume
 (`sizeuniverse.py`, `scripts/size_universe.py`): ranks 1-1,500 minus S&P 500 members and SEC fund tickers, about 1,040 names

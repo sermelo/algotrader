@@ -5,7 +5,10 @@ priority list; keep it updated as items are done).
 
 ## Where things stand
 
-- **Read `TASKS.md` first** (state, decisions, open items). 2026-10-28: the stale-SEC-values fix in `fundamentals.py`
+- **Read `TASKS.md` first** (state, decisions, open items). 2026-11-06: second Tiingo batch and book-to-market
+  share-count fix; every long-history family rerun and merged (ROADMAP 20; no verdict changed except concentration 2 -> 1
+  of 11; paper books: operating profitability top 10 Sharpe 0.98, +16.4% a year; momentum top 5 weekly 0.97, +27.5%).
+  2026-10-28: the stale-SEC-values fix in `fundamentals.py`
   and the full long-history rerun it needed are committed (ROADMAP 19; no verdict changed; paper configuration Sharpe
   0.99, +16.7% a year, max drawdown -41.0%). Paper account converted to dollars; alerts set up; cron jobs wait for
   sergio (start postponed until after the November Tiingo batch).

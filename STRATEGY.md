@@ -364,7 +364,8 @@ places with the best-ranked names not held (3/10, 5/20, 20/50). Multi-strategy p
 returns: all eleven at top 5 or 20, and the five (or one) with the best Sharpe on all earlier days, chosen every January.
 Pre-registered rule: concentration is better for a strategy if top 3 or top 5 minus top 50 has a Fama-French alpha
 t >= 2 at base costs; better in general only if that holds for most strategies. **Result (2026-10-19): not better in
-general**, 2 of 11 pass (momentum top 3, asset growth top 5); README, "Long history".
+general**, 2 of 11 passed (momentum top 3, asset growth top 5); after the 2026-11-06 rerun 1 of 11 (momentum; asset growth
+t 1.87); README, "Long history".
 
 ## Weekly versus monthly rebalancing (`algotrader/rebalance.py`, long history)
 
@@ -416,7 +417,7 @@ cash, Fama-French alpha -3.1% a year (t -1.68), beta 0.38, max drawdown -39.2% (
 Two long-history strategies run forward on one IBKR paper account, each as a **book** with its own shares and
 cash (`config/paper.json`; setup in `docs/paper-trading.md`): operating profitability top 10, monthly, $15,000,
 and momentum top 5, weekly, $15,000 (added 2026-10-28 at sergio's request; his high-return candidate, backtest
-+26.9% a year, Sharpe 0.97, max drawdown -35.1%).
++26.9% a year, Sharpe 0.97, max drawdown -35.1%; +27.5%, 0.97, -36.8% after the 2026-11-06 rerun).
 
 **Operating profitability.** The long-history `FundamentalSort` run forward. After the close of the last NYSE session of a month
 (exchange calendar XNYS), the members are today's S&P 500 list and the facts each member's current SEC

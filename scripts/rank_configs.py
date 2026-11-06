@@ -57,8 +57,14 @@ def main():
     spy = pd.read_csv(SOURCES["long_conc"], index_col=0, parse_dates=True)["SPY"]
     spy = returns_stats(spy[spy.index >= START].dropna())
     cfg = json.loads(PAPER.read_text())
-    paper = {"operating_profitability": "op_profitability"}.get(cfg["signal"], cfg["signal"])
-    chosen = df[df["configuration"] == f"{paper}|top{cfg['top_n']}"]
+    books = cfg.get("books") or [cfg]                    # older single-book config
+    names = []
+    for b in books:
+        sig = {"operating_profitability": "op_profitability"}.get(b["signal"], b["signal"])
+        names.append(f"{sig}|top{b['top_n']}" + ("|W" if b.get("every", "M") == "W" else ""))
+    chosen = df[df["configuration"].isin(names)]
+    listing = "; ".join(f"`{b['signal']}` top {b['top_n']}, {'weekly' if b.get('every', 'M') == 'W' else 'monthly'}, "
+                        f"${b['capital']:,.0f}" for b in books)
     end = pd.read_csv(SOURCES["long_vol"], index_col=0, parse_dates=True).index.max().date()
     text = f"""# Ranking of the long-history configurations
 
@@ -74,8 +80,9 @@ CAGR table is mostly concentration (3-5 stocks) and leverage to the market, with
 
 ## Paper-trading configuration (`config/paper.json`)
 
-`{cfg['signal']}`, top {cfg['top_n']}, monthly, ${cfg['capital']:,.0f}: chosen on 2026-10-22 as the best
-risk-adjusted option that is not concentrated in a handful of names (a top-10 portfolio, low turnover).
+{listing}. Operating profitability was chosen on 2026-10-22 as the best risk-adjusted option that is not
+concentrated in a handful of names (a top-10 portfolio, low turnover); momentum top 5 weekly was added on
+2026-10-28 as sergio's high-return candidate.
 
 {table(chosen)}
 

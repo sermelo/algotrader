@@ -374,84 +374,87 @@ Reading:
 
 `python -m algotrader.longrun` (and `longrun_chart`) walk forward over 14.8 years (yearly folds from
 2012; chart CNN from 2014; deep arbitrage from 2013) on the point-in-time S&P 500 universe, $1M, the
-same costs, adjusted prices from Tiingo, else the adjusted Hugging Face daily series, else WIKI. Full
+same costs, adjusted prices from Tiingo, else the adjusted Hugging Face daily series, else WIKI (data to 2026-11-04). Full
 tables (26 experiments): [`results/long/summary.md`](results/long/summary.md), factor regressions
 [`results/long/factor_alpha.md`](results/long/factor_alpha.md); the same run without the Hugging Face
 series is in `results/long_nohf/`. Buy and hold of SPY over the same days: Sharpe 0.93, +15.0% a year.
-Every result with SEC fundamentals was rerun on 2026-10-28 after the stale-value fix in `fundamentals.py`
-(STRATEGY.md, "Fundamental sorts"); price-only results did not change.
+Every long-history result was rerun on 2026-11-05/06 (`scripts/long_rerun.sh`) after the second Tiingo batch (211 more
+symbols, so most of the 166 members whose prices had ended in March 2026 now run to November) and the book-to-market
+share-count fix (STRATEGY.md, "Fundamental sorts"). No verdict changed; the numbers below are from that run.
 
-- **Long-only strategies match the market, they do not beat it.** Sharpe 0.5 to 0.9 (operating
-  profitability 0.84, profitability 0.84, high 52-week 0.81, pead 0.79, momentum 0.79, asset growth 0.79,
-  low volatility 0.78, value 0.64), all with beta about 1 (low volatility 0.61) and alpha against
-  SPY between -6.7% and +1.2% a year, none significantly positive; short-term reversal is significantly
-  negative (-6.7% a year, t -2.06). Against the Fama-French five
-  factors plus momentum no strategy has a positive alpha t-statistic above 1.12 (a long-short asset-growth sort, +1.7% a year).
-- **Long-short portfolios earn nothing** after costs (Sharpe -0.35 to +0.17): momentum 0.03 (it
-  loads 0.61 on the momentum factor, alpha -2.3% a year, t -1.07), value 0.02, profitability -0.04,
-  operating profitability -0.09, asset growth 0.17.
-- **Price-chart CNN** (small network): long 0.54 (alpha -3.3%, t -1.36), long-short -0.01; turnover
+- **Long-only strategies match the market, they do not beat it.** Sharpe 0.55 to 0.91 (operating
+  profitability 0.91, profitability 0.84, asset growth 0.83, high 52-week 0.82, pead 0.80, low volatility 0.80,
+  momentum 0.78, value 0.68, reversal 0.55), all with beta about 1 (low volatility 0.60) and alpha against
+  SPY between -5.7% and +1.5% a year, none significant (short-term reversal -5.7% a year, t -1.82). Against
+  the Fama-French five factors plus momentum no strategy has a positive alpha t-statistic above 1.51 (a
+  long-short asset-growth sort, +2.3% a year).
+- **Long-short portfolios earn nothing** after costs (Sharpe -0.47 to +0.29): momentum -0.04 (it
+  loads 0.69 on the momentum factor, alpha -3.1% a year, t -1.53), value 0.02, profitability -0.06,
+  operating profitability -0.09, asset growth 0.29.
+- **Price-chart CNN** (small network): long 0.56 (alpha -3.0%, t -1.14), long-short -0.15; turnover
   about 1,100% a year.
-- **Deep arbitrage fails with next-open execution**: Sharpe -5.37 (-4.79 without the Hugging Face
-  series), 0 of 14 folds positive, turnover 2,677% a year. Gross Sharpe is -0.15, so even before costs
+- **Deep arbitrage fails with next-open execution**: Sharpe -3.35 (-6.03 without the Hugging Face
+  series), 0 of 14 folds positive, turnover 2,036% a year. Gross Sharpe is -0.15, so even before costs
   there is nothing (see ROADMAP S8: the paper trades at the close).
 - **Luck bar:** 1,226 configurations in all (129 here, 44 in the stop-loss test, 138 in the concentration test, 60 in the weekly
   test, 16 in the volatile-subset test, 58 in the mid-cap test, 3 in the merger test); the best zero-edge one would reach a Sharpe of about 0.86 over 14.8 years ([`results/trials.md`](results/trials.md)). No long-history result clears it above SPY's 0.93.
 - **Combined signal and trend filter** (`combo.py`, 5 more experiments): blending momentum, low
-  volatility, 52-week high and profitability gives long-only 0.75 (price signals only 0.75), alpha
-  -0.5% a year (t -0.24) and long-short -0.25: blending does not create an edge. Holding the
-  combined signal only while SPY is above its 200-day mean gives Sharpe 0.78 and CAGR +8.5% with a
-  maximum drawdown of -16.0% (-32.9% without the filter), beta 0.39: it lowers risk by holding less of
-  the market, alpha +2.8% a year (t 1.17, not significant). Filtered momentum 0.61 (drawdown -25.8%).
-- **Blending the strategies** (`scripts/strategy_blend.py`, `results/long/blend.md`, 25 strategies, 2014 to 2026, SPY Sharpe 0.83
-  over those days): equal-weight long-only 0.72, inverse-volatility 0.72, all long-short about -0.1, long-only plus
-  long-short 0.71 with max drawdown -24% (SPY -34%) and beta 0.53, inverse-vol of everything 0.70 with drawdown -15% and
+  volatility, 52-week high and profitability gives long-only 0.74 (price signals only 0.78), alpha
+  -0.6% a year (t -0.28) and long-short -0.26: blending does not create an edge. Holding the
+  combined signal only while SPY is above its 200-day mean gives Sharpe 0.76 and CAGR +8.2% with a
+  maximum drawdown of -16.1% (-32.5% without the filter), beta 0.39: it lowers risk by holding less of
+  the market, alpha +2.6% a year (t 1.07, not significant). Filtered momentum 0.60 (drawdown -24.4%).
+- **Blending the strategies** (`scripts/strategy_blend.py`, `results/long/blend.md`, 25 strategies, 2014 to 2026): equal-weight long-only 0.75,
+  inverse-volatility 0.75, all long-short -0.1 to -0.2, long-only plus
+  long-short 0.73 with max drawdown -24% (SPY -34%) and beta 0.53, inverse-vol of everything 0.72 with drawdown -15% and
   beta 0.32. Long-only strategies are 0.72 correlated, so they diversify little; the long-short ones are uncorrelated
   with everything (0.02 to -0.04) but each earns about zero, so averaging them adds up to zero. Blends lower the
   risk by holding less of the market, not by adding return: alpha stays near zero (all |t| < 1).
 - **Stop-losses** (`stoploss.py`, `longrun_stop.py`, [`results/long_stop/summary.md`](results/long_stop/summary.md); momentum,
   low volatility, 52-week high and the combined price signal, each with no stop or a 10-30% fixed or trailing stop, 44
-  configurations): **every stop gives up more gain than the loss it avoids.** 60-87% of the stopped stocks were higher at the
-  next monthly rebalance than where they were sold; the gains given up were 1.5 to 16 times the losses avoided (net -0.1% to
-  -9.5% of the portfolio a year). What stops do buy is a smaller drawdown at about the same CAGR on the slow strategies: low
-  volatility with a 15% trailing stop Sharpe 0.92, CAGR +10.4%, max drawdown -18.6% (no stop 0.80, +10.5%, -34.9%), 52-week high
-  with 20% trailing 0.86, +11.2%, -21.8% (no stop 0.81, +11.1%, -31.0%); CAGR holds up despite the negative net because the lower
-  volatility costs less compounding. On momentum tight stops hurt (10% trailing: +7.4% a year against +16.1%) and the walk-forward
-  chose no stop or 30% in 13 of 15 years. The Sharpe gains (0.05-0.12) are well inside the noise; like the trend filter, a stop
+  configurations): **every stop gives up more gain than the loss it avoids.** 56-86% of the stopped stocks were higher at the
+  next monthly rebalance than where they were sold; the gains given up were 1.4 to 6 times the losses avoided (net -0.1% to
+  -9.4% of the portfolio a year). What stops do buy is a smaller drawdown at about the same CAGR on the slow strategies: low
+  volatility with a 15% trailing stop Sharpe 0.95, CAGR +10.9%, max drawdown -18.4% (no stop 0.84, +11.0%, -35.1%), 52-week high
+  with 20% trailing 0.88, +11.5%, -21.9% (no stop 0.82, +11.3%, -31.1%); CAGR holds up despite the negative net because the lower
+  volatility costs less compounding. On momentum tight stops hurt (10% trailing: +7.8% a year against +16.4%) and the walk-forward
+  chose no stop or 30% in 13 of 15 years. The Sharpe gains (0.05-0.11) are well inside the noise; like the trend filter, a stop
   trades return-free risk reduction, not an edge.
 - **How many stocks to hold** (`concentration.py`, [`results/long_conc/summary.md`](results/long_conc/summary.md); eleven
   long-only strategies at top 3, 5, 10, 20, 50, rank bands, buy/hold buffers and multi-strategy portfolios, 138 configurations):
   **fewer stocks do not earn more in general.** Pre-registered rule (top 3 or top 5 minus top 50 with Fama-French alpha t >= 2,
-  for most strategies): 2 of 11 pass (momentum top 3 +12.0% a year, t 2.12; asset growth top 5 +8.9%, t 2.40), about what 22
-  tests give by chance. Averaged over the strategies, Sharpe falls as N shrinks (top 50 0.74, 20 0.70, 10 0.66, 5 0.61, 3 0.56) at
-  about the same CAGR (+11.7% to +12.3% a year) with more volatility (17% to 25%) and deeper drawdowns (-38% to -50%). The top
-  three ranks beat ranks 21-50 only for momentum (+17.3% a year, t 2.57); on the combined price signal they are significantly
-  worse (-11.5%, t -3.01). A buffer (buy the top 5, sell only when out of the top 20) cuts turnover (by about half or more on 6 of
-  11, little on earnings drift and seasonality) but does not raise Sharpe (on 7 of 11 it is lower); monthly large-cap trading
-  costs little to begin with. Combining:
-  all eleven at top 5 each Sharpe 0.86 (+13.5% a year), the best five chosen each January on earlier data 0.88 (+14.3%), with the
-  buffer 0.92, the single best strategy chosen each January (operating profitability every year, so the same as holding it) at top 5 0.94
-  (+17.3% a year, Fama-French alpha +3.3%, t 1.12), SPY 0.93 (+15.0%). None is significant. The highest Sharpe of the test is
-  operating profitability top 10 (the paper configuration), 0.99 [0.55, 1.50], +16.7% a year, max drawdown -41.0%: one of 138
-  tries, against a luck bar of 0.86 above SPY's level (before the 2026-10-28 fundamentals fix top 5 was 1.04 and top 10 0.98).
+  for most strategies): 1 of 11 passes (momentum: top 3 +15.7% a year, t 2.66; top 5 +9.3%, t 2.09; asset growth, which passed
+  before the 2026-11 rerun, now t 1.87), about what 22 tests give by chance. Averaged over the strategies, Sharpe falls as N
+  shrinks (top 50 0.76, 20 0.72, 10 0.66, 5 0.61, 3 0.57) at about the same CAGR (+11.8% to +12.6% a year) with more volatility
+  (17% to 25%) and deeper drawdowns (-38% to -50%). The top three ranks beat ranks 21-50 only for momentum (+18.7% a year, t
+  2.67); on the combined price signal they are significantly worse (-14.0%, t -3.92). A buffer (buy the top 5, sell only when out
+  of the top 20) cuts turnover (by about half on most strategies, little on earnings drift and seasonality) but does not raise
+  Sharpe (on most it is lower); monthly large-cap trading costs little to begin with. Combining:
+  all eleven at top 5 each Sharpe 0.88 (+13.8% a year), the best five chosen each January on earlier data 0.92 (+14.8%), with the
+  buffer 0.92, the single best strategy chosen each January (operating profitability every year, so the same as holding it) at top 5 0.92
+  (+16.8% a year, Fama-French alpha +3.2%, t 1.09), SPY 0.93 (+15.0%). None is significant. The highest Sharpe of the test is
+  operating profitability top 10 (the paper configuration), 0.98 [0.54, 1.47], +16.4% a year, max drawdown -41.0%: one of 138
+  tries, against a luck bar of 0.86 above SPY's level.
 - **Weekly instead of monthly rebalancing** (`rebalance.py`, [`results/long_rebal/summary.md`](results/long_rebal/summary.md); ten
   strategies at top 5, top 20 and the top 5 / keep-in-top-20 buffer, 60 configurations): **no better.** Pre-registered rule (weekly
   minus monthly with Fama-French alpha t >= 2 for most strategies): 0 of 10 pass. Averaged over the strategies weekly checking
-  roughly doubles turnover (top 20: 409% to 940% a year) for the same or lower Sharpe (top 5: 0.60 to 0.57; top 20: 0.72 to 0.68 at
-  base costs, 0.70 to 0.65 at stress) and CAGR (top 20 +12.1% to +11.5% a year). Even before costs it adds nothing (top 20 gross
-  0.73 to 0.72). Largest gain momentum top 5 (+4.6% a year, t 2.05; Fama-French alpha t 1.95, just under the bar); largest loss earnings drift (-2.3% to -3.1% a year, its signal
-  is stale by the next week). Operating profitability top 5: 0.94 monthly, 0.94 weekly.
+  roughly doubles turnover (top 20: 419% to 953% a year) for the same or lower Sharpe (top 5: 0.62 to 0.58; top 20: 0.73 to 0.69 at
+  base costs, 0.72 to 0.66 at stress) and CAGR (top 20 +12.5% to +11.7% a year). Even before costs it adds nothing (top 20 gross
+  0.75 to 0.73). Largest gain momentum top 5 (+3.3% a year, t 1.51; Fama-French alpha t 1.56; Sharpe 0.85 to 0.97, +23.3% to
+  +27.5% a year, the paper's momentum book); largest loss earnings drift (-2.4% to -3.3% a year, its signal is stale by the next
+  week). Operating profitability top 5: 0.92 monthly, 0.93 weekly.
 - **Picking only from volatile stocks** (`volsubset.py`, [`results/long_vol/summary.md`](results/long_vol/summary.md); sergio's
   idea: the strategies need big price moves, so pick from the most volatile third of the members, about 165 names, and check
   more often; momentum and operating profitability at top 5 and top 20, monthly, weekly and daily, 16 new configurations):
   **no better.** All three pre-registered rules fail: no volatile version has Fama-French alpha t >= 2 (best momentum top 5
-  weekly +9.2% a year, t 1.72, about what the same strategy on all members gives, +9.6%, t 1.91); volatile minus all members
-  passes for neither strategy (Fama-French alpha t -0.58 to +1.08); weekly or daily minus monthly passes for neither (best
-  momentum top 5 weekly +5.0% a year, t 1.92). Momentum on the volatile third has about the same Sharpe (0.79-0.95 against
-  0.76-0.97) with more volatility and beta 1.25-1.32: a higher CAGR (top 20 monthly +19.4% against +16.1% a year) is market and
-  size exposure, not alpha. Operating profitability is clearly worse (top 5 monthly Sharpe 0.69 against 0.94, max drawdown -53%
-  against -40%): the quality strategy works on steady companies, and the filter removes them. Daily checking roughly doubles
-  turnover again (momentum top 20: 426% monthly, 1,967% daily) for nothing.
+  weekly +10.0% a year, t 1.81, less than the same strategy on all members, +11.6%, t 2.24: one of the many weekly/daily
+  versions tried, not a pre-registered test); volatile minus all members passes for neither strategy (Fama-French alpha t -0.86
+  to +1.06); weekly or daily minus monthly passes for neither (best momentum top 5 weekly +2.6% a year, t 1.04). Momentum on
+  the volatile third has about the same Sharpe (0.77-0.93 against 0.77-0.97) with more volatility and beta 1.26-1.31: a higher
+  CAGR (top 20 monthly +20.4% against +16.4% a year) is market and size exposure, not alpha. Operating profitability is clearly
+  worse (top 5 monthly Sharpe 0.71 against 0.92, max drawdown -53% against -40%): the quality strategy works on steady
+  companies, and the filter removes them. Daily checking roughly doubles turnover again (momentum top 20: 440% monthly, 1,985%
+  daily) for nothing.
 - **Run-to-run noise in the portfolio engine (found 2026-10-20, fixed 2026-10-22):** `PortfolioBacktester` used to place the
   day's buys in set order, which changes with Python's hash seed, and the last buy absorbed any cash shortfall, so identical code
   and data gave slightly different results (momentum top 5: 0.83 in the concentration run, 0.77 in the weekly run). It now
@@ -459,7 +462,7 @@ Every result with SEC fundamentals was rerun on 2026-10-28 after the stale-value
   portfolio result above was rerun with it. Most moved by under 0.01 Sharpe, the largest in the main tables by 0.05 (momentum
   with the SPY trend filter 0.56 to 0.61), some 5-stock portfolios by up to 0.19; no verdict changed. The two runs now agree
   (momentum top 5 0.81, combined signal top 5 0.21 in both).
-- The Hugging Face series changes a Sharpe by a median 0.05 (largest 0.58, `deep_arb_long`).
+- The Hugging Face series changes a Sharpe by a median 0.03 (largest 2.68, `deep_arb_long`; otherwise at most 0.08).
 
 ## Mid-cap test (2008 to Oct 2026, ex-S&P 500)
 
@@ -516,18 +519,18 @@ earnings releases, so that something else is better to hold then?) on the commit
 cash. Full tables: [`results/calendar/summary.md`](results/calendar/summary.md), `by_week.csv`, `by_month.csv`.
 
 - **No calendar pattern that repeats.** Shuffling the week or month labels within each year gives a spread of the means as
-  large as the real one in 4-89% of shuffles (operating profitability by week 4%, momentum by month 5%), but the pattern of
-  2012-2018 does not predict 2019-2026 (rank correlations -0.15 to +0.23). 30 of 312 strategy-weeks have |t| > 2 against
+  large as the real one in 3-76% of shuffles (momentum by month 3%, operating profitability by week 5%), but the pattern of
+  2012-2018 does not predict 2019-2026 (rank correlations -0.26 to +0.26). 29 of 312 strategy-weeks have |t| > 2 against
   SPY, about what overlapping strategies give by chance.
-- **The strongest one fails its holdout.** Momentum beat SPY in May in 14 of 15 years (+6.1% over SPY in May, t 4.2), but in
-  the four years before (2008-2011, not used to find it) monthly momentum lost to SPY in May every year (top 5: -1.5%, -8.8%,
-  -3.3%, -2.9%); on mid-caps it is weaker (+1.8% in May against +0.3% in other months, 9 of 15 years).
+- **The strongest one fails its holdout.** Momentum beat SPY in May in 14 of 15 years (+7.3% over SPY in May, t 4.1), but in
+  the four years before (2008-2011, not used to find it) monthly momentum lost to SPY in May every year (top 5: -1.5%, -8.7%,
+  -3.3%, -2.4%); on mid-caps it is weaker (+1.8% in May against +0.3% in other months, 9 of 15 years).
 - **Earnings season** (the 40% of days with the most S&P 500 releases): every option earns more in season, SPY too (+20.7%
-  against +11.7% a year); over SPY the difference in minus out is +1.4% to +12.4% a year with t 0.24 to 1.31: nothing
+  against +11.7% a year); over SPY the difference in minus out is +1.4% to +15.4% a year with t 0.25 to 1.64: nothing
   significant.
 - **Switching by month does not help.** Holding, each month, the option with the best mean in that month over earlier years
-  (walk-forward, 0.10% per switch, 2015-2026): +16.0% a year, Sharpe 0.65, max drawdown -53.1%, against momentum top 5 weekly
-  +25.4% (0.89, -35.1%), operating profitability +14.8% (0.86) and SPY +13.7% (0.82).
+  (walk-forward, 0.10% per switch, 2015-2026): +12.7% a year, Sharpe 0.55, max drawdown -57.7%, against momentum top 5 weekly
+  +27.4% (0.93, -35.6%), operating profitability +14.6% (0.85) and SPY +13.7% (0.82).
 
 ## Merger arbitrage (2008 to Mar 2026)
 
@@ -651,10 +654,11 @@ commit `7fc720e` and earlier):
   trades; dual momentum, multi-horizon trend, sector momentum and the SPY/DIA and
   QQQ/XLK pairs trade only or mainly ETFs. The long-history experiments trade S&P 500
   stocks only (SPY is just the benchmark).
-- **The long-history price data ends on 2026-03-31 for 166 of the 503 current members** (Hugging Face series
-  without Tiingo data; ROADMAP pending 2), so from April 2026 the long backtests treat them as delisted and pick
-  from the others (found 2026-10-22 when the live signal's top 10 differed from the backtest's in four names
-  with identical scores). About 6 of 178 months are affected.
+- **Until the 2026-11-05 Tiingo batch the long-history prices ended on 2026-03-31 for 166 of the 503 current members**
+  (Hugging Face series without Tiingo data; found 2026-10-22 when the live signal's top 10 differed from the backtest's
+  in four names with identical scores), so the backtests treated them as delisted from April 2026. After that batch
+  (results rerun 2026-11-06) 14 names of the last membership list still have no Tiingo prices after September 2026
+  (some delisted or renamed, some not on Tiingo: BK, BRK.B, EQR, FI, MMC, PSKY ...).
 - Results are pre-tax (the Spanish two-month rule on repurchased losses is not modelled).
   Not investment advice.
 

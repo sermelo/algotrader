@@ -214,15 +214,19 @@ market-on-open orders at the **Monday 2026-11-02** open.
 
 ## Dated
 
-10. [ ] **Tiingo batch done 2026-11-05 01:58 UTC** (211 of 212 symbols saved, NYX empty; 664 of 665 wanted symbols
+10. [x] **Done 2026-11-06.** Tiingo batch done 2026-11-05 01:58 UTC (211 of 212 symbols saved, NYX empty; 664 of 665 wanted symbols
    now on disk; `history check`: 717 ok, 51 partial, 32 missing, 18 mismatch). The first batch
    (2026-10-16) did not stop at the quota: it crashed on NYX after 472 symbols, because Tiingo answers `[]` (HTTP 200)
    for a symbol without data; fixed in `history.tiingo_download` (`[]` = missing, other non-CSV replies logged as
    errors and retried). This changes `history.py`, so `results/long*` show stale until the reruns below.
-   **Long rerun running since 2026-11-05 02:04 UTC** (`scripts/long_rerun.sh`, about
-   30 hours like the 10-27 run, outputs to `data/rerun_t/`, log `data/long_rerun.log`). **Do not rsync code into
-   `~/algotrader-work` until `data/rerun_t/all.done` exists** (the rerun and the paper cron run from it). Then: copy the
-   outputs into `results/long*`, `french report`, `trials`, `drawdown`, update README/STRATEGY numbers, commit.
+   **Long rerun done** (`scripts/long_rerun.sh`, 2026-11-05 02:04 to 2026-11-06 08:58 UTC, outputs merged into
+   `results/long*`, `results/mid`; reports, `french`, `drawdown`, `trials`, `ranking.md`, `blend.md`, calendar check
+   regenerated; README/STRATEGY/docs numbers updated). No verdict changed except concentration 2 -> 1 of 11 (asset growth
+   t 2.40 -> 1.87). Paper books: operating profitability top 10 0.99 -> 0.98, +16.7% -> +16.4%; momentum top 5 weekly
+   0.97 -> 0.97, +26.9% -> +27.5%, max drawdown -35.1% -> -36.8%. Main long table: operating profitability 0.84 -> 0.91,
+   value 0.64 -> 0.68, reversal 0.48 -> 0.55; deep arbitrage -5.37 -> -3.35. Mid-cap unchanged (no Tiingo).
+   `scripts/rank_configs.py` now reads the two-book config. 14 names of the last membership list still lack Tiingo
+   prices after September 2026 (README, Limitations).
    On or after 2026-11-01: Tiingo second batch (ROADMAP pending 2: `scripts/history_queue.sh` on the VPS for the
    remaining ~216 symbols; 166 current members' prices end 2026-03-31 until then), then `history check` and the long
    reruns (combine with item 9).

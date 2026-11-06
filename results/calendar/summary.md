@@ -8,46 +8,46 @@ Shuffle p: share of 2,000 within-year shuffles of the week (month) labels whose 
 
 | Strategy | Week shuffle p | Week split corr | Month shuffle p | Month split corr |
 |---|---|---|---|---|
-| op_profitability top 10 (paper) | 0.04 | +0.09 | 0.89 | +0.23 |
-| momentum top 5 weekly (paper) | 0.08 | +0.14 | 0.05 | +0.19 |
-| momentum top 3 | 0.10 | +0.06 | 0.05 | -0.15 |
-| asset_growth top 5 | 0.22 | +0.07 | 0.46 | +0.22 |
-| low_vol top 20 | 0.51 | +0.20 | 0.61 | -0.08 |
+| op_profitability top 10 (paper) | 0.05 | +0.16 | 0.76 | +0.17 |
+| momentum top 5 weekly (paper) | 0.13 | +0.18 | 0.03 | +0.03 |
+| momentum top 3 | 0.16 | +0.11 | 0.08 | -0.26 |
+| asset_growth top 5 | 0.28 | -0.03 | 0.32 | +0.25 |
+| low_vol top 20 | 0.49 | +0.22 | 0.59 | +0.01 |
 | cash | 0.39 | +0.11 | 0.30 | +0.26 |
 
 ## By month (mean of each year's return in that month)
 
 | Month | op_profitability top 10 (paper) | momentum top 5 weekly (paper) | momentum top 3 | asset_growth top 5 | low_vol top 20 | SPY | cash |
 |---|---|---|---|---|---|---|---|
-| 1 | +1.3% | +3.8% | +5.1% | +3.5% | +0.9% | +1.3% | +0.2% |
-| 2 | +1.0% | +2.9% | +2.8% | +2.2% | +1.1% | +0.8% | +0.1% |
-| 3 | +0.6% | -0.4% | -0.8% | +1.0% | +1.7% | +0.3% | +0.1% |
-| 4 | +1.9% | +1.0% | +0.7% | +5.6% | +1.3% | +1.7% | +0.1% |
-| 5 | +1.1% | +7.6% | +9.2% | +0.3% | -0.4% | +1.5% | +0.1% |
-| 6 | +2.1% | +1.4% | +0.6% | +1.4% | +1.3% | +1.4% | +0.1% |
-| 7 | +3.0% | +1.2% | +2.5% | +1.5% | +2.0% | +2.8% | +0.1% |
-| 8 | +1.4% | +2.5% | +1.6% | +0.7% | -0.3% | +0.7% | +0.1% |
-| 9 | -1.1% | +1.2% | +1.4% | +0.8% | -1.2% | -0.7% | +0.1% |
-| 10 | +0.7% | +1.4% | +1.2% | +0.7% | +1.6% | +1.4% | +0.1% |
-| 11 | +4.6% | +3.9% | +5.0% | +5.4% | +2.2% | +3.6% | +0.1% |
-| 12 | +0.4% | +0.7% | +0.4% | +1.1% | -0.1% | +0.3% | +0.1% |
+| 1 | +1.4% | +3.9% | +5.0% | +3.4% | +0.9% | +1.3% | +0.2% |
+| 2 | +1.1% | +3.3% | +3.3% | +2.3% | +1.1% | +0.8% | +0.1% |
+| 3 | +0.6% | -0.4% | -0.9% | +0.6% | +1.7% | +0.3% | +0.1% |
+| 4 | +1.9% | +2.2% | +3.5% | +6.1% | +1.4% | +1.7% | +0.1% |
+| 5 | +0.7% | +8.7% | +10.2% | +1.1% | -0.3% | +1.5% | +0.1% |
+| 6 | +2.0% | +1.2% | +1.0% | +1.6% | +1.2% | +1.4% | +0.1% |
+| 7 | +3.0% | +1.5% | +2.8% | +1.0% | +2.0% | +2.8% | +0.1% |
+| 8 | +1.3% | +1.5% | +1.0% | +0.0% | -0.2% | +0.7% | +0.1% |
+| 9 | -1.0% | +1.4% | +0.8% | +1.0% | -1.1% | -0.7% | +0.1% |
+| 10 | +0.5% | +1.3% | +1.3% | +0.9% | +1.7% | +1.4% | +0.1% |
+| 11 | +4.7% | +3.9% | +4.9% | +5.1% | +2.2% | +3.6% | +0.1% |
+| 12 | +0.4% | +0.5% | +0.1% | -0.0% | -0.1% | +0.3% | +0.1% |
 
 Over SPY by month (t across years):
 
 | Month | op_profitability top 10 (paper) | momentum top 5 weekly (paper) | momentum top 3 | asset_growth top 5 | low_vol top 20 | cash |
 |---|---|---|---|---|---|---|
-| 1 | +0.0% (0.0) | +2.5% (1.2) | +3.8% (1.1) | +2.2% (1.3) | -0.4% (-0.4) | -1.1% (-1.1) |
-| 2 | +0.2% (0.3) | +2.1% (1.1) | +2.0% (0.8) | +1.4% (0.8) | +0.3% (0.2) | -0.7% (-0.6) |
-| 3 | +0.3% (0.4) | -0.7% (-0.5) | -1.1% (-0.8) | +0.7% (0.4) | +1.4% (2.8) | -0.2% (-0.1) |
-| 4 | +0.2% (0.2) | -0.7% (-0.5) | -1.0% (-1.0) | +3.9% (1.5) | -0.4% (-0.4) | -1.6% (-1.2) |
-| 5 | -0.4% (-0.5) | +6.1% (4.2) | +7.7% (3.6) | -1.2% (-0.8) | -1.8% (-1.5) | -1.3% (-1.4) |
-| 6 | +0.7% (1.1) | +0.0% (0.0) | -0.8% (-0.4) | +0.0% (0.0) | -0.1% (-0.1) | -1.3% (-1.3) |
-| 7 | +0.1% (0.2) | -1.6% (-0.8) | -0.3% (-0.2) | -1.3% (-1.0) | -0.8% (-1.3) | -2.7% (-4.0) |
-| 8 | +0.6% (1.4) | +1.8% (1.7) | +0.9% (0.7) | -0.0% (-0.0) | -1.0% (-1.3) | -0.6% (-0.6) |
-| 9 | -0.4% (-0.7) | +1.9% (1.4) | +2.1% (1.4) | +1.5% (0.9) | -0.5% (-1.0) | +0.8% (0.9) |
-| 10 | -0.8% (-1.0) | -0.0% (-0.0) | -0.2% (-0.1) | -0.7% (-0.6) | +0.2% (0.2) | -1.3% (-1.2) |
-| 11 | +1.0% (2.0) | +0.3% (0.4) | +1.4% (1.3) | +1.8% (1.5) | -1.3% (-1.7) | -3.4% (-3.8) |
-| 12 | +0.2% (0.3) | +0.4% (0.5) | +0.2% (0.2) | +0.9% (1.0) | -0.4% (-0.4) | -0.1% (-0.1) |
+| 1 | +0.1% (0.1) | +2.6% (1.3) | +3.7% (1.1) | +2.2% (1.3) | -0.4% (-0.4) | -1.1% (-1.1) |
+| 2 | +0.3% (0.4) | +2.5% (1.2) | +2.6% (1.0) | +1.5% (0.9) | +0.3% (0.3) | -0.7% (-0.6) |
+| 3 | +0.3% (0.4) | -0.7% (-0.5) | -1.2% (-0.9) | +0.3% (0.2) | +1.4% (2.8) | -0.2% (-0.1) |
+| 4 | +0.2% (0.2) | +0.5% (0.2) | +1.8% (0.5) | +4.4% (1.9) | -0.3% (-0.3) | -1.6% (-1.2) |
+| 5 | -0.7% (-1.0) | +7.3% (4.0) | +8.7% (3.3) | -0.4% (-0.3) | -1.8% (-1.5) | -1.3% (-1.4) |
+| 6 | +0.6% (1.0) | -0.3% (-0.1) | -0.4% (-0.2) | +0.2% (0.2) | -0.2% (-0.2) | -1.3% (-1.3) |
+| 7 | +0.2% (0.2) | -1.4% (-0.8) | +0.0% (0.0) | -1.9% (-1.5) | -0.8% (-1.2) | -2.7% (-4.0) |
+| 8 | +0.6% (1.3) | +0.8% (0.8) | +0.3% (0.3) | -0.7% (-0.5) | -0.9% (-1.2) | -0.6% (-0.6) |
+| 9 | -0.3% (-0.5) | +2.1% (1.5) | +1.5% (1.4) | +1.7% (1.0) | -0.4% (-0.8) | +0.8% (0.9) |
+| 10 | -0.9% (-1.4) | -0.1% (-0.1) | -0.2% (-0.1) | -0.6% (-0.4) | +0.3% (0.3) | -1.3% (-1.2) |
+| 11 | +1.1% (2.2) | +0.4% (0.4) | +1.3% (1.2) | +1.5% (1.2) | -1.4% (-1.7) | -3.4% (-3.8) |
+| 12 | +0.2% (0.3) | +0.3% (0.3) | -0.1% (-0.1) | -0.3% (-0.2) | -0.4% (-0.5) | -0.1% (-0.1) |
 
 ## Weeks with the largest gap to SPY
 
@@ -55,28 +55,28 @@ With 52 weeks per strategy, about 2-3 weeks reach |t| > 2 by chance alone.
 
 | Strategy | Week | Mean | Over SPY | t | Years beat SPY |
 |---|---|---|---|---|---|
-| op_profitability top 10 (paper) | 41 | +0.7% | +0.7% | 2.65 | 12/15 |
-| op_profitability top 10 (paper) | 47 | +1.0% | +0.5% | 2.56 | 12/14 |
-| op_profitability top 10 (paper) | 43 | -0.5% | -1.0% | -3.25 | 4/14 |
-| op_profitability top 10 (paper) | 40 | -0.2% | -0.7% | -2.75 | 4/15 |
-| momentum top 5 weekly (paper) | 44 | +1.7% | +1.4% | 3.63 | 12/14 |
-| momentum top 5 weekly (paper) | 6 | +1.5% | +1.3% | 2.94 | 11/15 |
-| momentum top 5 weekly (paper) | 52 | +0.1% | -0.5% | -1.92 | 4/14 |
-| momentum top 5 weekly (paper) | 41 | -0.8% | -0.8% | -1.61 | 4/15 |
-| momentum top 3 | 44 | +1.7% | +1.4% | 4.32 | 12/14 |
-| momentum top 3 | 1 | +2.1% | +1.9% | 2.96 | 11/15 |
-| momentum top 3 | 43 | -1.1% | -1.5% | -2.56 | 3/14 |
-| momentum top 3 | 13 | -0.4% | -1.5% | -1.89 | 5/15 |
-| asset_growth top 5 | 51 | +1.1% | +0.8% | 2.85 | 10/14 |
-| asset_growth top 5 | 1 | +2.5% | +2.3% | 2.75 | 13/15 |
-| asset_growth top 5 | 27 | +0.1% | -1.0% | -2.71 | 3/15 |
-| asset_growth top 5 | 43 | -0.9% | -1.3% | -2.02 | 5/14 |
-| low_vol top 20 | 13 | +1.9% | +0.8% | 1.85 | 10/15 |
-| low_vol top 20 | 8 | +0.4% | +0.4% | 1.28 | 7/15 |
-| low_vol top 20 | 15 | +0.2% | -1.3% | -2.12 | 4/15 |
-| low_vol top 20 | 37 | -0.3% | -0.7% | -2.08 | 4/15 |
+| op_profitability top 10 (paper) | 47 | +1.0% | +0.6% | 2.76 | 13/14 |
+| op_profitability top 10 (paper) | 41 | +0.6% | +0.6% | 2.58 | 12/15 |
+| op_profitability top 10 (paper) | 43 | -0.5% | -0.9% | -3.01 | 4/14 |
+| op_profitability top 10 (paper) | 40 | -0.2% | -0.7% | -2.67 | 5/15 |
+| momentum top 5 weekly (paper) | 44 | +1.9% | +1.6% | 3.61 | 12/14 |
+| momentum top 5 weekly (paper) | 6 | +1.5% | +1.4% | 3.06 | 11/15 |
+| momentum top 5 weekly (paper) | 52 | +0.2% | -0.5% | -1.78 | 4/14 |
+| momentum top 5 weekly (paper) | 41 | -0.8% | -0.8% | -1.53 | 5/15 |
+| momentum top 3 | 44 | +1.8% | +1.5% | 4.74 | 12/14 |
+| momentum top 3 | 1 | +2.0% | +1.9% | 2.91 | 11/15 |
+| momentum top 3 | 43 | -1.0% | -1.4% | -2.49 | 3/14 |
+| momentum top 3 | 13 | -0.4% | -1.5% | -1.91 | 6/15 |
+| asset_growth top 5 | 1 | +2.6% | +2.5% | 2.88 | 13/15 |
+| asset_growth top 5 | 17 | +2.1% | +1.4% | 2.36 | 10/15 |
+| asset_growth top 5 | 27 | -0.0% | -1.2% | -2.56 | 3/15 |
+| asset_growth top 5 | 31 | -1.5% | -1.2% | -1.89 | 6/15 |
+| low_vol top 20 | 13 | +1.9% | +0.8% | 1.88 | 10/15 |
+| low_vol top 20 | 41 | +0.5% | +0.6% | 1.34 | 9/15 |
+| low_vol top 20 | 15 | +0.3% | -1.2% | -2.05 | 4/15 |
+| low_vol top 20 | 37 | -0.2% | -0.6% | -1.90 | 4/15 |
 
-Weeks with |t| > 2 over SPY: 30 of 312 (about 16 expected by chance if they were independent; they are not: the two momentum versions share most holdings).
+Weeks with |t| > 2 over SPY: 29 of 312 (about 16 expected by chance if they were independent; they are not: the two momentum versions share most holdings).
 
 ## Earnings season
 
@@ -84,24 +84,24 @@ In season: 40% of trading days (centred 10-session count of S&P 500 earnings rel
 
 | Strategy | In season | Off season | Over SPY in | Over SPY off | Difference (t) | Years in better |
 |---|---|---|---|---|---|---|
-| op_profitability top 10 (paper) | +22.9% | +12.9% | +2.1% | +1.2% | +1.7% (0.34) | 8/15 |
-| momentum top 5 weekly (paper) | +38.3% | +21.3% | +17.6% | +9.5% | +6.9% (0.69) | 11/15 |
-| momentum top 3 | +43.4% | +22.3% | +22.6% | +10.5% | +12.4% (1.31) | 10/15 |
-| asset_growth top 5 | +30.9% | +19.6% | +10.2% | +7.8% | +2.3% (0.26) | 5/15 |
-| low_vol top 20 | +16.6% | +6.0% | -4.2% | -5.8% | +1.4% (0.24) | 8/15 |
+| op_profitability top 10 (paper) | +22.8% | +12.7% | +2.0% | +1.0% | +1.8% (0.37) | 8/15 |
+| momentum top 5 weekly (paper) | +42.8% | +20.8% | +22.1% | +9.1% | +12.6% (1.60) | 10/15 |
+| momentum top 3 | +48.2% | +23.9% | +27.5% | +12.1% | +15.4% (1.64) | 10/15 |
+| asset_growth top 5 | +31.7% | +17.6% | +10.9% | +5.8% | +4.6% (0.53) | 7/15 |
+| low_vol top 20 | +17.2% | +6.5% | -3.6% | -5.3% | +1.4% (0.25) | 8/15 |
 | SPY | +20.7% | +11.7% | +0.0% | +0.0% | +0.0% (nan) | 0/15 |
 | cash | +1.7% | +1.6% | -19.1% | -10.1% | -9.0% (-1.68) | 4/15 |
 
 ## Holdout: month 5 for momentum in 2008-2011
 
-The strongest month over SPY above: momentum top 5 weekly, month 5, +6.1% a year over SPY (t 4.22, beat SPY 14 of 15 years). The same month in the four years before (monthly momentum, over SPY):
+The strongest month over SPY above: momentum top 5 weekly, month 5, +7.3% a year over SPY (t 4.05, beat SPY 14 of 15 years). The same month in the four years before (monthly momentum, over SPY):
 
 | Year | top3 | top5 | top20 |
 |---|---|---|---|
 | 2008 | -1.5% | -1.5% | -1.5% |
-| 2009 | -9.5% | -8.8% | -4.3% |
+| 2009 | -9.5% | -8.7% | -4.3% |
 | 2010 | -1.4% | -3.3% | +1.6% |
-| 2011 | -5.3% | -2.9% | -1.2% |
+| 2011 | -2.2% | -2.4% | -0.9% |
 
 ## A rule a trader could follow: best option for each month, chosen on earlier years
 
@@ -109,13 +109,13 @@ From 2015-01-02 (3 earlier years needed); 0.10% charged per switch. 109 switches
 
 | Option | CAGR | Per month | Sharpe | Max drawdown |
 |---|---|---|---|---|
-| month rule (walk-forward) | +16.0% | +1.25% | 0.65 | -53.1% |
-| op_profitability top 10 (paper) | +14.8% | +1.16% | 0.86 | -41.0% |
-| momentum top 5 weekly (paper) | +25.4% | +1.90% | 0.89 | -35.1% |
-| momentum top 3 | +25.4% | +1.90% | 0.82 | -39.2% |
-| asset_growth top 5 | +19.8% | +1.51% | 0.80 | -45.1% |
-| low_vol top 20 | +8.3% | +0.67% | 0.62 | -32.7% |
+| month rule (walk-forward) | +12.7% | +1.00% | 0.55 | -57.7% |
+| op_profitability top 10 (paper) | +14.6% | +1.14% | 0.85 | -41.0% |
+| momentum top 5 weekly (paper) | +27.4% | +2.04% | 0.93 | -35.6% |
+| momentum top 3 | +29.6% | +2.19% | 0.90 | -41.6% |
+| asset_growth top 5 | +18.2% | +1.40% | 0.75 | -45.1% |
+| low_vol top 20 | +9.0% | +0.72% | 0.66 | -32.5% |
 | SPY | +13.7% | +1.07% | 0.82 | -33.7% |
 | cash | +2.1% | +0.17% | - | 0.0% |
 
-Months held by the rule: asset_growth top 5 54, momentum top 3 46, momentum top 5 weekly (paper) 19, low_vol top 20 12, op_profitability top 10 (paper) 11.
+Months held by the rule: asset_growth top 5 52, momentum top 3 48, momentum top 5 weekly (paper) 16, low_vol top 20 13, op_profitability top 10 (paper) 13.
